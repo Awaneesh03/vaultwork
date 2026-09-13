@@ -7,7 +7,7 @@ import { createProject, executeText } from '@/services'
 import { useCalendarUiStore } from '@/store/calendarUiStore'
 import { useTaskUiStore } from '@/store/taskUiStore'
 import { useToastStore } from '@/store/toastStore'
-import { freezeClock, resetDatabase } from '../../../../tests/helpers'
+import { freezeClock, resetDatabase, waitOutsideAct } from '../../../../tests/helpers'
 import { CalendarView } from './CalendarView'
 
 /**
@@ -143,12 +143,22 @@ describe('the month view', () => {
     expect(useCalendarUiStore.getState().mode).toBe('day')
     expect(useCalendarUiStore.getState().selectedDate).toBe('2026-09-10')
 
-    // The day view then runs a fresh live query. Under a fully parallel suite
-    // that can exceed waitFor's 1s default on a loaded machine, so this one is
-    // given room — the assertion is unchanged, only the patience.
-    await waitFor(() => expect(screen.getByText('Thursday, 10 Sep 2026')).toBeTruthy(), {
-      timeout: 5000,
-    })
+    /*
+     * Polled outside `act`, not with `waitFor`.
+     *
+     * The click switches mode to `day` and sets `selectedDate`, which *rebuilds*
+     * the calendar's live query — a new options object, so a new subscription.
+     * `waitFor` polls from inside `act`, and in this jsdom + fake-indexeddb
+     * setup that starves Dexie's liveQuery task queue: the DOM does update, but
+     * only once control returns to real timers, so the poll never observes it
+     * however long it is given. That is why this failed roughly one run in five
+     * under the full parallel suite and passed every time in isolation — and
+     * why raising the timeout would have hidden it rather than fixed it.
+     *
+     * `waitOutsideAct` schedules the poll where the subscription can actually
+     * deliver. The assertion is unchanged.
+     */
+    await waitOutsideAct(() => expect(screen.getByText('Thursday, 10 Sep 2026')).toBeTruthy())
   })
 })
 
