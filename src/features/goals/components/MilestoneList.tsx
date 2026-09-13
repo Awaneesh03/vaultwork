@@ -18,6 +18,7 @@ import {
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { ArrowDown, ArrowUp, Check, GripVertical, Pencil, Trash2 } from 'lucide-react'
+import { Badge } from '@/components/ui/Badge'
 import { cn } from '@/lib/cn'
 import type { MilestoneView } from '@/services'
 import { formatGoalDate } from '../goalAppearance'
@@ -134,12 +135,13 @@ function Row({
             ) : null}
 
             {tasks.total > 0 ? (
-              <span
-                className="tabular shrink-0 rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-3"
+              <Badge
+                tone="neutral"
+                className="tabular"
                 aria-label={`${tasks.done} of ${tasks.total} tasks complete under ${milestone.title}`}
               >
                 {tasks.done}/{tasks.total} tasks
-              </span>
+              </Badge>
             ) : null}
           </div>
         </div>

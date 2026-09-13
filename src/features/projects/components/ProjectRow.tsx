@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { ArchiveRestore, Archive, Pencil, Trash2, TriangleAlert } from 'lucide-react'
+import { Badge } from '@/components/ui/Badge'
 import { cn } from '@/lib/cn'
 import { formatDayLabel } from '@/lib/date'
 import type { ProjectSummary } from '@/services'
@@ -73,7 +74,14 @@ export function ProjectRow({
         'group/row relative flex items-start gap-2.5 rounded-md border px-2 py-2 sm:px-2.5',
         'transition-colors duration-[var(--duration-fast)]',
         selected
-          ? 'border-accent-line bg-accent-soft/60'
+          ? [
+              'border-accent-line bg-accent-soft/60',
+              // The same keyboard cursor the task rows carry, for the same
+              // reason: these lists are walked with j/k and a tint alone is a
+              // shade of grey to anyone not looking for it.
+              'after:absolute after:inset-y-0 after:right-0 after:w-[2px]',
+              'after:rounded-l-full after:bg-accent',
+            ]
           : 'border-transparent hover:border-line hover:bg-surface',
         archived && 'opacity-70',
         dragging && 'opacity-40',
@@ -100,15 +108,16 @@ export function ProjectRow({
             {project.name}
           </button>
 
-          <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-3">
+          {/* The shared Badge, so a project's state reads the same as a sync
+              state or a document kind anywhere else in the application. */}
+          <Badge tone={archived ? 'neutral' : 'confirm'}>
             {PROJECT_STATUS_LABELS[project.status]}
-          </span>
+          </Badge>
 
           {stats.overdue > 0 ? (
-            <span className="tabular inline-flex shrink-0 items-center gap-1 rounded-sm bg-danger-soft px-1.5 py-px text-micro text-danger">
-              <TriangleAlert size={10} aria-hidden />
+            <Badge tone="danger" icon={<TriangleAlert size={10} />} className="tabular">
               {stats.overdue} overdue
-            </span>
+            </Badge>
           ) : null}
 
           {project.deadline ? (

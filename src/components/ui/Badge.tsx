@@ -31,6 +31,7 @@ export function Badge({
   className,
   title,
   role,
+  'aria-label': ariaLabel,
   children,
 }: {
   tone?: BadgeTone
@@ -38,6 +39,11 @@ export function Badge({
   className?: string | undefined
   /** The longer explanation, for hover. The label still carries the meaning. */
   title?: string | undefined
+  /**
+   * Overrides the announced name when the visible text is a shorthand.
+   * "3/5 tasks" on screen, "3 of 5 tasks complete under Arrays" to a reader.
+   */
+  'aria-label'?: string | undefined
   /**
    * `status` when the badge *reports* something that changes on its own — a
    * connection coming up, a sync finishing. A screen reader should hear those
@@ -50,6 +56,7 @@ export function Badge({
     <span
       role={role}
       title={title}
+      aria-label={ariaLabel}
       className={cn(
         'inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-[1.5px]',
         'text-meta font-medium whitespace-nowrap',

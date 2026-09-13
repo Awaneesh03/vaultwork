@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Archive, ArchiveRestore, Check, Flame, Pencil, Trash2 } from 'lucide-react'
+import { Badge } from '@/components/ui/Badge'
 import { cn } from '@/lib/cn'
 import { projectColorVar } from '@/features/projects/projectAppearance'
 import type { HabitListItem } from '@/services'
@@ -123,9 +124,7 @@ export function HabitRow({
             {habit.name}
           </button>
 
-          <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-3">
-            {scheduleText(item)}
-          </span>
+          <Badge tone="neutral">{scheduleText(item)}</Badge>
 
           {/* State in words as well as in the control's own aria-checked. */}
           <span className="sr-only">{state}</span>
@@ -134,11 +133,7 @@ export function HabitRow({
             <span className="shrink-0 text-micro text-ink-3">Not today</span>
           ) : null}
 
-          {archived ? (
-            <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-3">
-              Archived
-            </span>
-          ) : null}
+          {archived ? <Badge tone="neutral">Archived</Badge> : null}
         </div>
 
         <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta">

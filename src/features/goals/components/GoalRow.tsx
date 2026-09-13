@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Archive, ArchiveRestore, Check, Flag, Pencil, Trash2 } from 'lucide-react'
+import { Badge } from '@/components/ui/Badge'
 import { cn } from '@/lib/cn'
 import type { GoalListItem } from '@/services'
 import {
@@ -120,9 +121,7 @@ export function GoalRow({
           ) : null}
 
           {goal.status === 'paused' || archived ? (
-            <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-3">
-              {GOAL_STATUS_LABELS[goal.status]}
-            </span>
+            <Badge tone="neutral">{GOAL_STATUS_LABELS[goal.status]}</Badge>
           ) : null}
         </div>
 
