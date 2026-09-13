@@ -459,6 +459,32 @@ pub fn prime(app: &AppHandle) {
     state.set_configured(secrets::exists(secrets::TELEGRAM_TOKEN));
 }
 
+/// Whether a credential is present, as last established by `prime`.
+///
+/// Reads the cached flag rather than the credential store, so asking is free
+/// and the "one keychain read per launch" property holds.
+pub fn is_configured(app: &AppHandle) -> bool {
+    app.state::<Arc<TelegramState>>().is_configured()
+}
+
+/// Whether start-up should bring the worker up on its own.
+///
+/// Both halves are required, and the second is the one worth spelling out: the
+/// preference says the user *wants* it, `configured` says there is a credential
+/// to use. `forget_telegram` already clears the preference on disconnect, so
+/// the two normally agree — but a token removed outside Vaultwork (Keychain
+/// Access, a migrated machine, a restored backup) leaves the preference true
+/// with nothing behind it.
+///
+/// Without this check that case is not fatal, but it is wrong in a way the user
+/// feels: every launch spends a credential-store read to fail, and posts an
+/// error against an integration they did not ask to start.
+///
+/// Pure so it can be tested without an AppHandle, a keychain or a running app.
+pub fn should_auto_start(auto_start_preference: bool, configured: bool) -> bool {
+    auto_start_preference && configured
+}
+
 pub fn start_worker(app: AppHandle) {
     let state = app.state::<Arc<TelegramState>>().inner().clone();
 
@@ -852,6 +878,27 @@ mod tests {
             }
             _ => panic!("an unknown chat must never be delivered"),
         }
+    }
+
+    #[test]
+    fn auto_start_needs_both_the_preference_and_a_credential() {
+        // The ordinary cases.
+        assert!(should_auto_start(true, true), "asked for, and configured");
+        assert!(!should_auto_start(false, true), "not asked for");
+
+        /*
+         * The case this exists for: the preference survived but the token did
+         * not. `forget_telegram` clears the preference on disconnect, so this
+         * only happens when the credential leaves by some other route — a
+         * keychain edited by hand, a machine migration, a restored backup.
+         *
+         * Starting anyway is not fatal, because `start_worker` fails cleanly.
+         * It is still wrong: it spends a credential-store read to discover
+         * nothing is there and then shows an error against an integration the
+         * user never switched on this launch.
+         */
+        assert!(!should_auto_start(true, false), "wanted, but nothing to start with");
+        assert!(!should_auto_start(false, false));
     }
 
     #[test]

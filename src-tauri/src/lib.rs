@@ -62,7 +62,13 @@ pub fn run() {
             // once per launch is the whole cost. No request is made here —
             // an AI provider that called out at start-up would be a surprise.
             ai::prime(handle);
-            if store::telegram_auto_start(handle) {
+            // `prime` above has just set `configured` from the credential
+            // store, so both halves of this decision are known without a
+            // second keychain read.
+            if telegram::should_auto_start(
+                store::telegram_auto_start(handle),
+                telegram::is_configured(handle),
+            ) {
                 telegram::start_worker(handle.clone());
             }
             Ok(())
