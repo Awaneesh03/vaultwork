@@ -6,7 +6,6 @@ import { FocusView } from '@/features/focus/views/FocusView'
 import { GoalsView } from '@/features/goals/views/GoalsView'
 import { HabitsView } from '@/features/habits/views/HabitsView'
 import { InboxView } from '@/features/inbox/views/InboxView'
-import { NoteDetailView } from '@/features/notes/views/NoteDetailView'
 import { NotesView } from '@/features/notes/views/NotesView'
 import { ProjectDetailView } from '@/features/projects/views/ProjectDetailView'
 import { ProjectsView } from '@/features/projects/views/ProjectsView'
@@ -80,10 +79,15 @@ export function AppRoutes() {
         <Route path="focus" element={<FocusView />} />
         <Route path="analytics" element={<AnalyticsView />} />
         <Route path="ai" element={<AiView />} />
+        {/*
+          Both note routes render the same workspace: the rail is the collection
+          and the pane is the note, so opening one is a selection rather than a
+          navigation away from the list.
+        */}
         <Route path="notes" element={<NotesView />} />
         {/* Declared before the :noteId route so "graph" is not read as an id. */}
         <Route path="notes/graph" element={<NoteGraphView />} />
-        <Route path="notes/:noteId" element={<NoteDetailView />} />
+        <Route path="notes/:noteId" element={<NotesView />} />
         <Route path="documents" element={<DocumentsView />} />
         <Route path="obsidian" element={<ObsidianView />} />
         <Route path="obsidian/sync" element={<SyncCenterView />} />

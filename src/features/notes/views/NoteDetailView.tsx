@@ -168,11 +168,16 @@ export function NoteDetailView() {
 
   return (
     <section className="flex min-h-0 flex-col gap-4">
-      <header className="flex flex-col gap-2">
+      <header className="flex flex-col gap-2.5">
         <div className="flex flex-wrap items-center gap-2">
+          {/*
+            Only where the rail is not already on screen. On a wide window the
+            list is sitting to the left of this and a "back" link would be
+            pointing at something already visible.
+          */}
           <Link
             to="/notes"
-            className="inline-flex items-center gap-1 text-body text-ink-3 hover:text-accent"
+            className="inline-flex items-center gap-1 text-body text-ink-3 hover:text-accent lg:hidden"
           >
             <ArrowLeft size={12} aria-hidden />
             Notes
@@ -225,32 +230,38 @@ export function NoteDetailView() {
           placeholder="Untitled note"
           aria-label="Note title"
           className={cn(
-            'w-full rounded-md border border-transparent bg-transparent px-1 py-1',
-            'text-display font-semibold tracking-tight text-ink',
-            'placeholder:text-ink-3 hover:border-line focus:border-accent-line focus:bg-surface',
+            // The document's own title, not a labelled field: no box until you
+            // reach for it, and the same size it will be when it is read.
+            'w-full rounded-md border border-transparent bg-transparent px-1.5 py-1',
+            'text-display leading-tight font-semibold tracking-tight text-ink',
+            'transition-colors duration-[var(--duration-fast)]',
+            'placeholder:text-ink-3 hover:border-line focus:border-accent focus:bg-surface',
           )}
         />
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-meta text-ink-3">
+        {/*
+          One line, under a rule. Metadata about a document is not the document,
+          and every fact here promoted to its own labelled box would push the
+          first sentence of the note below the fold.
+        */}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-b border-line px-1.5 pb-2.5 text-micro text-ink-3">
           <span>Edited {formatEventTime(detail.note.updatedAt, detail.now, detail.today)}</span>
           {detail.tags.length > 0 ? (
             <span className="inline-flex items-center gap-1">
-              <TagIcon size={10} aria-hidden />
+              <TagIcon size={9} aria-hidden />
               {detail.tags.map((tag) => tag.name).join(', ')}
             </span>
           ) : null}
           {detail.note.vaultPath ? (
             <span
-              className="inline-flex items-center gap-1 font-mono text-micro"
+              className="inline-flex items-center gap-1 font-mono"
               title="Where this note will live in your Obsidian vault"
             >
-              <FolderTree size={10} aria-hidden />
+              <FolderTree size={9} aria-hidden />
               {detail.note.vaultPath}
             </span>
           ) : null}
-          {deleted ? (
-            <span className="rounded-sm bg-sunken px-1.5 py-px text-micro">Deleted</span>
-          ) : null}
+          {deleted ? <span className="rounded-sm bg-sunken px-1.5 py-px">Deleted</span> : null}
         </div>
       </header>
 
@@ -262,33 +273,40 @@ export function NoteDetailView() {
         onBlur={autosave.flush}
       />
 
-      <NoteLinkPicker
-        links={detail.links}
-        candidates={candidates ?? []}
-        onAttach={link}
-        onDetach={unlink}
-      />
+      {/*
+        Everything that is *about* the note rather than in it, below the fold it
+        makes. These were three stacked panels of equal weight; now they read as
+        an apparatus under a document, which is what they are.
+      */}
+      <div className="flex flex-col gap-5 rounded-xl border border-line bg-sunken/40 p-4">
+        <NoteLinkPicker
+          links={detail.links}
+          candidates={candidates ?? []}
+          onAttach={link}
+          onDetach={unlink}
+        />
 
-      <NoteKnowledgePanel
-        className="border-t border-line pt-4"
-        knowledge={knowledge}
-        onOpenNote={(id) => navigate(`/notes/${id}`)}
-      />
+        <NoteKnowledgePanel
+          className="border-t border-line pt-4"
+          knowledge={knowledge}
+          onOpenNote={(id) => navigate(`/notes/${id}`)}
+        />
 
-      <NoteObsidianPanel
-        className="border-t border-line pt-4"
-        connected={connected}
-        report={obsidian.report}
-        busy={obsidian.busy}
-        error={obsidian.error}
-        message={obsidian.message}
-        suggestedPath={suggestedPath}
-        onExport={(options) => void obsidian.exportToVault(options)}
-        onImport={(options) => void obsidian.importFromVault(options)}
-        onRefresh={() => void obsidian.refresh()}
-        onRename={(path) => void obsidian.renameTo(path)}
-        onDelete={() => void obsidian.deleteFile()}
-      />
+        <NoteObsidianPanel
+          className="border-t border-line pt-4"
+          connected={connected}
+          report={obsidian.report}
+          busy={obsidian.busy}
+          error={obsidian.error}
+          message={obsidian.message}
+          suggestedPath={suggestedPath}
+          onExport={(options) => void obsidian.exportToVault(options)}
+          onImport={(options) => void obsidian.importFromVault(options)}
+          onRefresh={() => void obsidian.refresh()}
+          onRename={(path) => void obsidian.renameTo(path)}
+          onDelete={() => void obsidian.deleteFile()}
+        />
+      </div>
     </section>
   )
 }
