@@ -47,13 +47,6 @@ const mount = () =>
 const timer = () => screen.getByRole('timer')
 
 /**
- * The start button, once it is actually usable.
- *
- * It renders disabled until the live query and the pomodoro settings have both
- * arrived — clicking it before then is a no-op, which is correct behaviour and
- * a very confusing test failure.
- */
-/**
  * A start button, once it is genuinely actionable.
  *
  * `findByRole` resolves as soon as a button with that name exists — including
@@ -282,22 +275,44 @@ describe('the timer itself', () => {
     const view = mount()
     await waitFor(() => expect(timer()).toBeTruthy())
 
-    /*
-     * The spy goes in *after* the screen has settled, so it counts only what
-     * the running timer does — `waitFor` polls on an interval of its own.
-     *
-     * Two and a half seconds of real ticking, and the answer must be none —
-     * the interval belongs to the session, not to the render. Depending on
-     * anything that changes each tick (the current instant, most obviously)
-     * rebuilds the timer inside its own callback and compounds: with `now` in
-     * the dependencies this assertion sees tens of thousands of intervals in
-     * these two and a half seconds rather than one.
-     */
-    const created = vi.spyOn(globalThis, 'setInterval')
-    await new Promise((resolve) => setTimeout(resolve, 2500))
-    expect(created).not.toHaveBeenCalled()
+    try {
+      /*
+       * A moving clock, for this test and no other.
+       *
+       * Everywhere else this file pins the instant so a countdown reads the
+       * same number twice. That pin is exactly what would blunt this
+       * assertion: the ticker calls `setNow(platform.clock.now())`, and
+       * against a constant clock that stores the value it already held, so
+       * React bails out of the re-render and the dependency never changes —
+       * the regression this test exists for cannot happen. A millisecond of
+       * drift per read (what `freezeClock` does by default) is enough to make
+       * every tick a real state change, which is the condition under which a
+       * mis-declared dependency actually bites.
+       *
+       * `restoreMocks` in vitest.config.ts puts the pinned clock back before
+       * the next test; the `finally` below covers the unmount, which it does
+       * not.
+       */
+      let tick = NOW.getTime()
+      vi.spyOn(platform.clock, 'now').mockImplementation(() => tick++)
 
-    view.unmount()
+      /*
+       * The spy goes in *after* the screen has settled, so it counts only what
+       * the running timer does — `waitFor` polls on an interval of its own.
+       *
+       * Two and a half seconds of real ticking, and the answer must be none —
+       * the interval belongs to the session, not to the render. Depending on
+       * anything that changes each tick (the current instant, most obviously)
+       * rebuilds the timer inside its own callback and compounds: with `now`
+       * in the dependencies this assertion sees tens of thousands of intervals
+       * in these two and a half seconds rather than one.
+       */
+      const created = vi.spyOn(globalThis, 'setInterval')
+      await new Promise((resolve) => setTimeout(resolve, 2500))
+      expect(created).not.toHaveBeenCalled()
+    } finally {
+      view.unmount()
+    }
   })
 
   it('stops ticking when the screen goes away', async () => {
