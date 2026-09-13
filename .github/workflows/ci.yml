@@ -1,0 +1,89 @@
+name: CI
+
+# Vaultwork is a local-first desktop app with no backend and no deployment, so
+# CI has exactly one job: prove that a clean checkout still builds and that the
+# suite still passes on a machine that is not the author's.
+#
+# It deliberately has access to nothing. There are no secrets, no environment
+# variables and no network calls to Groq or Telegram — every one of those paths
+# is behind a port with a test double, which is what makes the suite runnable
+# here at all. The macOS keychain and the author's Obsidian vault are likewise
+# never touched: the vault tests run against temporary directories they create
+# themselves.
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+# A second push should cancel the first rather than queue behind it.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  web:
+    name: Web (lint, types, tests, build)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      # `ci` rather than `install`: the lockfile is the input, and a run that
+      # silently resolved a different tree would not be testing this commit.
+      - run: npm ci
+
+      - name: Formatting
+        run: npm run format:check
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Types
+        run: npm run typecheck
+
+      # TZ is pinned in the test script itself (Asia/Kolkata) so the date
+      # convention tests catch a UTC-based implementation. Nothing to set here.
+      - name: Tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+  rust:
+    name: Rust (vault, telegram, ai)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri
+
+      # The crate is rlib-only and the tests never build the desktop binary,
+      # but `tauri` still pulls in `wry`, which links WebKitGTK on Linux. These
+      # are installed rather than assumed away: the alternative is a workflow
+      # whose first run fails on a missing .pc file.
+      - name: System dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libwebkit2gtk-4.1-dev \
+            libgtk-3-dev \
+            libayatana-appindicator3-dev \
+            librsvg2-dev \
+            libsoup-3.0-dev \
+            libjavascriptcoregtk-4.1-dev
+
+      # `keyring` builds against the Linux secret-service backend here. No test
+      # opens a keychain entry, so no daemon needs to be running for them to
+      # pass — the macOS keychain this app actually uses is never touched.
+      - name: Tests
+        run: cargo test --manifest-path src-tauri/Cargo.toml
