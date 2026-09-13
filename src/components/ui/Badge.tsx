@@ -18,7 +18,14 @@ export type BadgeTone = 'neutral' | 'accent' | 'confirm' | 'ok' | 'warn' | 'dang
 const TONES: Record<BadgeTone, string> = {
   neutral: 'bg-sunken text-ink-2 border-line',
   accent: 'bg-accent-soft text-accent border-accent-line/50',
-  confirm: 'bg-accent-2-soft text-accent-2 border-accent-2-line/50',
+  /*
+   * "Settled" — synced, agreed, done. It wears the success green rather than
+   * the brand accent, which is reserved for *selection and identity*, and it
+   * is emphatically not violet: violet belongs to the Assistant, and a PDF
+   * badge in the Assistant's colour claims a relationship that is not there.
+   * It read violet from the palette reversal until Phase 5 caught it.
+   */
+  confirm: 'bg-ok-soft text-ok border-ok/25',
   ok: 'bg-ok-soft text-ok border-ok/25',
   warn: 'bg-warn-soft text-warn border-warn/25',
   danger: 'bg-danger-soft text-danger border-danger/25',

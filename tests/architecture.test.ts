@@ -5,6 +5,7 @@ import { TASK_ROUTES } from '@/app/navigation'
 import { STORE_NAMES } from '@/db'
 import { STORE_NAMES_FOR_BACKUP, TASK_VIEW_IDS, TASK_VIEW_PATHS } from '@/services'
 import { MENU_ACTIONS } from '@/platform'
+import { TEXT_SCALE } from '@/lib/cn'
 
 /**
  * The architecture is only real if it is checked by a machine.
@@ -999,6 +1000,26 @@ describe('the AI boundary', () => {
     for (const dangerous of ['ai_get_key', 'ai_key', 'ai_secret', 'ai_request', 'ai_fetch']) {
       expect(commands).not.toContain(dangerous)
     }
+  })
+
+  it('tells tailwind-merge about every step in the scale', () => {
+    /*
+     * `text-body` is a size, but `tailwind-merge` only knows the sizes Tailwind
+     * ships with — everything else beginning `text-` it files as a colour, and
+     * a size filed as a colour is deleted the moment a real colour follows it
+     * in the same `cn()`. That is how the note title came to ask for 19px and
+     * render at 14, in company with forty-seven other call sites.
+     *
+     * `cn.ts` registers the scale so the grouping is right. This asserts the
+     * two lists are the same list, because a seventh step added to globals.css
+     * alone would reintroduce exactly the original bug for exactly that step,
+     * silently.
+     */
+    const css = readFileSync(join(ROOT, 'src/styles/globals.css'), 'utf8')
+    const declared = [...css.matchAll(/--text-([a-z]+):/g)].map((match) => match[1])
+
+    expect(declared.length).toBeGreaterThan(0)
+    expect([...TEXT_SCALE].sort()).toEqual([...new Set(declared)].sort())
   })
 
   it('sizes text from the scale, not by hand', () => {
