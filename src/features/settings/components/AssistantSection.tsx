@@ -1,7 +1,18 @@
 import { useState } from 'react'
 import { KeyRound } from 'lucide-react'
+import { Badge, type BadgeTone } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { describeAi, useAiSettings } from '../hooks/useAiSettings'
+
+/** One fact about the provider, as a word. Mirrors the Telegram section. */
+function Fact({ label, value, tone }: { label: string; value: string; tone: BadgeTone }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-body text-ink-3">{label}</span>
+      <Badge tone={tone}>{value}</Badge>
+    </div>
+  )
+}
 
 /**
  * The Assistant section of Settings.
@@ -37,30 +48,50 @@ export function AssistantSection() {
 
   return (
     <div className="flex flex-col gap-3.5">
-      <dl className="flex flex-col gap-1.5 font-mono text-body text-ink-2">
-        <div className="flex justify-between gap-3">
-          <dt>status</dt>
-          <dd className={status.enabled ? 'text-ok' : 'text-ink'}>
+      {/*
+        Four separate answers, because they are four separate questions: is the
+        assistant optional (always yes), is a key saved, is it switched on, and
+        which model would answer. A single "status" line cannot say that a key
+        is saved and the assistant is deliberately off — which is the default
+        state of a fresh installation and needs no fixing.
+      */}
+      <div className="flex flex-col gap-2 panel p-3.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="text-strong font-medium text-ink">
+            {status.configured ? status.provider : 'No provider'}
+          </span>
+          <span className={`text-body ${status.enabled ? 'text-ok' : 'text-ink-2'}`}>
             {describeAi(status, ai.available)}
-          </dd>
+          </span>
         </div>
-        {status.configured ? (
-          <div className="flex justify-between gap-3">
-            <dt>provider</dt>
-            <dd className="text-ink">{status.provider}</dd>
+
+        <div className="flex flex-col gap-1.5 border-t border-line pt-2">
+          <Fact
+            label="Provider key"
+            value={status.configured ? 'In the keychain' : 'Not saved'}
+            tone={status.configured ? 'confirm' : 'neutral'}
+          />
+          <Fact
+            label="Reaching the provider"
+            value={status.enabled ? 'Allowed' : 'Switched off'}
+            tone={status.enabled ? 'confirm' : 'neutral'}
+          />
+          {status.model ? (
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-body text-ink-3">Model</span>
+              <span className="font-mono text-meta text-ink-2">{status.model}</span>
+            </div>
+          ) : null}
+          {/*
+            A diagnostic, kept because each read is a potential OS
+            authorization prompt and a climbing number is the symptom.
+          */}
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-body text-ink-3">Keychain reads</span>
+            <span className="tabular font-mono text-meta text-ink-2">{status.keychainReads}</span>
           </div>
-        ) : null}
-        {status.model ? (
-          <div className="flex justify-between gap-3">
-            <dt>model</dt>
-            <dd className="text-ink">{status.model}</dd>
-          </div>
-        ) : null}
-        <div className="flex justify-between gap-3">
-          <dt>credential store reads</dt>
-          <dd className="tabular text-ink">{status.keychainReads}</dd>
         </div>
-      </dl>
+      </div>
 
       {status.lastError !== null ? (
         <p className="text-body text-danger">{status.lastError}</p>
@@ -122,14 +153,21 @@ export function AssistantSection() {
       ) : null}
 
       {status.configured ? (
-        <label className="flex items-center gap-2 text-body text-ink-2">
+        <label className="flex items-start gap-2.5 rounded-lg border border-line bg-sunken p-3 text-body text-ink">
           <input
             type="checkbox"
+            className="mt-[3px]"
             checked={status.enabled}
             disabled={ai.busy}
             onChange={(event) => void ai.setEnabled(event.target.checked)}
           />
-          Let the assistant reach the provider
+          <span className="flex flex-col gap-0.5">
+            <span className="font-medium">Let the assistant reach the provider</span>
+            <span className="text-body text-ink-3">
+              Off by default, and off after a key is saved. Nothing leaves this machine until this
+              is on, and only what you ask about is sent.
+            </span>
+          </span>
         </label>
       ) : null}
 

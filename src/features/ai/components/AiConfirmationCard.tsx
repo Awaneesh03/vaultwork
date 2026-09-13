@@ -12,6 +12,14 @@ import type { AiConfirmation } from '@/services'
  * reasoning rather than as the action, because a reply that says "tidy up a few
  * old things" while proposing something else is the ordinary failure mode here.
  *
+ * It is deliberately *not* violet. Everything the assistant says wears the
+ * Assistant's colour; this is Vaultwork saying what it is about to do to your
+ * own data, and the model is not the thing that acts. Reading "the assistant
+ * understood me" and authorising "Vaultwork is about to change my data" must
+ * not look like the same event, so one is a violet rule beside some prose and
+ * the other is the loudest surface in the application, in Vaultwork's emerald,
+ * with an amber reminder that it has not happened yet.
+ *
  * Confirming is a deliberate click. There is no default-focused Confirm, no
  * Enter-to-confirm and no auto-apply for a single unambiguous step: the whole
  * point of the gate is that the user has read what will happen.
@@ -58,7 +66,7 @@ export function AiConfirmationCard({
         to your own data should not look alike, and this is the only component
         that gets to shout.
       */}
-      <div className="flex items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2">
         <span
           className="grid h-6 w-6 shrink-0 place-items-center rounded-md bg-accent text-accent-ink"
           aria-hidden
@@ -70,7 +78,26 @@ export function AiConfirmationCard({
             ? 'Confirm this change'
             : `Confirm ${confirmation.summary.length} changes`}
         </h3>
+        <span className="flex-1" />
+        {/*
+          The state, as a word. "Nothing has changed yet" was already written
+          down at the bottom of the card in grey; a pending mutation deserves to
+          say so where the eye lands, and in the colour the rest of the
+          application uses for "an exception you should notice".
+        */}
+        <span className="rounded-full border border-warn/40 bg-warn-soft px-2 py-0.5 text-micro font-medium text-warn">
+          Not applied yet
+        </span>
       </div>
+
+      {/*
+        Whose words these are. The lines below are written by Vaultwork from the
+        resolved command; the model's own description is one disclosure further
+        down, and never the thing you are agreeing to.
+      */}
+      <p className="text-meta text-ink-3">
+        Written by Vaultwork from the resolved command — not by the assistant.
+      </p>
 
       {/*
         Every line here is written by the confirmation service from the resolved
@@ -121,12 +148,10 @@ export function AiConfirmationCard({
         <Button variant="secondary" onClick={onCancel} disabled={busy}>
           Cancel
         </Button>
-        <span className="flex-1" />
-        <p className="text-meta text-ink-3">Nothing has changed yet.</p>
       </div>
 
       <p className="text-meta text-ink-3">
-        This proposal expires in a few minutes. Press Escape to dismiss it.
+        Nothing has changed yet. This proposal expires in a few minutes; press Escape to dismiss it.
       </p>
     </div>
   )

@@ -29,7 +29,12 @@ export interface KnowledgeGraphViewProps {
   onSelect?: (noteId: string) => void
   onOpen?: (noteId: string) => void
   className?: string
-  height?: number
+  /**
+   * How tall the plot is. A number is pixels; a string is any CSS length, so
+   * the full-screen view can hand it a `clamp()` and stay usable on a phone
+   * without this component learning about breakpoints.
+   */
+  height?: number | string
 }
 
 const WIDTH = 800
@@ -85,6 +90,25 @@ export function KnowledgeGraphView({
 
   const positions = layout.positions
 
+  /**
+   * The selection and everything it touches.
+   *
+   * Used to fade the rest — the point of clicking a node is to see *its*
+   * neighbourhood, and a hundred unrelated nodes at full strength is the same
+   * picture you were already looking at. Membership comes from the drawn edges
+   * and nothing else, so the highlight cannot claim a relationship the graph
+   * does not show.
+   */
+  const near = useMemo(() => {
+    if (selectedNoteId === null) return null
+    const set = new Set<string>([selectedNoteId])
+    for (const edge of edges) {
+      if (edge.source === selectedNoteId) set.add(edge.target)
+      if (edge.target === selectedNoteId) set.add(edge.source)
+    }
+    return set
+  }, [selectedNoteId, edges])
+
   if (nodes.length === 0) {
     return (
       <div
@@ -107,11 +131,11 @@ export function KnowledgeGraphView({
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      <div className="relative overflow-hidden panel">
+      <div className="panel relative overflow-hidden" style={{ height }}>
         <svg
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           width="100%"
-          height={height}
+          height="100%"
           role="img"
           aria-label={`Knowledge graph: ${nodes.length} notes, ${edges.length} links`}
           className="block touch-none select-none"
@@ -181,9 +205,10 @@ export function KnowledgeGraphView({
               const focused = node.id === focusNoteId
               const selected = node.id === selectedNoteId
               const radius = radiusOf(node)
+              const faded = near !== null && !near.has(node.id)
 
               return (
-                <g key={node.id}>
+                <g key={node.id} opacity={faded ? 0.25 : 1}>
                   <circle
                     cx={at.x}
                     cy={at.y}
@@ -224,8 +249,11 @@ export function KnowledgeGraphView({
         The same graph as a list. An SVG scatter plot cannot be tabbed through
         or read aloud, so every node also exists as a real button here — this is
         the keyboard and screen-reader path, not a decoration.
+
+        Height-capped and scrollable: a vault of two hundred notes turned this
+        into a wall of chips taller than the picture it was describing.
       */}
-      <ul className="flex flex-wrap gap-1">
+      <ul className="flex max-h-[4.75rem] flex-wrap gap-1 overflow-y-auto pr-1">
         {nodes.map((node) => (
           <li key={node.id}>
             <button

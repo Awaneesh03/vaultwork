@@ -125,3 +125,55 @@ export const CONNECTION_TONES: Record<ConnectionState, BadgeTone> = {
   'not-connected': 'neutral',
   unsupported: 'neutral',
 }
+
+/**
+ * Which band a state belongs to in the Sync Center.
+ *
+ * Three kinds of row, and they are not the same kind of thing. `decide` is
+ * work only a person can do — Vaultwork will not choose between two versions,
+ * and cannot act at all on an identity problem. `ready` is work it can do the
+ * moment it is told to. `settled` is everything already agreed, kept on screen
+ * so that "nothing to do" is a visible answer rather than an absence.
+ *
+ * Grouping lives here, beside the labels and tones, for the same reason they
+ * do: it is a statement about how state is *presented*, not about what the
+ * state means. The domain decides that a note is in conflict; this decides
+ * that a conflict is shown above a rename.
+ */
+export type SyncGroup = 'decide' | 'ready' | 'settled'
+
+export const SYNC_STATUS_GROUPS: Record<SyncStatus, SyncGroup> = {
+  // Both sides moved, or two files claim one note. Nobody but the user can say.
+  conflict: 'decide',
+  'moved-change': 'decide',
+  'duplicate-id': 'decide',
+  'path-collision': 'decide',
+  error: 'decide',
+
+  // One side moved. The action is obvious once chosen, and safe to stage.
+  'external-change': 'ready',
+  'local-change': 'ready',
+  untracked: 'ready',
+  'not-exported': 'ready',
+  missing: 'ready',
+  moved: 'ready',
+  'deleted-local': 'ready',
+
+  clean: 'settled',
+  ignored: 'settled',
+}
+
+/** The bands, in the order a person needs them. */
+export const SYNC_GROUP_ORDER: SyncGroup[] = ['decide', 'ready', 'settled']
+
+export const SYNC_GROUP_LABELS: Record<SyncGroup, string> = {
+  decide: 'Needs your decision',
+  ready: 'Ready to apply',
+  settled: 'Already in agreement',
+}
+
+export const SYNC_GROUP_HINTS: Record<SyncGroup, string> = {
+  decide: 'Vaultwork will not choose between two versions. Nothing here is staged for you.',
+  ready: 'One side changed. Choose an action and it is staged until you apply.',
+  settled: 'Nothing to do. Listed so that agreement is something you can see.',
+}

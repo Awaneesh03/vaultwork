@@ -150,9 +150,12 @@ export function NoteEditor({
               '# A heading\n\nWrite in markdown. **Bold**, *italic*, `code`.\n\n- [ ] a task'
             }
             className={cn(
-              'min-h-[320px] w-full resize-none rounded-md border border-line bg-surface p-3',
-              'font-mono text-strong leading-relaxed text-ink',
-              'placeholder:text-ink-3 focus:border-accent-line',
+              // A page to write on: one surface, generous inside margins, and a
+              // measure that stops a line running the width of a wide monitor.
+              'min-h-[440px] w-full resize-none rounded-lg border border-line bg-surface',
+              'px-4 py-3.5 font-mono text-strong leading-relaxed text-ink',
+              'transition-colors duration-[var(--duration-fast)]',
+              'placeholder:text-ink-3 focus:border-accent',
             )}
           />
         ) : null}
@@ -160,8 +163,11 @@ export function NoteEditor({
         {showPreview ? (
           <div
             className={cn(
-              'min-h-[320px] overflow-y-auto rounded-md border p-3',
-              mode === 'preview' ? 'border-line bg-surface' : 'border-line bg-sunken/40',
+              'min-h-[440px] overflow-y-auto rounded-lg border border-line px-4 py-3.5',
+              // Reading and writing are different jobs. On its own the preview
+              // is the document and sits on the page surface; beside the
+              // textarea it is a reference and recedes behind it.
+              mode === 'preview' ? 'bg-surface' : 'bg-sunken/40',
             )}
           >
             <Markdown
@@ -174,10 +180,10 @@ export function NoteEditor({
         ) : null}
       </div>
 
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 px-1">
         <SaveIndicator state={saveState} />
         <span className="flex-1" />
-        <span className="hidden text-meta text-ink-3 sm:inline">Saves automatically</span>
+        <span className="hidden text-micro text-ink-3 sm:inline">Saves automatically</span>
       </div>
     </div>
   )

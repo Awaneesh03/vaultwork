@@ -24,6 +24,13 @@ import { SyncStatusBadge } from '../components/SyncStatusBadge'
 import { VaultStatusBadge } from '../components/VaultConnection'
 import { useVaultConnection } from '../hooks/useObsidian'
 import { describeSyncResult, useVaultSync } from '../hooks/useVaultSync'
+import {
+  SYNC_GROUP_HINTS,
+  SYNC_GROUP_LABELS,
+  SYNC_GROUP_ORDER,
+  SYNC_STATUS_GROUPS,
+  type SyncGroup,
+} from '../obsidianAppearance'
 
 /**
  * The Sync Center.
@@ -43,6 +50,7 @@ const SECTIONS: SyncStatus[] = [
   'moved-change',
   'duplicate-id',
   'path-collision',
+  'error',
   'external-change',
   'deleted-local',
   'missing',
@@ -51,7 +59,27 @@ const SECTIONS: SyncStatus[] = [
   'untracked',
   'not-exported',
   'clean',
+  'ignored',
 ]
+
+/**
+ * How a band is drawn.
+ *
+ * Three treatments, because three different things are being said. A decision
+ * carries a danger edge and cannot be mistaken for a queued action; a settled
+ * row is deliberately recessive — it is on screen to prove there is nothing to
+ * do, not to be read. Colour is never the whole signal: each band is named in
+ * words above the rows it contains.
+ */
+const BAND: Record<SyncGroup, { edge: string; panel: string; heading: string }> = {
+  decide: {
+    edge: 'bg-danger',
+    panel: 'border-danger/30',
+    heading: 'text-danger',
+  },
+  ready: { edge: 'bg-accent', panel: 'border-line', heading: 'text-ink-2' },
+  settled: { edge: 'bg-line-strong', panel: 'border-line', heading: 'text-ink-3' },
+}
 
 function Section({
   status,
@@ -69,7 +97,12 @@ function Section({
   if (items.length === 0) return null
 
   return (
-    <section className="overflow-hidden panel">
+    <section
+      className={cn(
+        'overflow-hidden rounded-lg border bg-surface',
+        BAND[SYNC_STATUS_GROUPS[status]].panel,
+      )}
+    >
       <h3>
         <button
           type="button"
@@ -91,6 +124,49 @@ function Section({
       ) : null}
     </section>
   )
+}
+
+/**
+ * One band: a named group of states, or nothing at all.
+ *
+ * Returns `null` when the band is empty, so the page never shows a heading
+ * over an empty region — "Needs your decision" with nothing under it reads as
+ * a bug in the scan.
+ */
+function Band({
+  group,
+  count,
+  children,
+}: {
+  group: SyncGroup
+  count: number
+  children: React.ReactNode
+}) {
+  if (count === 0) return null
+
+  return (
+    <section className="relative flex flex-col gap-2 pl-3">
+      <span
+        aria-hidden
+        className={cn('absolute inset-y-0 left-0 w-[3px] rounded-full', BAND[group].edge)}
+      />
+      <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+        <h3 className={cn('t-section', BAND[group].heading)}>{SYNC_GROUP_LABELS[group]}</h3>
+        <span className="tabular text-meta text-ink-3">{count}</span>
+        <p className="w-full text-meta text-ink-3">{SYNC_GROUP_HINTS[group]}</p>
+      </div>
+      {children}
+    </section>
+  )
+}
+
+/** How many items in one band, across every state that belongs to it. */
+function countIn(byStatus: Map<SyncStatus, SyncItem[]>, group: SyncGroup): number {
+  let total = 0
+  for (const [status, items] of byStatus) {
+    if (SYNC_STATUS_GROUPS[status] === group) total += items.length
+  }
+  return total
 }
 
 export function SyncCenterView() {
@@ -211,6 +287,45 @@ export function SyncCenterView() {
             ) : null}
           </div>
 
+          {/*
+            What is currently staged, before the confirmation asks about it.
+
+            The Apply button carries a total; a total does not say whether the
+            two things about to happen are two exports or one export and one
+            deletion. Shown on the page so the answer is available while the
+            choices are still being made, not only in the dialog afterwards.
+          */}
+          {summary !== null && summary.total > 0 ? (
+            <p
+              role="status"
+              className="flex flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-accent-line bg-accent-soft px-3 py-2 text-body text-ink-2"
+            >
+              <span className="font-medium text-accent">Staged</span>
+              {(
+                [
+                  ['import', summary.imported],
+                  ['export', summary.exported],
+                  ['accept move', summary.moved],
+                  ['delete from vault', summary.deleted],
+                  ['stop tracking', summary.forgotten],
+                ] as const
+              )
+                .filter(([, count]) => count > 0)
+                .map(([label, count]) => (
+                  <span key={label} className="tabular">
+                    {count} {label}
+                  </span>
+                ))}
+              {summary.destructive > 0 ? (
+                <span className="tabular font-medium text-danger">
+                  {summary.destructive} replaces content
+                </span>
+              ) : null}
+              <span className="flex-1" />
+              <span className="text-meta text-ink-3">Nothing is written until you apply.</span>
+            </p>
+          ) : null}
+
           {plan !== null ? (
             <p
               className="text-meta text-ink-3"
@@ -286,78 +401,102 @@ export function SyncCenterView() {
               />
             )
           ) : (
-            <div className="flex flex-col gap-2">
-              {SECTIONS.map((status) => {
-                const items = notesByStatus.get(status) ?? []
-                const open = openSections[status] ?? status !== 'clean'
-                return (
-                  <Section
-                    key={status}
-                    status={status}
-                    items={items}
-                    open={open}
-                    onToggle={() => setOpenSections((current) => ({ ...current, [status]: !open }))}
-                  >
-                    {items.map((item) => (
-                      <SyncItemRow
-                        key={item.key}
-                        item={item}
-                        decision={sync.decisions[item.key] ?? 'skip'}
-                        now={plan.scannedAt}
-                        today=""
-                        onDecide={(decision) => sync.decide(item.key, decision)}
-                        onCompare={async () => {
-                          const versions = await sync.compare(item)
-                          if (versions !== null) setComparing({ item, ...versions })
-                        }}
-                      />
-                    ))}
-                  </Section>
-                )
-              })}
+            <div className="flex flex-col gap-5">
+              {/*
+                Three bands, in the order a person needs them: what only they
+                can decide, what is queued behind a click, and what already
+                agrees. Before this the twelve states were twelve identical
+                panels, and a conflict looked exactly like a rename.
+              */}
+              {SYNC_GROUP_ORDER.map((group) => (
+                <Band key={group} group={group} count={countIn(notesByStatus, group)}>
+                  {SECTIONS.filter((status) => SYNC_STATUS_GROUPS[status] === group).map(
+                    (status) => {
+                      const items = notesByStatus.get(status) ?? []
+                      const open = openSections[status] ?? group !== 'settled'
+                      return (
+                        <Section
+                          key={status}
+                          status={status}
+                          items={items}
+                          open={open}
+                          onToggle={() =>
+                            setOpenSections((current) => ({ ...current, [status]: !open }))
+                          }
+                        >
+                          {items.map((item) => (
+                            <SyncItemRow
+                              key={item.key}
+                              item={item}
+                              decision={sync.decisions[item.key] ?? 'skip'}
+                              now={plan.scannedAt}
+                              today=""
+                              onDecide={(decision) => sync.decide(item.key, decision)}
+                              onCompare={async () => {
+                                const versions = await sync.compare(item)
+                                if (versions !== null) setComparing({ item, ...versions })
+                              }}
+                            />
+                          ))}
+                        </Section>
+                      )
+                    },
+                  )}
+                </Band>
+              ))}
 
               {/*
                 PDF documents, under their own heading.
-                
+
                 Separate because the actions differ: a document can be imported,
                 re-read or forgotten, and never exported — Vaultwork does not
                 write PDFs. Mixing the two lists would offer actions that cannot
                 happen.
               */}
               {documentsByStatus.size > 0 ? (
-                <>
-                  <h3 className="t-eyebrow mt-4 flex items-center gap-1.5 px-0.5 text-ink-3">
+                <section className="flex flex-col gap-4 border-t border-line pt-5">
+                  <h3 className="t-eyebrow flex items-center gap-1.5 px-0.5 text-ink-3">
                     <FileText size={11} aria-hidden />
                     PDF documents
                   </h3>
-                  {SECTIONS.map((status) => {
-                    const items = documentsByStatus.get(status) ?? []
-                    const key = `doc:${status}`
-                    const open = openSections[key] ?? status !== 'clean'
-                    return (
-                      <Section
-                        key={key}
-                        status={status}
-                        items={items}
-                        open={open}
-                        onToggle={() =>
-                          setOpenSections((current) => ({ ...current, [key]: !open }))
-                        }
-                      >
-                        {items.map((item) => (
-                          <SyncItemRow
-                            key={item.key}
-                            item={item}
-                            decision={sync.decisions[item.key] ?? 'skip'}
-                            now={plan.scannedAt}
-                            today=""
-                            onDecide={(decision) => sync.decide(item.key, decision)}
-                          />
-                        ))}
-                      </Section>
-                    )
-                  })}
-                </>
+                  {SYNC_GROUP_ORDER.map((group) => (
+                    <Band
+                      key={`doc:${group}`}
+                      group={group}
+                      count={countIn(documentsByStatus, group)}
+                    >
+                      {SECTIONS.filter((status) => SYNC_STATUS_GROUPS[status] === group).map(
+                        (status) => {
+                          const items = documentsByStatus.get(status) ?? []
+                          const key = `doc:${status}`
+                          const open = openSections[key] ?? group !== 'settled'
+                          return (
+                            <Section
+                              key={key}
+                              status={status}
+                              items={items}
+                              open={open}
+                              onToggle={() =>
+                                setOpenSections((current) => ({ ...current, [key]: !open }))
+                              }
+                            >
+                              {items.map((item) => (
+                                <SyncItemRow
+                                  key={item.key}
+                                  item={item}
+                                  decision={sync.decisions[item.key] ?? 'skip'}
+                                  now={plan.scannedAt}
+                                  today=""
+                                  onDecide={(decision) => sync.decide(item.key, decision)}
+                                />
+                              ))}
+                            </Section>
+                          )
+                        },
+                      )}
+                    </Band>
+                  ))}
+                </section>
               ) : null}
 
               {plan.errors.length > 0 ? (

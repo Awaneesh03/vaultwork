@@ -1,7 +1,26 @@
 import { useState } from 'react'
 import { Send } from 'lucide-react'
+import { Badge, type BadgeTone } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
 import { describeTelegram, useTelegramSettings } from '../hooks/useTelegramSettings'
+
+/**
+ * One fact about the connection, as a word.
+ *
+ * The three facts this section has to keep apart — a token exists, a worker is
+ * polling, a chat is allowed — were a mono key/value dump that read like a
+ * debug panel. They are separate facts and each is now stated separately,
+ * because "Configured" and "Running" being confused is the failure this whole
+ * section exists to prevent.
+ */
+function Fact({ label, value, tone }: { label: string; value: string; tone: BadgeTone }) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-body text-ink-3">{label}</span>
+      <Badge tone={tone}>{value}</Badge>
+    </div>
+  )
+}
 
 /**
  * The Telegram section of Settings.
@@ -34,24 +53,56 @@ export function TelegramSection() {
 
   return (
     <div className="flex flex-col gap-3.5">
-      <dl className="flex flex-col gap-1.5 font-mono text-body text-ink-2">
-        <div className="flex justify-between gap-3">
-          <dt>status</dt>
-          <dd className={status.running ? 'text-ok' : 'text-ink'}>{state}</dd>
+      {/*
+        The connection, as three separate answers plus the one sentence that
+        summarises them. A single "status" line cannot say that a token is
+        saved, the worker is stopped, and the chat is still unapproved — which
+        is a perfectly ordinary state and needs three different actions.
+      */}
+      <div className="flex flex-col gap-2 panel p-3.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <span className="text-strong font-medium text-ink">
+            {status.botUsername === null ? 'No bot connected' : `@${status.botUsername}`}
+          </span>
+          {/*
+            Not a live region. The notice at the foot of this section is the one
+            `status` role here; a second made `getByRole('status')` ambiguous,
+            which is the accessible-tree version of the same confusion — two
+            things both claiming to be *the* announcement.
+          */}
+          <span className={`text-body ${status.running ? 'text-ok' : 'text-ink-2'}`}>{state}</span>
         </div>
-        {status.botUsername !== null ? (
-          <div className="flex justify-between gap-3">
-            <dt>bot</dt>
-            <dd className="text-ink">@{status.botUsername}</dd>
-          </div>
-        ) : null}
-        <div className="flex justify-between gap-3">
-          <dt>chat</dt>
-          <dd className="text-ink">
-            {status.authorizedChatId === null ? 'Not authorized' : 'Authorized'}
-          </dd>
+
+        <div className="flex flex-col gap-1.5 border-t border-line pt-2">
+          <Fact
+            label="Bot token"
+            value={status.configured ? 'In the keychain' : 'Not saved'}
+            tone={status.configured ? 'confirm' : 'neutral'}
+          />
+          <Fact
+            label="Worker"
+            value={status.running ? 'Polling' : 'Not polling'}
+            tone={status.running ? 'confirm' : 'neutral'}
+          />
+          <Fact
+            label="Chat"
+            value={
+              status.authorizedChatId !== null
+                ? 'Authorized'
+                : status.pendingChatId !== null
+                  ? 'Waiting for approval'
+                  : 'Not authorized'
+            }
+            tone={
+              status.authorizedChatId !== null
+                ? 'confirm'
+                : status.pendingChatId !== null
+                  ? 'warn'
+                  : 'neutral'
+            }
+          />
         </div>
-      </dl>
+      </div>
 
       {status.lastError !== null ? (
         <p className="text-body text-danger">{status.lastError}</p>
@@ -186,15 +237,26 @@ export function TelegramSection() {
           </label>
 
           {/*
-            Said plainly rather than implied. Polling lives in the desktop
-            process, so closing Vaultwork stops it — a user who expects a bot
-            that answers overnight should learn that here and not by wondering
-            why nothing replied.
+            Said plainly rather than implied, and said precisely.
+
+            There is no Telegram daemon. Polling lives inside this process, so
+            the chain is: macOS starts Vaultwork (if "Launch at login" is on),
+            Vaultwork starts the worker (if this box is ticked and a token is
+            saved), and quitting Vaultwork ends both. A user who expects a bot
+            that answers overnight should learn that here rather than by
+            wondering why nothing replied.
           */}
-          <p className="border-t border-line pt-2 text-meta text-ink-3">
-            Telegram runs only while Vaultwork is running. Closing the app stops the bot until you
-            open it again.
-          </p>
+          <div className="flex flex-col gap-1 border-t border-line pt-2 text-meta text-ink-3">
+            <p>
+              There is no separate Telegram service. The bot is part of Vaultwork and runs only
+              while Vaultwork is running — quitting the app stops it until you open it again.
+            </p>
+            <p>
+              For it to be answering before you sit down, both this and{' '}
+              <span className="text-ink-2">Launch Vaultwork at login</span> under Desktop need to be
+              on: macOS starts Vaultwork, and Vaultwork starts the bot.
+            </p>
+          </div>
         </div>
       ) : null}
 

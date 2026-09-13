@@ -49,10 +49,16 @@ const mount = () =>
     </MemoryRouter>,
   )
 
-/** A stat tile, read by its label rather than by position. */
+/**
+ * A labelled figure, read by its label rather than by position.
+ *
+ * The page has two kinds now — the headline band at the top and the totals
+ * strip at the bottom — and both pair an eyebrow with its value in the same
+ * container, so one helper reads either.
+ */
 const stat = (label: string) => {
   const tile = screen.getByText(label).closest('div')
-  if (tile === null) throw new Error(`No tile for ${label}`)
+  if (tile === null) throw new Error(`No figure for ${label}`)
   return tile.textContent ?? ''
 }
 
@@ -88,12 +94,17 @@ describe('with history', () => {
   it('leads with the totals as numbers, not as charts', async () => {
     mount()
 
-    // A single value is not a shape; it gets a hero number.
-    await waitFor(() => expect(stat('Tasks done')).toContain('3'))
-    expect(stat('Tasks done')).toContain('1 created')
-    expect(stat('Habits')).toContain('1')
-    expect(stat('Focus')).toContain('1h')
-    expect(stat('Focus')).toContain('2 sessions')
+    // Tasks completed is the headline: the one series that answers "did I move
+    // my own work forward". It gets the largest numeral on the page.
+    await waitFor(() => expect(stat('Tasks completed')).toContain('3'))
+    expect(stat('Created')).toContain('1')
+
+    // The rest are facts rather than shapes, in the totals strip.
+    // Each supporting chart now carries its own total beside its caption, so
+    // no measure is named twice on the page.
+    expect(stat('Habit check-ins')).toContain('1')
+    expect(stat('Focus minutes')).toContain('1h')
+    expect(stat('Focus sessions')).toContain('2')
   })
 
   it('names the busiest hour in words rather than as a number of the clock', async () => {
@@ -152,13 +163,13 @@ describe('the range control', () => {
     await plant('task.completed', new Date(2026, 8, 3, 9, 0))
 
     mount()
-    await waitFor(() => expect(stat('Tasks done')).toContain('1'))
+    await waitFor(() => expect(stat('Tasks completed')).toContain('1'))
 
     fireEvent.click(screen.getByRole('button', { name: '30 days' }))
 
     // The range is part of the query key, so the older completion appears.
     await waitOutsideAct(() => {
-      expect(stat('Tasks done')).toContain('2')
+      expect(stat('Tasks completed')).toContain('2')
     })
     expect(chartRows('Tasks completed')).toHaveLength(30)
   })
@@ -181,7 +192,7 @@ describe('a range with focus but no events', () => {
     await plantFocus(new Date(2026, 8, 3, 9, 50), 25)
     mount()
 
-    await waitFor(() => expect(stat('Focus')).toContain('25m'))
+    await waitFor(() => expect(stat('Focus minutes')).toContain('25m'))
     expect(screen.queryByText('Nothing in this range yet')).toBeNull()
   })
 })

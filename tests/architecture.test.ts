@@ -5,6 +5,7 @@ import { TASK_ROUTES } from '@/app/navigation'
 import { STORE_NAMES } from '@/db'
 import { STORE_NAMES_FOR_BACKUP, TASK_VIEW_IDS, TASK_VIEW_PATHS } from '@/services'
 import { MENU_ACTIONS } from '@/platform'
+import { TEXT_SCALE } from '@/lib/cn'
 
 /**
  * The architecture is only real if it is checked by a machine.
@@ -1001,6 +1002,67 @@ describe('the AI boundary', () => {
     }
   })
 
+  it('keeps the secondary accent for the Assistant and nothing else', () => {
+    /*
+     * The semantic mapping, enforced rather than described.
+     *
+     *   emerald (`--accent`)   Vaultwork itself: identity, selection, the one
+     *                          primary action per view, and Vaultwork acting
+     *                          on your data — including the AI mutation gate,
+     *                          because the model is not the thing that acts.
+     *   violet  (`--accent-2`) the Assistant's own voice and presence. Here,
+     *                          and nowhere else.
+     *   warn                   an exception inside a normal flow: a focus
+     *                          session overrunning, a truncated extraction, a
+     *                          lapsed permission, a change not yet applied.
+     *   danger                 destructive, or blocked pending a decision.
+     *   ok                     settled: synced, persisted, succeeded.
+     *
+     * Violet had drifted onto a Focus countdown that had overrun (an
+     * exception), a `confirm` button variant whose only caller was Focus's
+     * primary action, and every "Synced" badge in Obsidian. Each of those read
+     * as a second primary, which is exactly what makes an accent stop meaning
+     * anything. The list below is short on purpose: adding to it should
+     * require deciding that the surface really is the Assistant.
+     */
+    const ALLOWED = new Set([
+      // The Assistant's own screen and its parts.
+      'src/features/ai/views/AiView.tsx',
+      'src/features/ai/components/AiTurnView.tsx',
+      // The sidebar mark that says which entry is the Assistant.
+      'src/components/layout/Sidebar.tsx',
+    ])
+
+    const offenders: string[] = []
+    for (const file of walk(SRC)) {
+      const rel = posix.normalize(relative(ROOT, file).split('\\').join('/'))
+      if (ALLOWED.has(rel)) continue
+      if (/\baccent-2\b/.test(readFileSync(file, 'utf8'))) offenders.push(rel)
+    }
+
+    expect(offenders).toEqual([])
+  })
+
+  it('tells tailwind-merge about every step in the scale', () => {
+    /*
+     * `text-body` is a size, but `tailwind-merge` only knows the sizes Tailwind
+     * ships with — everything else beginning `text-` it files as a colour, and
+     * a size filed as a colour is deleted the moment a real colour follows it
+     * in the same `cn()`. That is how the note title came to ask for 19px and
+     * render at 14, in company with forty-seven other call sites.
+     *
+     * `cn.ts` registers the scale so the grouping is right. This asserts the
+     * two lists are the same list, because a seventh step added to globals.css
+     * alone would reintroduce exactly the original bug for exactly that step,
+     * silently.
+     */
+    const css = readFileSync(join(ROOT, 'src/styles/globals.css'), 'utf8')
+    const declared = [...css.matchAll(/--text-([a-z]+):/g)].map((match) => match[1])
+
+    expect(declared.length).toBeGreaterThan(0)
+    expect([...TEXT_SCALE].sort()).toEqual([...new Set(declared)].sort())
+  })
+
   it('sizes text from the scale, not by hand', () => {
     /*
      * There were twenty distinct hand-picked `text-[Npx]` values across 493
@@ -1011,7 +1073,14 @@ describe('the AI boundary', () => {
      * than UI type and is deliberately outside the scale. Anything else
      * appearing here means a screen has started inventing its own sizes again.
      */
-    const ALLOWED = new Set(['52px', '68px'])
+    /*
+     * The display numerals — a focus countdown and the analytics headline.
+     * These are figures you read from across a desk, not interface text, and a
+     * scale built for labels and rows has nothing sensible to say about them.
+     * The list is short and enumerated so adding a third means deciding it is
+     * genuinely display type rather than a screen inventing a size again.
+     */
+    const ALLOWED = new Set(['40px', '52px', '68px'])
     const offenders: string[] = []
 
     for (const file of walk(SRC)) {

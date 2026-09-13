@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { Ban, Check, Coffee, Timer } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { SectionHeader } from '@/components/ui/PageHeader'
+import { FocusDial } from '../components/FocusDial'
 import { cn } from '@/lib/cn'
 import { DataView } from '@/components/feedback/DataView'
 import { EmptyState } from '@/components/feedback/EmptyState'
@@ -88,6 +89,15 @@ export function FocusView() {
   const active = focus.active
   const running = active ?? null
 
+  /*
+   * How much of the planned session is gone, 0 → 1. Derived from the same
+   * `remaining` the numerals show, so the ring can never disagree with them.
+   * It saturates at 1 during overrun rather than continuing round.
+   */
+  const plannedMs = running ? running.plannedMin * 60_000 : 0
+  const elapsedFraction =
+    running && plannedMs > 0 ? 1 - Math.min(1, (focus.remaining ?? 0) / plannedMs) : 0
+
   return (
     <div
       className={cn(
@@ -157,24 +167,19 @@ export function FocusView() {
           </>
         ) : (
           <>
-            <p
-              className={cn(
-                'tabular relative font-mono text-[68px] leading-none font-light tracking-tight',
-                focus.overrun ? 'text-accent-2' : 'text-ink',
-              )}
-              role="timer"
-              aria-live="off"
-            >
-              {clock(focus.remaining ?? 0)}
-            </p>
-            <p className="t-meta relative text-ink-2">
-              {KIND_LABEL[running.kind]} · {running.plannedMin}m
-              {focus.overrun ? ' · finishing…' : ''}
-            </p>
+            <FocusDial
+              className="relative"
+              elapsedFraction={elapsedFraction}
+              display={clock(focus.remaining ?? 0)}
+              caption={`${KIND_LABEL[running.kind]} · ${running.plannedMin}m${
+                focus.overrun ? ' · finishing…' : ''
+              }`}
+              overrun={focus.overrun}
+            />
             <div className="relative flex flex-wrap justify-center gap-2">
               <Button
                 size="sm"
-                variant="confirm"
+                variant="primary"
                 icon={<Check size={13} aria-hidden />}
                 disabled={focus.busy}
                 onClick={() => void focus.complete()}

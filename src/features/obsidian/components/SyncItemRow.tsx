@@ -45,7 +45,7 @@ export function SyncItemRow({
   const comparable = !isDocument && (item.status === 'conflict' || item.status === 'moved-change')
 
   return (
-    <li className="flex flex-col gap-1.5 px-2.5 py-2">
+    <li className="flex flex-col gap-1.5 px-3 py-2.5">
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
         {isDocument ? (
           <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 truncate text-strong font-medium text-ink">
@@ -69,7 +69,12 @@ export function SyncItemRow({
         <SyncStatusBadge status={item.status} />
       </div>
 
-      <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-meta text-ink-3">
+      {/*
+        Where it lives. Quiet and monospaced: a path is something you check,
+        not something you read, and four paragraphs of equal grey is the wall
+        of small text this row used to be.
+      */}
+      <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-micro text-ink-3">
         {item.previousPath ? (
           <>
             <span className="min-w-0 truncate font-mono" title={item.previousPath}>
@@ -88,12 +93,16 @@ export function SyncItemRow({
         ) : null}
       </p>
 
-      <p className="text-meta leading-relaxed text-ink-3">
+      {/*
+        Why it is in this state — the one sentence in the row that decides what
+        the reader does next, so it is the one sentence set as body text.
+      */}
+      <p className="max-w-prose text-body leading-relaxed text-ink-2">
         {item.message ?? SYNC_STATUS_DESCRIPTIONS[item.status]}
       </p>
 
       {item.noteUpdatedAt !== null || item.fileUpdatedAt !== null ? (
-        <p className="flex flex-wrap gap-x-3 text-meta text-ink-3">
+        <p className="flex flex-wrap gap-x-3 text-micro text-ink-3">
           {item.noteUpdatedAt !== null ? (
             <span>Vaultwork changed {formatEventTime(item.noteUpdatedAt, now, today)}</span>
           ) : null}

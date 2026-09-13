@@ -11,6 +11,7 @@ import {
   Sparkles,
 } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import { PageHeader, SectionHeader } from '@/components/ui/PageHeader'
 import { cn } from '@/lib/cn'
 import type { ImportPreview, SyncStatus } from '@/services'
 import { VaultConnection } from '../components/VaultConnection'
@@ -25,6 +26,12 @@ import { SYNC_STATUS_DESCRIPTIONS, SYNC_STATUS_LABELS } from '../obsidianAppeara
  * choose.** There is no button that reconciles everything, because a button
  * like that has to guess what the user wants when both sides changed, and
  * guessing is what this milestone exists to forbid.
+ *
+ * It is also ordered by what a person needs in the order they need it: whether
+ * there is a vault at all, which one, the action that moves things forward,
+ * then what the last scan found, then the rows behind those numbers. Anything
+ * that asks for a decision — an unreadable folder, a conflict — jumps the queue
+ * and sits above the figures it calls into question.
  *
  * Nothing here reaches a filesystem. Every operation goes through the hooks,
  * which go through the service, which speaks to a `VaultPort` — so this file
@@ -63,17 +70,11 @@ export function ObsidianView() {
 
   return (
     <section className="flex flex-col gap-4">
-      <header className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <Sparkles size={18} className="text-accent" aria-hidden />
-          <h2 className="t-page text-ink">Obsidian</h2>
-        </div>
-        <p className="t-body max-w-prose text-ink-2">
-          Vaultwork reads Markdown notes and PDF documents from your vault. Notes sync both ways;
-          PDFs are read only. Vaultwork never merges and never overwrites a file you changed — when
-          both sides move, it stops and asks.
-        </p>
-      </header>
+      <PageHeader
+        icon={<Sparkles size={15} aria-hidden />}
+        title="Obsidian"
+        description="Vaultwork reads Markdown notes and PDF documents from your vault. Notes sync both ways; PDFs are read only. Vaultwork never merges and never overwrites a file you changed — when both sides move, it stops and asks."
+      />
 
       <VaultConnection
         status={connection.status}
@@ -85,12 +86,16 @@ export function ObsidianView() {
       />
 
       {connected ? (
-        <section className="flex flex-col gap-3.5 panel p-4 shadow-[var(--shadow-sm)]">
+        <>
+          {/*
+            The action bar, on the page rather than inside a panel. Scanning is
+            the primary action until a scan exists and exporting becomes it
+            afterwards — the policy written as a button hierarchy: look first,
+            then choose.
+          */}
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="t-section text-ink">Sync</h3>
-            <span className="flex-1" />
             <Button
-              variant="secondary"
+              variant={scan === null ? 'primary' : 'secondary'}
               size="sm"
               disabled={vaultScan.busy}
               onClick={() => void vaultScan.run()}
@@ -98,15 +103,8 @@ export function ObsidianView() {
             >
               Scan vault
             </Button>
-            <Link
-              to="/obsidian/sync"
-              className="inline-flex h-7 items-center gap-1.5 rounded-md border border-line px-2.5 text-body font-medium text-ink-2 hover:border-accent-line hover:text-ink"
-            >
-              <GitCompare size={12} aria-hidden />
-              Sync center
-            </Link>
             <Button
-              variant="primary"
+              variant={scan === null ? 'secondary' : 'primary'}
               size="sm"
               // Deliberately disabled until a scan has run: exporting before
               // looking is exactly the blind operation the policy forbids.
@@ -122,35 +120,37 @@ export function ObsidianView() {
             >
               Export all
             </Button>
+            <span className="flex-1" />
+            <Link
+              to="/obsidian/sync"
+              className="inline-flex h-7 items-center gap-1.5 rounded-md border border-line px-2.5 text-body font-medium text-ink-2 hover:border-accent-line hover:text-ink"
+            >
+              <GitCompare size={12} aria-hidden />
+              Sync center
+            </Link>
           </div>
 
           {scan === null ? (
-            <p className="text-body text-ink-3">
-              Scan to see what is in sync before changing anything.
+            <p className="rounded-lg border border-dashed border-line px-3.5 py-3 text-body text-ink-3">
+              Scan to see what is in sync before changing anything. A scan reads; it writes nothing.
             </p>
           ) : (
             <>
-              <div className="flex flex-wrap gap-1.5">
-                {ORDER.map((status) => (
-                  <CountChip key={status} status={status} count={scan.counts[status]} />
-                ))}
-              </div>
-
               {/*
-                Folders the walk could not read.
+                What needs a person, before what merely happened.
 
-                Shown before the counts are believed, because a scan that could
-                not open part of the vault is reporting a smaller vault than the
-                one on disk — and "0 files" with no explanation is the symptom
-                that made this worth surfacing at all.
+                Folders the walk could not read come first, because a scan that
+                could not open part of the vault is reporting a smaller vault
+                than the one on disk — and "0 files" with no explanation is the
+                symptom that made this worth surfacing at all.
               */}
               {scan.errors.length > 0 ? (
                 <div
                   role="alert"
-                  className="flex flex-col gap-1 rounded-md border border-danger/40 bg-danger-soft px-2.5 py-2 text-body text-danger"
+                  className="flex flex-col gap-1 rounded-lg border border-danger/40 bg-danger-soft px-3 py-2.5 text-body text-danger"
                 >
-                  <span className="inline-flex items-start gap-1.5">
-                    <AlertCircle size={12} className="mt-[2px] shrink-0" aria-hidden />
+                  <span className="inline-flex items-start gap-1.5 font-medium">
+                    <AlertCircle size={12} className="mt-[3px] shrink-0" aria-hidden />
                     {scan.errors.length === 1
                       ? 'One folder could not be read, so this count may be incomplete.'
                       : `${scan.errors.length} folders could not be read, so this count may be incomplete.`}
@@ -165,6 +165,60 @@ export function ObsidianView() {
                 </div>
               ) : null}
 
+              {scan.counts.conflict > 0 ? (
+                <div
+                  role="alert"
+                  className="flex flex-wrap items-center gap-x-3 gap-y-1.5 rounded-lg border border-danger/40 bg-danger-soft px-3 py-2.5 text-body text-danger"
+                >
+                  <span className="inline-flex items-start gap-1.5 font-medium">
+                    <AlertCircle size={12} className="mt-[3px] shrink-0" aria-hidden />
+                    {scan.counts.conflict} note{scan.counts.conflict === 1 ? '' : 's'} changed on
+                    both sides. Open each one to choose which version to keep — nothing was written.
+                  </span>
+                  <Link to="/obsidian/sync" className="underline decoration-dotted">
+                    Resolve in Sync center
+                  </Link>
+                </div>
+              ) : null}
+
+              {/*
+                What the scan saw: two figures and a footnote, not three equal
+                cards. Markdown and PDFs are the vault; Skipped is the reason
+                the other two are smaller than you expected, which makes it an
+                explanation rather than a third measure.
+              */}
+              <section className="panel flex flex-wrap items-end gap-x-10 gap-y-4 px-4 py-3.5">
+                {(
+                  [
+                    ['Markdown', scan.seen.markdown],
+                    ['PDFs', scan.seen.pdf],
+                  ] as const
+                ).map(([label, count]) => (
+                  <div key={label} className="flex flex-col gap-0.5">
+                    <span className="t-eyebrow text-ink-3">{label}</span>
+                    <span className="tabular text-[40px] leading-none font-semibold text-ink">
+                      {count}
+                    </span>
+                  </div>
+                ))}
+                <div className="flex flex-col gap-0.5 border-l border-line pl-6">
+                  <span className="t-eyebrow text-ink-3">Skipped</span>
+                  <span className="tabular text-title leading-none text-ink-3">
+                    {scan.skipped.nonMarkdown}
+                  </span>
+                </div>
+                <span className="flex-1" />
+                {/*
+                  The states, beside the totals they add up to. Zeroes are not
+                  drawn: a row of empty categories is a row with no signal in it.
+                */}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  {ORDER.filter((status) => scan.counts[status] > 0).map((status) => (
+                    <CountChip key={status} status={status} count={scan.counts[status]} />
+                  ))}
+                </div>
+              </section>
+
               {/*
                 A folder with files in it but nothing Vaultwork can read.
 
@@ -172,40 +226,6 @@ export function ObsidianView() {
                 one: a folder of images or archives scans perfectly and imports
                 nothing. Said plainly here, next to the zeroes it explains.
               */}
-              {/* What the scan actually saw, in the three categories that matter. */}
-              {/*
-                Three categories, three numbers. The dominant figure is the
-                count, not the label — this strip exists to be read at a glance
-                and only then explained.
-              */}
-              <dl className="grid grid-cols-3 gap-px overflow-hidden rounded-lg border border-line bg-line">
-                {(
-                  [
-                    ['Markdown', scan.seen.markdown, 'text-ink'],
-                    ['PDFs', scan.seen.pdf, 'text-ink'],
-                    ['Skipped', scan.skipped.nonMarkdown, 'text-ink-3'],
-                  ] as const
-                ).map(([label, count, tone]) => (
-                  <div key={label} className="flex flex-col gap-0.5 bg-surface px-3 py-2.5">
-                    <dt className="t-eyebrow text-ink-3">{label}</dt>
-                    <dd className={`tabular text-display leading-none font-semibold ${tone}`}>
-                      {count}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-
-              {scan.untrackedDocuments.length > 0 ? (
-                <p className="flex flex-wrap items-center gap-1.5 text-body text-ink-2">
-                  <FileText size={12} className="shrink-0 text-ink-3" aria-hidden />
-                  {scan.untrackedDocuments.length} PDF
-                  {scan.untrackedDocuments.length === 1 ? '' : 's'} not read yet.
-                  <Link to="/obsidian/sync" className="text-accent underline decoration-dotted">
-                    Import them in Sync center
-                  </Link>
-                </p>
-              ) : null}
-
               {scan.untracked.length === 0 &&
               scan.untrackedDocuments.length === 0 &&
               scan.seen.markdown + scan.seen.pdf === 0 &&
@@ -213,10 +233,10 @@ export function ObsidianView() {
               scan.reports.length === 0 ? (
                 <p
                   role="status"
-                  className="flex flex-col gap-1 rounded-md border border-line bg-sunken px-2.5 py-2 text-body text-ink-2"
+                  className="flex flex-col gap-1 rounded-lg border border-line bg-sunken px-3 py-2.5 text-body text-ink-2"
                 >
                   <span className="inline-flex items-start gap-1.5">
-                    <FileQuestion size={12} className="mt-[2px] shrink-0" aria-hidden />
+                    <FileQuestion size={12} className="mt-[3px] shrink-0" aria-hidden />
                     Nothing here Vaultwork can read — {scan.skipped.nonMarkdown} file
                     {scan.skipped.nonMarkdown === 1 ? '' : 's'}, and none of them are Markdown notes
                     or PDFs.
@@ -233,48 +253,58 @@ export function ObsidianView() {
                 </p>
               ) : null}
 
-              {scan.counts.conflict > 0 ? (
-                <p
-                  role="alert"
-                  className="inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger"
-                >
-                  <AlertCircle size={12} className="mt-[2px] shrink-0" aria-hidden />
-                  {scan.counts.conflict} note{scan.counts.conflict === 1 ? '' : 's'} changed on both
-                  sides. Open each one to choose which version to keep — nothing was written.
+              {scan.untrackedDocuments.length > 0 ? (
+                <p className="flex flex-wrap items-center gap-1.5 rounded-lg border border-line bg-sunken px-3 py-2 text-body text-ink-2">
+                  <FileText size={12} className="shrink-0 text-ink-3" aria-hidden />
+                  {scan.untrackedDocuments.length} PDF
+                  {scan.untrackedDocuments.length === 1 ? '' : 's'} not read yet.
+                  <Link to="/obsidian/sync" className="text-accent underline decoration-dotted">
+                    Import them in Sync center
+                  </Link>
                 </p>
               ) : null}
 
-              {bulk ? <p className="text-body text-ink-2">{bulk}</p> : null}
+              {bulk ? (
+                <p role="status" className="text-body text-ink-2">
+                  {bulk}
+                </p>
+              ) : null}
 
-              <ul className="flex flex-col divide-y divide-line rounded-md border border-line">
-                {scan.reports
-                  .filter((report) => report.status !== 'clean')
-                  .slice(0, 12)
-                  .map((report) => (
-                    <li
-                      key={report.noteId}
-                      className="flex flex-wrap items-center gap-2 px-2.5 py-1.5 text-body"
-                    >
-                      <Link
-                        to={`/notes/${report.noteId}`}
-                        className="min-w-0 flex-1 truncate font-mono text-meta text-ink-2 hover:text-accent"
-                        title={report.vaultPath ?? 'No vault path'}
-                      >
-                        {report.vaultPath ?? 'No vault path'}
-                      </Link>
-                      <SyncStatusBadge status={report.status} />
-                    </li>
-                  ))}
-              </ul>
+              {/* Details last: the rows behind the numbers above. */}
+              {scan.reports.some((report) => report.status !== 'clean') ? (
+                <section className="flex flex-col gap-2">
+                  <SectionHeader label="Needs attention" />
+                  <ul className="flex flex-col divide-y divide-line rounded-lg border border-line">
+                    {scan.reports
+                      .filter((report) => report.status !== 'clean')
+                      .slice(0, 12)
+                      .map((report) => (
+                        <li
+                          key={report.noteId}
+                          className="flex flex-wrap items-center gap-2 px-3 py-2 text-body"
+                        >
+                          <Link
+                            to={`/notes/${report.noteId}`}
+                            className="min-w-0 flex-1 truncate font-mono text-meta text-ink-2 hover:text-accent"
+                            title={report.vaultPath ?? 'No vault path'}
+                          >
+                            {report.vaultPath ?? 'No vault path'}
+                          </Link>
+                          <SyncStatusBadge status={report.status} />
+                        </li>
+                      ))}
+                  </ul>
+                </section>
+              ) : null}
 
               {scan.untracked.length > 0 ? (
-                <section className="flex flex-col gap-1.5">
-                  <h4 className="t-eyebrow text-ink-3">In the vault, not in Vaultwork</h4>
-                  <ul className="flex flex-col divide-y divide-line rounded-md border border-line">
+                <section className="flex flex-col gap-2">
+                  <SectionHeader label="In the vault, not in Vaultwork" />
+                  <ul className="flex flex-col divide-y divide-line rounded-lg border border-line">
                     {scan.untracked.slice(0, 10).map((path) => (
                       <li
                         key={path}
-                        className="flex flex-wrap items-center gap-2 px-2.5 py-1.5 text-body"
+                        className="flex flex-wrap items-center gap-2 px-3 py-1.5 text-body"
                       >
                         <span
                           className="min-w-0 flex-1 truncate font-mono text-meta text-ink-2"
@@ -304,12 +334,13 @@ export function ObsidianView() {
           {vaultScan.error ? (
             <p
               role="alert"
-              className="rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger"
+              className="inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger"
             >
+              <AlertCircle size={12} className="mt-[2px] shrink-0" aria-hidden />
               {vaultScan.error}
             </p>
           ) : null}
-        </section>
+        </>
       ) : null}
 
       {preview ? (

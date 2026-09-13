@@ -28,6 +28,22 @@ export interface DayBarsProps {
   label: string
   /** How a value reads: 7 → "7 tasks", 90 → "1h 30m". */
   format?: (value: number) => string
+  /**
+   * Drops the panel and the caption.
+   *
+   * For the headline chart, which already sits inside a titled panel — a
+   * bordered box inside a bordered box, repeating a label already above it, is
+   * the kind of nesting that makes a page look assembled rather than designed.
+   */
+  bare?: boolean
+  /**
+   * The period total, shown beside the caption.
+   *
+   * A chart shows shape; the total is the fact. Putting them together means the
+   * page never has to name the same measure twice in two places, which is how
+   * a summary strip and a chart grid end up repeating each other.
+   */
+  total?: string
 }
 
 const HEIGHT = 96
@@ -37,7 +53,13 @@ const RADIUS = 4
 /** "Thursday, 3 Sep" — the long form, for a tooltip and for a screen reader. */
 const longDay = (date: DateStr): string => `${weekdayName(date)}, ${formatDayMonth(date)}`
 
-export function DayBars({ data, label, format = (value) => String(value) }: DayBarsProps) {
+export function DayBars({
+  data,
+  label,
+  format = (value) => String(value),
+  bare = false,
+  total,
+}: DayBarsProps) {
   const captionId = useId()
   const max = Math.max(1, ...data.map((point) => point.value))
   const width = 100
@@ -52,16 +74,28 @@ export function DayBars({ data, label, format = (value) => String(value) }: DayB
   )
 
   return (
-    <figure className="flex flex-col gap-2.5 panel p-3.5 shadow-[var(--shadow-sm)]">
-      <figcaption id={captionId} className="text-body font-medium text-ink-2">
-        {label}
-      </figcaption>
+    <figure className={bare ? 'flex flex-col gap-2.5' : 'panel flex flex-col gap-2.5 p-3.5'}>
+      {/*
+        No caption when bare. The panel around it already carries these exact
+        words as a heading, and rendering them again — even visually hidden —
+        means a screen reader says the label twice. The chart is named directly
+        on the <svg> instead, and the data table below keeps its own caption.
+      */}
+      {bare ? null : (
+        <figcaption
+          id={captionId}
+          className="flex items-baseline justify-between gap-2 text-body font-medium text-ink-2"
+        >
+          {label}
+          {total ? <span className="tabular text-title text-ink">{total}</span> : null}
+        </figcaption>
+      )}
 
       <svg
         viewBox={`0 0 ${width} ${HEIGHT}`}
         preserveAspectRatio="none"
         role="img"
-        aria-labelledby={captionId}
+        {...(bare ? { 'aria-label': label } : { 'aria-labelledby': captionId })}
         className="h-24 w-full"
       >
         {/* A baseline, and nothing else. A grid behind seven bars is furniture. */}

@@ -24,65 +24,109 @@ const RANGE_LABEL: Record<AnalyticsRange, string> = {
   90: '90 days',
 }
 
-/** A headline number. Not a chart, because a single value is not a shape. */
-function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
-  return (
-    <div className="flex flex-col gap-1 panel px-3.5 py-3 shadow-[var(--shadow-sm)]">
-      <span className="t-eyebrow text-ink-3">{label}</span>
-      <span className="t-stat text-ink">{value}</span>
-      {hint ? <span className="t-meta text-ink-3">{hint}</span> : null}
-    </div>
-  )
-}
-
+/**
+ * The page's information hierarchy, in three bands.
+ *
+ * Four equally-sized charts is a wall, not an answer — every measure shouting
+ * at the same volume means the reader has to do the ranking the page should
+ * have done. So: one headline measure with its own full-width trend, then the
+ * supporting series at half the prominence, then the facts that are numbers
+ * rather than shapes.
+ *
+ * Tasks completed is the headline because it is the only series here that
+ * answers "did I move my own work forward", which is the question the page
+ * exists for. The rest are context for it.
+ */
 function Charts({ data }: { data: AnalyticsData }) {
+  const series = (pick: (day: AnalyticsData['days'][number]) => number) =>
+    data.days.map((day) => ({ date: day.date, value: pick(day) }))
+
+  const perDay = data.totals.tasksCompleted / Math.max(1, data.days.length)
+
   return (
     <>
-      <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat
-          label="Tasks done"
-          value={String(data.totals.tasksCompleted)}
-          hint={`${data.totals.tasksCreated} created`}
-        />
-        <Stat label="Habits" value={String(data.totals.habitsCompleted)} hint="check-ins" />
-        <Stat
-          label="Focus"
-          value={data.totals.focusMinutes === 0 ? '0m' : formatEstimate(data.totals.focusMinutes)}
-          hint={`${data.totals.focusSessions} session${data.totals.focusSessions === 1 ? '' : 's'}`}
-        />
-        <Stat
-          label="Busiest hour"
-          value={data.busiestHour === null ? '—' : formatHour(data.busiestHour)}
-          hint={`${data.totals.events} events`}
-        />
-      </div>
+      {/* ── the headline ─────────────────────────────────────────────── */}
+      <section className="panel flex flex-col gap-4 p-4" aria-label="Tasks completed">
+        <div className="flex flex-wrap items-end justify-between gap-x-6 gap-y-2">
+          <div className="flex flex-col gap-0.5">
+            <span className="t-eyebrow text-ink-3">Tasks completed</span>
+            <span className="tabular text-[40px] leading-none font-semibold tracking-tight text-ink">
+              {data.totals.tasksCompleted}
+            </span>
+          </div>
+          {/*
+            Two figures that put the headline in proportion. An average is only
+            honest alongside the count it came from, so both are shown.
+          */}
+          <dl className="flex gap-6 text-meta text-ink-3">
+            <div className="flex flex-col gap-0.5">
+              <dt>Per day</dt>
+              <dd className="tabular text-title text-ink-2">{perDay.toFixed(1)}</dd>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <dt>Created</dt>
+              <dd className="tabular text-title text-ink-2">{data.totals.tasksCreated}</dd>
+            </div>
+            <div className="flex flex-col gap-0.5">
+              <dt>Busiest hour</dt>
+              <dd className="tabular text-title text-ink-2">
+                {data.busiestHour === null ? '—' : formatHour(data.busiestHour)}
+              </dd>
+            </div>
+          </dl>
+        </div>
 
-      {/*
-        One measure per plot. Tasks and minutes are different units, and putting
-        them on a shared axis would invent a relationship between them.
-      */}
-      <div className="grid gap-5 lg:grid-cols-2">
         <DayBars
           label="Tasks completed"
-          data={data.days.map((day) => ({ date: day.date, value: day.tasksCompleted }))}
+          data={series((day) => day.tasksCompleted)}
           format={(value) => `${value} task${value === 1 ? '' : 's'}`}
+          bare
         />
+      </section>
+
+      {/* ── the supporting series ────────────────────────────────────── */}
+      <div className="grid gap-4 lg:grid-cols-3">
         <DayBars
           label="Focus minutes"
-          data={data.days.map((day) => ({ date: day.date, value: day.focusMinutes }))}
+          total={data.totals.focusMinutes === 0 ? '0m' : formatEstimate(data.totals.focusMinutes)}
+          data={series((day) => day.focusMinutes)}
           format={(value) => (value === 0 ? 'none' : formatEstimate(value))}
         />
         <DayBars
           label="Habit check-ins"
-          data={data.days.map((day) => ({ date: day.date, value: day.habitsCompleted }))}
+          total={String(data.totals.habitsCompleted)}
+          data={series((day) => day.habitsCompleted)}
           format={(value) => `${value} check-in${value === 1 ? '' : 's'}`}
         />
         <DayBars
           label="Notes written"
-          data={data.days.map((day) => ({ date: day.date, value: day.notesTouched }))}
+          total={String(data.totals.notesTouched)}
+          data={series((day) => day.notesTouched)}
           format={(value) => `${value} note${value === 1 ? '' : 's'}`}
         />
       </div>
+
+      {/*
+        The facts no chart carries.
+
+        Every measure with a shape now shows its own total beside its caption,
+        so this strip holds only what is left. Naming the same measure in two
+        places on one page is how a summary strip and a chart grid end up
+        repeating each other, and how a reader learns to skip both.
+      */}
+      <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line">
+        {(
+          [
+            ['Focus sessions', String(data.totals.focusSessions)],
+            ['Events recorded', String(data.totals.events)],
+          ] as const
+        ).map(([label, value]) => (
+          <div key={label} className="flex flex-col gap-1 bg-surface px-3.5 py-3">
+            <dt className="t-eyebrow text-ink-3">{label}</dt>
+            <dd className="tabular text-title font-semibold text-ink">{value}</dd>
+          </div>
+        ))}
+      </dl>
     </>
   )
 }
