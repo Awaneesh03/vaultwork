@@ -53,7 +53,24 @@ const timer = () => screen.getByRole('timer')
  * arrived — clicking it before then is a no-op, which is correct behaviour and
  * a very confusing test failure.
  */
-const startButton = (name: RegExp) => screen.findByRole('button', { name })
+/**
+ * A start button, once it is genuinely actionable.
+ *
+ * `findByRole` resolves as soon as a button with that name exists — including
+ * while it is *disabled*. These stay disabled until `useFocus`'s live query
+ * reports whether a session is already running, so a test that waits only on
+ * the name can click a dead control. `fireEvent` on a disabled button is a
+ * no-op, the click is silently lost, and the failure surfaces several
+ * assertions later as "no session was created", pointing at the wrong thing.
+ *
+ * Waiting on `disabled === false` waits for the actual precondition — the live
+ * query having answered — rather than sleeping and hoping.
+ */
+const startButton = async (name: RegExp): Promise<HTMLButtonElement> => {
+  const button = (await screen.findByRole('button', { name })) as HTMLButtonElement
+  await waitFor(() => expect(button.disabled).toBe(false))
+  return button
+}
 const focusEvents = async () =>
   (await eventRepo.list())
     .reverse()
@@ -72,6 +89,37 @@ describe('starting a session', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: /Focus · 40m/ })).toBeTruthy())
     expect(screen.getByRole('button', { name: /Short break · 7m/ })).toBeTruthy()
     expect(screen.getByRole('button', { name: /Long break · 20m/ })).toBeTruthy()
+  })
+
+  it('refuses to start until the live query has reported', async () => {
+    /*
+     * The regression this file kept tripping over. Until `useFocus` knows
+     * whether something is already running, starting a session could create a
+     * second one — so the control is disabled, and it must *stay* disabled
+     * rather than merely look it. A click landing in that window is swallowed
+     * by the DOM and produces no session at all.
+     */
+    mount()
+
+    /*
+     * Read synchronously, before any await. `useLiveQuery` returns `undefined`
+     * on its first render, so at this exact point the control must be disabled
+     * — asserted unconditionally, because a conditional assertion here would
+     * quietly pass the moment the guard was removed.
+     */
+    const button = screen.getByRole('button', { name: /^Focus/ }) as HTMLButtonElement
+    expect(button.disabled).toBe(true)
+
+    // A click in that window is swallowed by the DOM and creates nothing.
+    fireEvent.click(button)
+    expect(await focusSessionRepo.list()).toEqual([])
+
+    // Once the query reports, the same control becomes usable.
+    await waitFor(() => expect(button.disabled).toBe(false))
+    fireEvent.click(button)
+    await waitOutsideAct(async () => {
+      expect(await focusSessionRepo.list()).toHaveLength(1)
+    })
   })
 
   it('writes one session and shows the countdown', async () => {
