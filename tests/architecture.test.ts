@@ -1002,6 +1002,47 @@ describe('the AI boundary', () => {
     }
   })
 
+  it('keeps the secondary accent for the Assistant and nothing else', () => {
+    /*
+     * The semantic mapping, enforced rather than described.
+     *
+     *   emerald (`--accent`)   Vaultwork itself: identity, selection, the one
+     *                          primary action per view, and Vaultwork acting
+     *                          on your data — including the AI mutation gate,
+     *                          because the model is not the thing that acts.
+     *   violet  (`--accent-2`) the Assistant's own voice and presence. Here,
+     *                          and nowhere else.
+     *   warn                   an exception inside a normal flow: a focus
+     *                          session overrunning, a truncated extraction, a
+     *                          lapsed permission, a change not yet applied.
+     *   danger                 destructive, or blocked pending a decision.
+     *   ok                     settled: synced, persisted, succeeded.
+     *
+     * Violet had drifted onto a Focus countdown that had overrun (an
+     * exception), a `confirm` button variant whose only caller was Focus's
+     * primary action, and every "Synced" badge in Obsidian. Each of those read
+     * as a second primary, which is exactly what makes an accent stop meaning
+     * anything. The list below is short on purpose: adding to it should
+     * require deciding that the surface really is the Assistant.
+     */
+    const ALLOWED = new Set([
+      // The Assistant's own screen and its parts.
+      'src/features/ai/views/AiView.tsx',
+      'src/features/ai/components/AiTurnView.tsx',
+      // The sidebar mark that says which entry is the Assistant.
+      'src/components/layout/Sidebar.tsx',
+    ])
+
+    const offenders: string[] = []
+    for (const file of walk(SRC)) {
+      const rel = posix.normalize(relative(ROOT, file).split('\\').join('/'))
+      if (ALLOWED.has(rel)) continue
+      if (/\baccent-2\b/.test(readFileSync(file, 'utf8'))) offenders.push(rel)
+    }
+
+    expect(offenders).toEqual([])
+  })
+
   it('tells tailwind-merge about every step in the scale', () => {
     /*
      * `text-body` is a size, but `tailwind-merge` only knows the sizes Tailwind

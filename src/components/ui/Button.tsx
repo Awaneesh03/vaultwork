@@ -2,19 +2,22 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react'
 import { cn } from '@/lib/cn'
 
 /**
- * Five variants, and the number is the point.
+ * Four variants, and the number is the point.
  *
  * A screen with three equally-weighted buttons has told you nothing about which
  * one to press. So the ladder is explicit: exactly one `primary` per view, a
  * `secondary` for the ordinary alternatives, `ghost` for the ones that should
- * recede until wanted, `danger` for the destructive, and `confirm` for the
- * mint-accented "this is settled" action — applying a sync, accepting a plan.
+ * recede until wanted, and `danger` for the destructive.
  *
- * `confirm` is the only place the secondary accent appears on a filled control,
- * which is what keeps it meaningful.
+ * There was a fifth, `confirm`, described here as mint and as belonging to
+ * "applying a sync, accepting a plan". It was neither: it rendered in the
+ * Assistant's violet, and its only caller in the entire application was the
+ * Focus screen's "Finish now" — which is simply that view's primary action.
+ * A variant with one user whose semantics are already covered is not a
+ * variant, and keeping it meant violet reading as a second primary.
  */
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'confirm'
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'
 type Size = 'sm' | 'md'
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -34,10 +37,6 @@ const VARIANTS: Record<Variant, string> = {
   ),
   ghost: 'border-transparent bg-transparent text-ink-2 hover:bg-surface hover:text-ink',
   danger: 'border-line-strong bg-transparent text-danger hover:border-danger hover:bg-danger-soft',
-  confirm: cn(
-    'border-transparent bg-accent-2 text-accent-2-ink',
-    'hover:brightness-110 active:brightness-95',
-  ),
 }
 
 const SIZES: Record<Size, string> = {

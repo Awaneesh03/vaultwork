@@ -67,7 +67,7 @@ export function FocusDial({
           cy={SIZE / 2}
           r={RADIUS}
           fill="none"
-          stroke={overrun ? 'var(--color-accent-2)' : 'var(--color-accent)'}
+          stroke={overrun ? 'var(--color-warn)' : 'var(--color-accent)'}
           strokeWidth={STROKE}
           strokeLinecap="round"
           strokeDasharray={CIRCUMFERENCE}
@@ -87,7 +87,7 @@ export function FocusDial({
         <p
           className={cn(
             'tabular font-mono text-[68px] leading-none font-light tracking-tight',
-            overrun ? 'text-accent-2' : 'text-ink',
+            overrun ? 'text-warn' : 'text-ink',
           )}
           role="timer"
           /*

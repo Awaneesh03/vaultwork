@@ -179,7 +179,7 @@ export function FocusView() {
             <div className="relative flex flex-wrap justify-center gap-2">
               <Button
                 size="sm"
-                variant="confirm"
+                variant="primary"
                 icon={<Check size={13} aria-hidden />}
                 disabled={focus.busy}
                 onClick={() => void focus.complete()}
