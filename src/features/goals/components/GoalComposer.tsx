@@ -20,7 +20,7 @@ import { emptyGoalForm, goalForm, goalFormError, type GoalFormValue } from '../g
  */
 
 const FIELD =
-  'w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-[13px] text-ink placeholder:text-ink-3 focus:border-accent-line'
+  'w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-strong text-ink placeholder:text-ink-3 focus:border-accent-line'
 
 function Label({ htmlFor, children }: { htmlFor?: string; children: string }) {
   return (
@@ -101,7 +101,7 @@ export function GoalComposer({
         className="flex w-full max-w-md flex-col gap-3 rounded-lg border border-line bg-elevated p-4 shadow-xl [animation:panel-in_var(--duration-base)_var(--ease-out)]"
       >
         <div className="flex items-center gap-2">
-          <h2 className="flex-1 text-[14px] font-semibold tracking-tight text-ink">
+          <h2 className="flex-1 text-strong font-semibold tracking-tight text-ink">
             {editing ? 'Edit goal' : 'New goal'}
           </h2>
           <button
@@ -167,7 +167,7 @@ export function GoalComposer({
         {shown ? (
           <p
             role="alert"
-            className="inline-flex items-center gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger"
+            className="inline-flex items-center gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger"
           >
             <AlertCircle size={12} aria-hidden />
             {shown}
@@ -182,7 +182,7 @@ export function GoalComposer({
             Cancel
           </Button>
           <span className="flex-1" />
-          <span className="hidden items-center gap-1 text-[11px] text-ink-3 sm:inline-flex">
+          <span className="hidden items-center gap-1 text-meta text-ink-3 sm:inline-flex">
             <Kbd>esc</Kbd> to close
           </span>
         </div>

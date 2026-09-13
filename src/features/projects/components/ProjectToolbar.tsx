@@ -43,7 +43,7 @@ const SORTS: { id: ProjectSort; label: string }[] = [
 ]
 
 const SELECT =
-  'h-7 rounded-md border border-line bg-surface px-2 text-[12.5px] text-ink-2 hover:border-line-strong focus:border-accent-line'
+  'h-7 rounded-md border border-line bg-surface px-2 text-body text-ink-2 hover:border-line-strong focus:border-accent-line'
 
 export interface ProjectToolbarProps {
   filter: ProjectToolbarFilter
@@ -102,7 +102,7 @@ export function ProjectToolbar({
             }}
             placeholder="Search projects by name or description…"
             aria-label="Search projects"
-            className="min-w-0 flex-1 bg-transparent text-[12.5px] text-ink placeholder:text-ink-3"
+            className="min-w-0 flex-1 bg-transparent text-body text-ink placeholder:text-ink-3"
           />
           {filter.search.length > 0 ? (
             <button
@@ -148,7 +148,7 @@ export function ProjectToolbar({
               onClick={() => onState(state.id)}
               aria-pressed={filter.state === state.id}
               className={cn(
-                'inline-flex h-6 items-center gap-1.5 rounded px-2 text-[12px]',
+                'inline-flex h-6 items-center gap-1.5 rounded px-2 text-body',
                 'transition-colors duration-[var(--duration-fast)]',
                 filter.state === state.id
                   ? 'bg-accent-soft font-medium text-ink'
@@ -156,7 +156,7 @@ export function ProjectToolbar({
               )}
             >
               {state.label}
-              <span className="tabular text-[10.5px] text-ink-3">{countFor(state.id)}</span>
+              <span className="tabular text-micro text-ink-3">{countFor(state.id)}</span>
             </button>
           ))}
         </div>
@@ -194,7 +194,7 @@ export function ProjectToolbar({
 
         <span className="flex-1" />
 
-        <span className="tabular hidden text-[11.5px] text-ink-3 sm:inline">
+        <span className="tabular hidden text-meta text-ink-3 sm:inline">
           {sort === 'manual' ? 'Drag to reorder' : 'Sorted — drag disabled'}
         </span>
       </div>

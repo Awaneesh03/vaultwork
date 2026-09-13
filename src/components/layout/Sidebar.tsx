@@ -33,7 +33,7 @@ function itemClasses(isActive: boolean): string {
     // 32px rows and 16px between groups: the whole rail has to fit a short
     // laptop window without scrolling, and a nav whose last item is clipped is
     // worse than two pixels less padding on each of nineteen rows.
-    'group relative flex h-8 items-center gap-2.5 rounded-md pr-2 pl-3 text-[13px]',
+    'group relative flex h-8 items-center gap-2.5 rounded-md pr-2 pl-3 text-strong',
     'transition-colors duration-[var(--duration-fast)]',
     isActive
       ? [
@@ -64,7 +64,7 @@ export function Sidebar() {
           <span className="relative h-[18px] w-[18px] shrink-0 rounded-[5px] bg-accent" aria-hidden>
             <span className="absolute right-[3px] bottom-[3px] h-[6px] w-[6px] rounded-[2px] bg-accent-2" />
           </span>
-          <span className="text-[14px] font-semibold tracking-tight text-ink">Vaultwork</span>
+          <span className="text-strong font-semibold tracking-tight text-ink">Vaultwork</span>
         </div>
         <button
           type="button"

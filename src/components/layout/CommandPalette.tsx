@@ -244,14 +244,14 @@ export function CommandPalette() {
             }}
             placeholder="Search, add a task, or type / for a command…"
             aria-label="Command input"
-            className="h-11 flex-1 bg-transparent text-[13.5px] text-ink placeholder:text-ink-3"
+            className="h-11 flex-1 bg-transparent text-strong text-ink placeholder:text-ink-3"
           />
-          {pending ? <span className="text-[11px] text-ink-3">…</span> : <Kbd>esc</Kbd>}
+          {pending ? <span className="text-meta text-ink-3">…</span> : <Kbd>esc</Kbd>}
         </div>
 
         {ambiguity ? (
           <div className="p-1.5">
-            <p className="px-2.5 pb-1.5 pt-1 text-[12.5px] text-ink-2">{ambiguity.message}</p>
+            <p className="px-2.5 pb-1.5 pt-1 text-body text-ink-2">{ambiguity.message}</p>
             <ul>
               {choices.map((choice, index) => (
                 <li key={choice.id}>
@@ -271,14 +271,12 @@ export function CommandPalette() {
                         : 'bg-transparent hover:bg-surface',
                     )}
                   >
-                    <span className="tabular w-4 shrink-0 text-[11.5px] text-ink-3">
+                    <span className="tabular w-4 shrink-0 text-meta text-ink-3">
                       {choice.index}
                     </span>
-                    <span className="flex-1 truncate text-[13px] text-ink">{choice.label}</span>
+                    <span className="flex-1 truncate text-strong text-ink">{choice.label}</span>
                     {choice.hint ? (
-                      <span className="hidden text-[11.5px] text-ink-3 sm:inline">
-                        {choice.hint}
-                      </span>
+                      <span className="hidden text-meta text-ink-3 sm:inline">{choice.hint}</span>
                     ) : null}
                   </button>
                 </li>
@@ -319,10 +317,10 @@ export function CommandPalette() {
                       dark={theme.resolved === 'dark'}
                       active={index === active}
                     />
-                    <span className="min-w-0 flex-1 truncate text-[13px] text-ink">
+                    <span className="min-w-0 flex-1 truncate text-strong text-ink">
                       {item.label}
                     </span>
-                    <span className="hidden shrink-0 text-[11.5px] text-ink-3 sm:inline">
+                    <span className="hidden shrink-0 text-meta text-ink-3 sm:inline">
                       {item.hint}
                     </span>
                   </button>
@@ -332,7 +330,7 @@ export function CommandPalette() {
           </ul>
         )}
 
-        <div className="flex items-center gap-3 border-t border-line px-3.5 py-2 text-[11px] text-ink-3">
+        <div className="flex items-center gap-3 border-t border-line px-3.5 py-2 text-meta text-ink-3">
           <span className="inline-flex items-center gap-1">
             <Kbd>/add</Kbd> <Kbd>/done</Kbd> <Kbd>/today</Kbd> <Kbd>/projects</Kbd>
           </span>

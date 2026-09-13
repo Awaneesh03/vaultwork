@@ -94,7 +94,7 @@ export function KnowledgeGraphView({
         )}
         style={{ height }}
       >
-        <p className="px-4 text-center text-[12.5px] text-ink-3">
+        <p className="px-4 text-center text-body text-ink-3">
           Nothing to draw. Link notes with <code className="font-mono">[[wikilinks]]</code> and they
           will appear here.
         </p>
@@ -203,7 +203,7 @@ export function KnowledgeGraphView({
                     y={at.y + radius + 11}
                     textAnchor="middle"
                     className={cn(
-                      'pointer-events-none text-[9px]',
+                      'pointer-events-none text-micro',
                       focused || selected ? 'fill-ink' : 'fill-ink-3',
                     )}
                   >
@@ -215,7 +215,7 @@ export function KnowledgeGraphView({
           </g>
         </svg>
 
-        <div className="pointer-events-none absolute bottom-2 right-2 rounded-md bg-elevated/90 px-2 py-1 text-[10.5px] text-ink-3">
+        <div className="pointer-events-none absolute bottom-2 right-2 rounded-md bg-elevated/90 px-2 py-1 text-micro text-ink-3">
           Drag to pan · scroll to zoom · double-click a node to open
         </div>
       </div>
@@ -234,7 +234,7 @@ export function KnowledgeGraphView({
               onDoubleClick={() => onOpen?.(node.id)}
               aria-pressed={node.id === selectedNoteId}
               className={cn(
-                'rounded-md border px-2 py-1 text-[11.5px] transition-colors',
+                'rounded-md border px-2 py-1 text-meta transition-colors',
                 node.id === selectedNoteId || node.id === focusNoteId
                   ? 'border-accent-line bg-accent-soft text-accent'
                   : 'border-line text-ink-3 hover:border-line-strong hover:text-ink-2',

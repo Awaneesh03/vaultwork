@@ -49,7 +49,7 @@ export interface ProjectComposerProps {
 }
 
 const FIELD =
-  'w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-[13px] text-ink placeholder:text-ink-3 focus:border-accent-line'
+  'w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-strong text-ink placeholder:text-ink-3 focus:border-accent-line'
 
 function Label({ htmlFor, children }: { htmlFor: string; children: string }) {
   return (
@@ -128,7 +128,7 @@ export function ProjectComposer({
         }}
       >
         <header className="flex items-center gap-2 border-b border-line px-4 py-3">
-          <h2 className="flex-1 text-[14px] font-semibold tracking-tight text-ink">
+          <h2 className="flex-1 text-strong font-semibold tracking-tight text-ink">
             {editing ? 'Edit project' : 'New project'}
           </h2>
           <button
@@ -160,7 +160,7 @@ export function ProjectComposer({
               <p
                 id={`${ids}-error`}
                 role="alert"
-                className="inline-flex items-center gap-1 text-[11.5px] text-danger"
+                className="inline-flex items-center gap-1 text-meta text-danger"
               >
                 <AlertCircle size={11} aria-hidden />
                 {message}
@@ -267,7 +267,7 @@ export function ProjectComposer({
         </div>
 
         <footer className="flex items-center gap-2 border-t border-line px-4 py-3">
-          <span className="flex-1 text-[11px] text-ink-3">
+          <span className="flex-1 text-meta text-ink-3">
             <Kbd>esc</Kbd> to cancel
           </span>
           <Button variant="ghost" size="sm" onClick={onCancel}>

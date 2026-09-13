@@ -26,8 +26,8 @@ function Stat({ label, value, hint }: { label: string; value: string; hint?: str
   return (
     <div className="flex min-w-0 flex-col gap-0.5 rounded-md border border-line bg-surface px-2.5 py-1.5">
       <span className="t-eyebrow text-ink-3">{label}</span>
-      <span className="tabular text-[15px] font-semibold leading-tight text-ink">{value}</span>
-      {hint ? <span className="text-[10.5px] text-ink-3">{hint}</span> : null}
+      <span className="tabular text-title font-semibold leading-tight text-ink">{value}</span>
+      {hint ? <span className="text-micro text-ink-3">{hint}</span> : null}
     </div>
   )
 }
@@ -99,10 +99,10 @@ export function HabitDetailPanel({
             style={{ backgroundColor: accent }}
           />
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-[15px] font-semibold tracking-tight text-ink">
+            <h2 className="truncate text-title font-semibold tracking-tight text-ink">
               {habit.name}
             </h2>
-            <p className="text-[11.5px] text-ink-3">
+            <p className="text-meta text-ink-3">
               {schedule}
               {archived ? ' · Archived' : ''}
             </p>
@@ -151,7 +151,7 @@ export function HabitDetailPanel({
             <HabitHistoryStrip name={habit.name} days={detail.history} />
 
             {/* A legend, because the squares alone are not self-describing. */}
-            <ul className="flex flex-wrap gap-x-3 gap-y-1 text-[10.5px] text-ink-3">
+            <ul className="flex flex-wrap gap-x-3 gap-y-1 text-micro text-ink-3">
               <li className="inline-flex items-center gap-1">
                 <span className="h-2.5 w-2.5 rounded-[2px] border border-accent bg-accent" />
                 Completed
@@ -170,7 +170,7 @@ export function HabitDetailPanel({
           <section className="flex flex-col gap-1.5">
             <h3 className="t-eyebrow text-ink-3">Recent completions</h3>
             {detail.entries.length === 0 ? (
-              <p className="text-[12.5px] text-ink-3">Nothing recorded yet.</p>
+              <p className="text-body text-ink-3">Nothing recorded yet.</p>
             ) : (
               <ul className="flex flex-col divide-y divide-line rounded-md border border-line">
                 {[...detail.entries]
@@ -179,7 +179,7 @@ export function HabitDetailPanel({
                   .map((entry) => (
                     <li
                       key={entry.id}
-                      className="flex items-baseline gap-2 px-2.5 py-1.5 text-[12px]"
+                      className="flex items-baseline gap-2 px-2.5 py-1.5 text-body"
                     >
                       <span className="flex-1 text-ink-2">{formatFullDate(entry.date)}</span>
                       {habit.kind === 'quantity' ? (
@@ -194,7 +194,7 @@ export function HabitDetailPanel({
                   ))}
               </ul>
             )}
-            <p className="text-[10.5px] text-ink-3">
+            <p className="text-micro text-ink-3">
               {detail.totalEntries} recorded {detail.totalEntries === 1 ? 'day' : 'days'} in total.
             </p>
           </section>
@@ -206,7 +206,7 @@ export function HabitDetailPanel({
 
           <p
             className={cn(
-              'inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1.5 text-[11.5px] text-ink-3',
+              'inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1.5 text-meta text-ink-3',
             )}
           >
             <Flame size={11} aria-hidden />

@@ -62,7 +62,7 @@ function Metric({
       </span>
       <span
         className={cn(
-          'tabular text-[15px] font-semibold leading-tight',
+          'tabular text-title font-semibold leading-tight',
           tone === 'warn' ? 'text-danger' : 'text-ink',
         )}
       >
@@ -199,9 +199,9 @@ export function ProjectsView() {
       <header className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2.5">
           <FolderKanban size={18} className="text-accent" aria-hidden />
-          <h2 className="text-[19px] font-semibold tracking-tight text-ink">Projects</h2>
+          <h2 className="text-display font-semibold tracking-tight text-ink">Projects</h2>
           {data ? (
-            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-[11.5px] text-ink-2">
+            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-meta text-ink-2">
               {data.activeTotal}
             </span>
           ) : null}
@@ -215,7 +215,7 @@ export function ProjectsView() {
             New project
           </Button>
         </div>
-        <p className="max-w-prose text-[13px] text-ink-2">
+        <p className="max-w-prose text-strong text-ink-2">
           Work with a lifecycle. Progress is computed from completed tasks every time it is read, so
           it cannot drift and cannot be faked.
         </p>
@@ -246,7 +246,7 @@ export function ProjectsView() {
             label={`${data.totals.completed} of ${data.totals.total} tasks complete across every project on screen`}
             className="flex-1"
           />
-          <span className="tabular shrink-0 text-[11.5px] text-ink-3">
+          <span className="tabular shrink-0 text-meta text-ink-3">
             {data.totals.progress}% across {onScreen.length} project
             {onScreen.length === 1 ? '' : 's'}
           </span>
@@ -286,7 +286,7 @@ export function ProjectsView() {
                 <button
                   type="button"
                   onClick={clearFilter}
-                  className="text-[12.5px] text-accent underline decoration-dotted"
+                  className="text-body text-accent underline decoration-dotted"
                 >
                   Clear filters
                 </button>
@@ -310,7 +310,7 @@ export function ProjectsView() {
               <section className="flex flex-col gap-1">
                 <div className="flex items-baseline gap-2 px-2">
                   <h3 className="t-eyebrow text-ink-3">Active</h3>
-                  <span className="tabular text-[11px] text-ink-3">{value.active.length}</span>
+                  <span className="tabular text-meta text-ink-3">{value.active.length}</span>
                 </div>
                 <ProjectList
                   summaries={value.active}
@@ -336,8 +336,8 @@ export function ProjectsView() {
                     <Archive size={11} aria-hidden />
                     Archived
                   </h3>
-                  <span className="tabular text-[11px] text-ink-3">{value.archived.length}</span>
-                  <span className="text-[11px] text-ink-3">— tasks kept, nothing deleted</span>
+                  <span className="tabular text-meta text-ink-3">{value.archived.length}</span>
+                  <span className="text-meta text-ink-3">— tasks kept, nothing deleted</span>
                 </div>
                 <ProjectList
                   summaries={value.archived}
@@ -354,7 +354,7 @@ export function ProjectsView() {
               </section>
             ) : null}
 
-            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-[11px] text-ink-3">
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-meta text-ink-3">
               <span className="inline-flex items-center gap-1">
                 <Kbd>J</Kbd>
                 <Kbd>K</Kbd> move

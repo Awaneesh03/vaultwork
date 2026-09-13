@@ -21,7 +21,7 @@ import {
  */
 
 const FIELD =
-  'w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-[13px] text-ink placeholder:text-ink-3 focus:border-accent-line'
+  'w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-strong text-ink placeholder:text-ink-3 focus:border-accent-line'
 
 export function MilestoneComposer({
   milestone,
@@ -93,10 +93,10 @@ export function MilestoneComposer({
       >
         <div className="flex items-start gap-2">
           <div className="min-w-0 flex-1">
-            <h2 className="text-[14px] font-semibold tracking-tight text-ink">
+            <h2 className="text-strong font-semibold tracking-tight text-ink">
               {editing ? 'Edit milestone' : 'New milestone'}
             </h2>
-            <p className="truncate text-[11.5px] text-ink-3">{goalTitle}</p>
+            <p className="truncate text-meta text-ink-3">{goalTitle}</p>
           </div>
           <button
             type="button"
@@ -138,7 +138,7 @@ export function MilestoneComposer({
         {touched && problem ? (
           <p
             role="alert"
-            className="inline-flex items-center gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger"
+            className="inline-flex items-center gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger"
           >
             <AlertCircle size={12} aria-hidden />
             {problem}

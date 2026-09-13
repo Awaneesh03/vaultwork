@@ -74,7 +74,7 @@ export function DashboardCard({
         */}
         <h3
           className={cn(
-            'text-[12.5px] font-semibold tracking-tight',
+            'text-body font-semibold tracking-tight',
             tone === 'warn' ? 'text-danger' : 'text-ink-2',
           )}
         >
@@ -87,7 +87,7 @@ export function DashboardCard({
         {href ? (
           <Link
             to={href}
-            className="group/link inline-flex items-center gap-1 rounded-sm text-[11.5px] text-ink-3 transition-colors hover:text-accent"
+            className="group/link inline-flex items-center gap-1 rounded-sm text-meta text-ink-3 transition-colors hover:text-accent"
           >
             {linkLabel ?? 'View all'}
             <ArrowRight
@@ -100,7 +100,7 @@ export function DashboardCard({
       </header>
 
       {isEmpty ? (
-        <p className="px-3.5 py-3.5 text-[12.5px] text-ink-3">{empty ?? 'Nothing here.'}</p>
+        <p className="px-3.5 py-3.5 text-body text-ink-3">{empty ?? 'Nothing here.'}</p>
       ) : (
         children
       )}

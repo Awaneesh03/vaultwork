@@ -135,7 +135,7 @@ export function SettingsView() {
             <div className="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4">
               <div className="flex items-center gap-2">
                 <HardDrive size={14} className="text-ink-3" aria-hidden />
-                <span className="text-[13px] text-ink">
+                <span className="text-strong text-ink">
                   {report.persistence.persisted
                     ? 'Storage is persistent'
                     : 'Storage is not persistent'}
@@ -145,10 +145,10 @@ export function SettingsView() {
                 ) : null}
               </div>
               {report.persistence.reason ? (
-                <p className="text-[12.5px] text-ink-3">{report.persistence.reason}</p>
+                <p className="text-body text-ink-3">{report.persistence.reason}</p>
               ) : null}
               {report.estimate ? (
-                <p className="tabular font-mono text-[12px] text-ink-3">
+                <p className="tabular font-mono text-body text-ink-3">
                   {formatBytes(report.estimate.usageBytes)} used of{' '}
                   {formatBytes(report.estimate.quotaBytes)}
                 </p>
@@ -203,15 +203,15 @@ export function SettingsView() {
           />
         </div>
 
-        {data.state.message ? <p className="text-[12.5px] text-ok">{data.state.message}</p> : null}
-        {data.state.error ? <p className="text-[12.5px] text-danger">{data.state.error}</p> : null}
+        {data.state.message ? <p className="text-body text-ok">{data.state.message}</p> : null}
+        {data.state.error ? <p className="text-body text-danger">{data.state.error}</p> : null}
 
         {data.snapshots && data.snapshots.length > 0 ? (
           <ul className="divide-y divide-line rounded-lg border border-line bg-surface">
             {data.snapshots.map((snapshot) => (
               <li key={snapshot.id} className="flex items-center gap-3 px-3.5 py-2.5">
-                <span className="flex-1 font-mono text-[12px] text-ink-2">{snapshot.id}</span>
-                <span className="tabular font-mono text-[11.5px] text-ink-3">
+                <span className="flex-1 font-mono text-body text-ink-2">{snapshot.id}</span>
+                <span className="tabular font-mono text-meta text-ink-3">
                   {formatBytes(snapshot.bytes)}
                 </span>
                 <Button size="sm" variant="ghost" onClick={() => void data.restore(snapshot.id)}>
@@ -221,7 +221,7 @@ export function SettingsView() {
             ))}
           </ul>
         ) : (
-          <p className="text-[12.5px] text-ink-3">
+          <p className="text-body text-ink-3">
             No snapshots yet. Snapshots are stored in{' '}
             {platform.snapshots.id === 'opfs'
               ? 'the Origin Private File System'
@@ -257,14 +257,14 @@ export function SettingsView() {
           </Button>
           {diagnostics.notice ? (
             <p
-              className={`text-[12.5px] ${diagnostics.notice.ok ? 'text-ok' : 'text-danger'}`}
+              className={`text-body ${diagnostics.notice.ok ? 'text-ok' : 'text-danger'}`}
               role="status"
             >
               {diagnostics.notice.text}
             </p>
           ) : null}
         </div>
-        <p className="text-[12.5px] text-ink-3">
+        <p className="text-body text-ink-3">
           One notification, sent now. Scheduling and reminder rules are a later milestone — this
           only proves the channel works.
         </p>
@@ -294,14 +294,14 @@ export function SettingsView() {
               key={name}
               className="flex items-center justify-between gap-3 border-b border-line py-1.5"
             >
-              <dt className="font-mono text-[12px] text-ink-2">{name}</dt>
-              <dd className={`font-mono text-[11px] ${enabled ? 'text-ok' : 'text-ink-3'}`}>
+              <dt className="font-mono text-body text-ink-2">{name}</dt>
+              <dd className={`font-mono text-meta ${enabled ? 'text-ok' : 'text-ink-3'}`}>
                 {enabled ? 'yes' : 'no'}
               </dd>
             </div>
           ))}
         </dl>
-        <p className="text-[12.5px] text-ink-3">
+        <p className="text-body text-ink-3">
           Vault access needs either the File System Access API, which only Chromium-based browsers
           have, or the desktop build, which needs no permission at all. Notifications and a native
           menu are desktop-only. Inbound messages need a running process, which a browser tab is not
@@ -310,7 +310,7 @@ export function SettingsView() {
       </Section>
 
       <Section title="About">
-        <dl className="flex flex-col gap-1.5 font-mono text-[12px] text-ink-2">
+        <dl className="flex flex-col gap-1.5 font-mono text-body text-ink-2">
           <div className="flex justify-between">
             <dt>app version</dt>
             <dd className="text-ink">{APP_VERSION}</dd>
@@ -336,14 +336,14 @@ export function SettingsView() {
           safe here?", which is a question you go looking for.
         */}
         <details className="rounded-lg border border-line bg-surface">
-          <summary className="cursor-pointer px-3.5 py-2.5 text-[12.5px] text-ink-2">
+          <summary className="cursor-pointer px-3.5 py-2.5 text-body text-ink-2">
             Diagnostics
           </summary>
           <div className="border-t border-line px-3.5 py-3">
             {diagnostics.report === undefined ? (
-              <p className="text-[12.5px] text-ink-3">Reading…</p>
+              <p className="text-body text-ink-3">Reading…</p>
             ) : (
-              <dl className="flex flex-col gap-1.5 font-mono text-[12px] text-ink-2">
+              <dl className="flex flex-col gap-1.5 font-mono text-body text-ink-2">
                 <div className="flex justify-between gap-3">
                   <dt>runtime</dt>
                   <dd className="text-ink">{diagnostics.report.runtime}</dd>

@@ -54,7 +54,7 @@ function Unavailable({ reason }: { reason: NonNullable<AiAssistant['unavailable'
       <div>
         <Link
           to={ROUTES.settings}
-          className="inline-flex h-7 items-center rounded-md border border-line bg-surface px-2.5 text-[12.5px] font-medium text-ink transition-colors hover:border-accent-line hover:bg-elevated"
+          className="inline-flex h-7 items-center rounded-md border border-line bg-surface px-2.5 text-body font-medium text-ink transition-colors hover:border-accent-line hover:bg-elevated"
         >
           Open Settings
         </Link>
@@ -125,7 +125,7 @@ export function AiView() {
                 <button
                   type="button"
                   onClick={() => setDraft(example)}
-                  className="rounded-full border border-line bg-surface px-3 py-1.5 text-[12.5px] text-ink-2 transition-colors duration-[var(--duration-fast)] hover:border-accent-line hover:bg-elevated hover:text-ink"
+                  className="rounded-full border border-line bg-surface px-3 py-1.5 text-body text-ink-2 transition-colors duration-[var(--duration-fast)] hover:border-accent-line hover:bg-elevated hover:text-ink"
                 >
                   {example}
                 </button>
@@ -164,7 +164,7 @@ export function AiView() {
         <p
           role="status"
           aria-live="polite"
-          className={`break-words text-[13px] ${ai.outcome.ok ? 'text-ok' : 'text-ink-2'}`}
+          className={`break-words text-strong ${ai.outcome.ok ? 'text-ok' : 'text-ink-2'}`}
         >
           {ai.outcome.message}
         </p>
@@ -181,7 +181,7 @@ export function AiView() {
       ) : null}
 
       {ai.status !== null && !blocked ? (
-        <p className="flex items-center gap-1.5 font-mono text-[11px] text-ink-3">
+        <p className="flex items-center gap-1.5 font-mono text-meta text-ink-3">
           <span className="h-1.5 w-1.5 rounded-full bg-accent-2" aria-hidden />
           {ai.status.provider} · {ai.status.model}
         </p>

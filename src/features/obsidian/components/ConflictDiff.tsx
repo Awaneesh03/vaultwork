@@ -56,8 +56,8 @@ export function ConflictDiff({
       >
         <div className="flex items-start gap-2">
           <div className="min-w-0 flex-1">
-            <h2 className="truncate text-[14px] font-semibold tracking-tight text-ink">{title}</h2>
-            <p className="text-[11.5px] text-ink-3">
+            <h2 className="truncate text-strong font-semibold tracking-tight text-ink">{title}</h2>
+            <p className="text-meta text-ink-3">
               {summary.removed} line{summary.removed === 1 ? '' : 's'} only in Vaultwork ·{' '}
               {summary.added} only in Obsidian
             </p>
@@ -72,13 +72,13 @@ export function ConflictDiff({
           </button>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 text-[11px] font-medium text-ink-3">
+        <div className="grid grid-cols-2 gap-2 text-meta font-medium text-ink-3">
           <span>Vaultwork</span>
           <span>Obsidian</span>
         </div>
 
         <div className="min-h-0 flex-1 overflow-auto rounded-md border border-line bg-sunken">
-          <table className="w-full border-collapse font-mono text-[11.5px]">
+          <table className="w-full border-collapse font-mono text-meta">
             <caption className="sr-only">
               Line by line comparison. Lines marked minus are only in Vaultwork; lines marked plus
               are only in Obsidian.
@@ -112,7 +112,7 @@ export function ConflictDiff({
           </table>
         </div>
 
-        <p className="text-[11.5px] text-ink-3">
+        <p className="text-meta text-ink-3">
           Vaultwork will not combine these. Choose the version to keep — the other is replaced.
         </p>
 

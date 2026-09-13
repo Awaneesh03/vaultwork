@@ -38,14 +38,12 @@ export function UnscheduledPanel({
         <Inbox size={12} className="text-ink-3" aria-hidden />
         <h3 className="t-eyebrow text-ink-3">Unscheduled</h3>
         {total > 0 ? (
-          <span className="tabular rounded-sm bg-sunken px-1.5 text-[10px] text-ink-2">
-            {total}
-          </span>
+          <span className="tabular rounded-sm bg-sunken px-1.5 text-micro text-ink-2">{total}</span>
         ) : null}
       </header>
 
       {tasks.length === 0 ? (
-        <p className="px-3 py-2.5 text-[12px] text-ink-3">Everything has a date.</p>
+        <p className="px-3 py-2.5 text-body text-ink-3">Everything has a date.</p>
       ) : (
         <div className="flex max-h-[240px] flex-col gap-1 overflow-y-auto p-2">
           {tasks.map((task) => (
@@ -60,14 +58,14 @@ export function UnscheduledPanel({
             />
           ))}
           {total > tasks.length ? (
-            <p className="px-1 pt-0.5 text-[10.5px] text-ink-3">
+            <p className="px-1 pt-0.5 text-micro text-ink-3">
               {total - tasks.length} more not shown
             </p>
           ) : null}
         </div>
       )}
 
-      <p className="border-t border-line px-3 py-1.5 text-[10.5px] text-ink-3">
+      <p className="border-t border-line px-3 py-1.5 text-micro text-ink-3">
         Drag onto a day to schedule it.
       </p>
     </section>

@@ -31,12 +31,10 @@ export function DashboardNotes({
               className="flex flex-col gap-0.5 px-3.5 py-1.5 hover:bg-elevated"
             >
               <span className="flex items-baseline gap-2">
-                <span className="min-w-0 flex-1 truncate text-[12.5px] text-ink-2">
-                  {note.title}
-                </span>
+                <span className="min-w-0 flex-1 truncate text-body text-ink-2">{note.title}</span>
                 {note.linkCount > 0 ? (
                   <span
-                    className="tabular inline-flex shrink-0 items-center gap-0.5 text-[10.5px] text-ink-3"
+                    className="tabular inline-flex shrink-0 items-center gap-0.5 text-micro text-ink-3"
                     aria-label={`${note.linkCount} linked ${
                       note.linkCount === 1 ? 'item' : 'items'
                     }`}
@@ -45,12 +43,12 @@ export function DashboardNotes({
                     {note.linkCount}
                   </span>
                 ) : null}
-                <span className="tabular shrink-0 text-[10.5px] text-ink-3">
+                <span className="tabular shrink-0 text-micro text-ink-3">
                   {formatEventTime(note.updatedAt, now, today)}
                 </span>
               </span>
               {note.excerpt.length > 0 ? (
-                <span className="truncate text-[11px] text-ink-3">{note.excerpt}</span>
+                <span className="truncate text-meta text-ink-3">{note.excerpt}</span>
               ) : null}
             </Link>
           </li>
@@ -58,7 +56,7 @@ export function DashboardNotes({
       </ul>
 
       {notes.length === 0 ? (
-        <p className="px-3.5 pb-2.5 pt-2 text-[12px] text-ink-3">
+        <p className="px-3.5 pb-2.5 pt-2 text-body text-ink-3">
           No notes yet. Press Shift+N anywhere to write one.
         </p>
       ) : null}

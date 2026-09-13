@@ -32,7 +32,7 @@ export function TopBar({ title }: { title: string }) {
       <button
         type="button"
         onClick={() => setCommandPaletteOpen(true)}
-        className="group flex h-8 items-center gap-2 rounded-md border border-line-strong bg-surface pr-1.5 pl-2.5 text-[12.5px] text-ink-3 transition-colors hover:border-accent-line hover:bg-elevated hover:text-ink-2"
+        className="group flex h-8 items-center gap-2 rounded-md border border-line-strong bg-surface pr-1.5 pl-2.5 text-body text-ink-3 transition-colors hover:border-accent-line hover:bg-elevated hover:text-ink-2"
       >
         <Search size={14} aria-hidden />
         <span className="hidden sm:inline">Search or jump to</span>

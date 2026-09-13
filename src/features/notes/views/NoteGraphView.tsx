@@ -55,22 +55,22 @@ export function NoteGraphView() {
       <header className="flex flex-col gap-2">
         <Link
           to="/notes"
-          className="inline-flex w-fit items-center gap-1 text-[12px] text-ink-3 hover:text-accent"
+          className="inline-flex w-fit items-center gap-1 text-body text-ink-3 hover:text-accent"
         >
           <ArrowLeft size={12} aria-hidden />
           Notes
         </Link>
         <div className="flex flex-wrap items-center gap-2.5">
           <Network size={18} className="text-accent" aria-hidden />
-          <h2 className="text-[19px] font-semibold tracking-tight text-ink">Graph</h2>
+          <h2 className="text-display font-semibold tracking-tight text-ink">Graph</h2>
           {graph ? (
-            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-[11.5px] text-ink-2">
+            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-meta text-ink-2">
               {graph.nodes.length}
               {graph.nodes.length !== graph.totalNodes ? ` of ${graph.totalNodes}` : ''}
             </span>
           ) : null}
         </div>
-        <p className="max-w-prose text-[13px] text-ink-2">
+        <p className="max-w-prose text-strong text-ink-2">
           Every note, connected by the <code className="font-mono">[[wikilinks]]</code> in their
           bodies. Only links that resolve become lines — an unresolved or ambiguous link is a
           question, not a relationship.
@@ -91,7 +91,7 @@ export function NoteGraphView() {
               title={option.hint}
               onClick={() => setParam('filter', option.id === 'all' ? null : option.id)}
               className={cn(
-                'rounded-[5px] px-2 py-1 text-[11.5px] transition-colors duration-[var(--duration-fast)]',
+                'rounded-[5px] px-2 py-1 text-meta transition-colors duration-[var(--duration-fast)]',
                 filter === option.id ? 'bg-elevated text-ink' : 'text-ink-3 hover:text-ink-2',
               )}
             >
@@ -100,13 +100,13 @@ export function NoteGraphView() {
           ))}
         </div>
 
-        <label className="flex shrink-0 items-center gap-1.5 text-[11.5px] text-ink-3">
+        <label className="flex shrink-0 items-center gap-1.5 text-meta text-ink-3">
           <span className="sr-only sm:not-sr-only">Tag</span>
           <select
             value={tagId ?? ''}
             onChange={(event) => setParam('tag', event.target.value || null)}
             aria-label="Filter the graph by tag"
-            className="rounded-md border border-line bg-surface px-2 py-1.5 text-[11.5px] text-ink-2 focus:border-accent-line"
+            className="rounded-md border border-line bg-surface px-2 py-1.5 text-meta text-ink-2 focus:border-accent-line"
           >
             <option value="">Every tag</option>
             {(tags ?? []).map((tag) => (
@@ -121,7 +121,7 @@ export function NoteGraphView() {
           <button
             type="button"
             onClick={() => setParam('note', null)}
-            className="rounded-md border border-line px-2 py-1 text-[11.5px] text-ink-2 hover:border-accent-line hover:text-ink"
+            className="rounded-md border border-line px-2 py-1 text-meta text-ink-2 hover:border-accent-line hover:text-ink"
           >
             Show the whole vault
           </button>
@@ -142,7 +142,7 @@ export function NoteGraphView() {
       )}
 
       {selected !== null ? (
-        <p className="text-[12px] text-ink-3">
+        <p className="text-body text-ink-3">
           Selected{' '}
           <Link to={`/notes/${selected}`} className="text-accent underline decoration-dotted">
             {graph?.nodes.find((node) => node.id === selected)?.title ?? 'note'}

@@ -12,7 +12,7 @@ import { cn } from '@/lib/cn'
 
 const BASE = cn(
   'w-full rounded-md border border-line-strong bg-surface px-2.5',
-  'text-[13.5px] text-ink placeholder:text-ink-3',
+  'text-strong text-ink placeholder:text-ink-3',
   'transition-colors duration-[var(--duration-fast)]',
   'hover:border-accent-line focus:border-accent',
   'disabled:cursor-not-allowed disabled:opacity-55',

@@ -138,7 +138,7 @@ export function TaskDetailPanel({ taskId, onClose, onCreateTag }: TaskDetailPane
         )}
       >
         <header className="flex h-14 shrink-0 items-center gap-2 border-b border-line px-4">
-          <h2 className="flex-1 text-[13.5px] font-semibold tracking-tight">Task</h2>
+          <h2 className="flex-1 text-strong font-semibold tracking-tight">Task</h2>
 
           {loaded ? (
             <button
@@ -173,7 +173,7 @@ export function TaskDetailPanel({ taskId, onClose, onCreateTag }: TaskDetailPane
           {detail === undefined ? (
             <SkeletonRows rows={5} />
           ) : detail === null ? (
-            <p className="text-[13px] text-ink-3">That task is no longer here.</p>
+            <p className="text-strong text-ink-3">That task is no longer here.</p>
           ) : (
             <TaskComposer
               mode="edit"

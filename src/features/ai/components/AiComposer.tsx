@@ -65,7 +65,7 @@ export function AiComposer({
           onKeyDown={onKeyDown}
           placeholder="Ask about your work, or describe a change…"
           spellCheck
-          className="min-w-0 flex-1 resize-none bg-transparent px-1.5 py-1 text-[13.5px] text-ink placeholder:text-ink-3 disabled:opacity-50"
+          className="min-w-0 flex-1 resize-none bg-transparent px-1.5 py-1 text-strong text-ink placeholder:text-ink-3 disabled:opacity-50"
         />
         <Button
           size="sm"
@@ -77,7 +77,7 @@ export function AiComposer({
           {busy ? 'Thinking…' : 'Ask'}
         </Button>
       </div>
-      <p className="px-1 text-[11.5px] text-ink-3">
+      <p className="px-1 text-meta text-ink-3">
         Enter to send · Shift+Enter for a new line. Nothing changes until you confirm it.
       </p>
     </div>

@@ -63,9 +63,9 @@ export function NoteComposer({
         <div className="flex items-start gap-2">
           <FileText size={15} className="mt-[3px] shrink-0 text-accent" aria-hidden />
           <div className="min-w-0 flex-1">
-            <h2 className="text-[14px] font-semibold tracking-tight text-ink">New note</h2>
+            <h2 className="text-strong font-semibold tracking-tight text-ink">New note</h2>
             {contextLabel ? (
-              <p className="truncate text-[11.5px] text-ink-3">Linked to {contextLabel}</p>
+              <p className="truncate text-meta text-ink-3">Linked to {contextLabel}</p>
             ) : null}
           </div>
           <button
@@ -84,7 +84,7 @@ export function NoteComposer({
           onChange={(event) => setTitle(event.target.value)}
           placeholder="Title (optional)"
           aria-label="Note title"
-          className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-[13px] text-ink placeholder:text-ink-3 focus:border-accent-line"
+          className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-strong text-ink placeholder:text-ink-3 focus:border-accent-line"
         />
 
         <textarea
@@ -95,7 +95,7 @@ export function NoteComposer({
           aria-label="Note body"
           className={cn(
             'w-full resize-none rounded-md border border-line bg-surface px-2.5 py-2',
-            'font-mono text-[12.5px] leading-relaxed text-ink',
+            'font-mono text-body leading-relaxed text-ink',
             'placeholder:text-ink-3 focus:border-accent-line',
           )}
         />
@@ -111,7 +111,7 @@ export function NoteComposer({
             Cancel
           </Button>
           <span className="flex-1" />
-          <span className="hidden items-center gap-1 text-[11px] text-ink-3 sm:inline-flex">
+          <span className="hidden items-center gap-1 text-meta text-ink-3 sm:inline-flex">
             <Kbd>esc</Kbd> to close
           </span>
         </div>

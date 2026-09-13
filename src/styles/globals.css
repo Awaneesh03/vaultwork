@@ -72,6 +72,29 @@
     ui-sans-serif, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
     sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+
+  /*
+   * The type scale — six steps, as pure font sizes.
+   *
+   * Separate from the semantic `.t-*` utilities, which also carry weight and
+   * leading. These exist to replace the 494 hand-picked `text-[Npx]` values
+   * that had accumulated across twenty distinct sizes, where the difference
+   * between 11px and 11.5px was nobody's decision.
+   *
+   * The steps are chosen to sit *on* the most frequent existing values rather
+   * than on round numbers, so adopting them moves roughly half the call sites
+   * by nothing at all and the rest by half a pixel. A prettier scale that
+   * shifted every row in the application would have been a worse trade.
+   *
+   * `micro` is the floor. Nothing below 10.5px, which retires the 9px and
+   * 9.5px text that had crept into the calendar and the knowledge graph.
+   */
+  --text-micro: 10.5px;
+  --text-meta: 11.5px;
+  --text-body: 12.5px;
+  --text-strong: 13.5px;
+  --text-title: 15px;
+  --text-display: 19px;
 }
 
 @layer base {

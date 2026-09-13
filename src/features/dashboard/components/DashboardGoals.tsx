@@ -25,16 +25,16 @@ export function DashboardGoals({ summary }: { summary: GoalDashboardSummary }) {
     <div className="flex flex-col">
       <div className="flex flex-wrap items-center gap-2 px-3.5 pb-1.5 pt-2.5">
         <span
-          className="tabular text-[15px] font-semibold text-ink"
+          className="tabular text-title font-semibold text-ink"
           aria-label={`${summary.activeCount} active goals`}
         >
           {summary.activeCount}
         </span>
-        <span className="text-[11.5px] text-ink-3">
+        <span className="text-meta text-ink-3">
           {summary.activeCount === 1 ? 'goal in progress' : 'goals in progress'}
         </span>
         {summary.overdueCount > 0 ? (
-          <span className="rounded-sm bg-danger-soft px-1.5 py-px text-[10.5px] text-danger">
+          <span className="rounded-sm bg-danger-soft px-1.5 py-px text-micro text-danger">
             {summary.overdueCount} overdue
           </span>
         ) : null}
@@ -46,19 +46,19 @@ export function DashboardGoals({ summary }: { summary: GoalDashboardSummary }) {
             <div className="flex items-baseline gap-2">
               <Link
                 to={`${ROUTES.goals}?goal=${goal.id}`}
-                className="min-w-0 flex-1 truncate text-[12.5px] text-ink-2 hover:text-accent"
+                className="min-w-0 flex-1 truncate text-body text-ink-2 hover:text-accent"
               >
                 {goal.title}
               </Link>
               <span
                 className={cn(
-                  'shrink-0 rounded-sm px-1.5 py-px text-[10px]',
+                  'shrink-0 rounded-sm px-1.5 py-px text-micro',
                   GOAL_HEALTH_CLASSES[goal.health],
                 )}
               >
                 {GOAL_HEALTH_LABELS[goal.health]}
               </span>
-              <span className="tabular shrink-0 text-[11px] text-ink-3">
+              <span className="tabular shrink-0 text-meta text-ink-3">
                 {goal.progress.percent}%
               </span>
             </div>
@@ -73,13 +73,13 @@ export function DashboardGoals({ summary }: { summary: GoalDashboardSummary }) {
       </ul>
 
       {summary.goals.length === 0 ? (
-        <p className="px-3.5 pb-2.5 pt-1 text-[12px] text-ink-3">
+        <p className="px-3.5 pb-2.5 pt-1 text-body text-ink-3">
           No active goals. A goal is an outcome you are working towards.
         </p>
       ) : null}
 
       {hidden > 0 ? (
-        <Link to={ROUTES.goals} className="px-3.5 py-1.5 text-[11px] text-ink-3 hover:text-accent">
+        <Link to={ROUTES.goals} className="px-3.5 py-1.5 text-meta text-ink-3 hover:text-accent">
           {hidden} more
         </Link>
       ) : null}

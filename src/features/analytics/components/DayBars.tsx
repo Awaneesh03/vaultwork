@@ -53,7 +53,7 @@ export function DayBars({ data, label, format = (value) => String(value) }: DayB
 
   return (
     <figure className="flex flex-col gap-2.5 rounded-lg border border-line bg-surface p-3.5 shadow-[var(--shadow-sm)]">
-      <figcaption id={captionId} className="text-[12.5px] font-medium text-ink-2">
+      <figcaption id={captionId} className="text-body font-medium text-ink-2">
         {label}
       </figcaption>
 
@@ -113,7 +113,7 @@ export function DayBars({ data, label, format = (value) => String(value) }: DayB
 
       {/* Endpoints and the peak. Labelling all ninety columns would crowd the
           axis without telling anyone anything the tooltip does not. */}
-      <div className="flex justify-between gap-2 font-mono text-[10.5px] text-ink-3">
+      <div className="flex justify-between gap-2 font-mono text-micro text-ink-3">
         <span>{data[0] ? formatDayMonth(data[0].date) : ''}</span>
         {peak.index >= 0 && data[peak.index] ? (
           <span className="text-accent">

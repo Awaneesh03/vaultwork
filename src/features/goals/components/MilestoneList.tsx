@@ -117,7 +117,7 @@ function Row({
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
             <span
               className={cn(
-                'text-[13px] leading-snug',
+                'text-strong leading-snug',
                 milestone.done ? 'text-ink-3 line-through' : 'text-ink',
               )}
             >
@@ -126,10 +126,7 @@ function Row({
 
             {milestone.targetDate !== null ? (
               <span
-                className={cn(
-                  'tabular shrink-0 text-[11px]',
-                  overdue ? 'text-danger' : 'text-ink-3',
-                )}
+                className={cn('tabular shrink-0 text-meta', overdue ? 'text-danger' : 'text-ink-3')}
               >
                 {formatGoalDate(milestone.targetDate, today)}
                 {overdue ? ' · late' : ''}
@@ -138,7 +135,7 @@ function Row({
 
             {tasks.total > 0 ? (
               <span
-                className="tabular shrink-0 rounded-sm bg-sunken px-1.5 py-px text-[10.5px] text-ink-3"
+                className="tabular shrink-0 rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-3"
                 aria-label={`${tasks.done} of ${tasks.total} tasks complete under ${milestone.title}`}
               >
                 {tasks.done}/{tasks.total} tasks

@@ -48,20 +48,20 @@ export function SyncItemRow({
     <li className="flex flex-col gap-1.5 px-2.5 py-2">
       <div className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
         {isDocument ? (
-          <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 truncate text-[13px] font-medium text-ink">
+          <span className="inline-flex min-w-0 max-w-full items-center gap-1.5 truncate text-strong font-medium text-ink">
             {/* The kind is shown, not merely implied by which list it is in. */}
             <FileText size={12} className="shrink-0 text-ink-3" aria-hidden />
             {item.title}
             <span className="sr-only"> (PDF document)</span>
           </span>
         ) : item.noteId === null ? (
-          <span className="min-w-0 max-w-full truncate text-[13px] font-medium text-ink">
+          <span className="min-w-0 max-w-full truncate text-strong font-medium text-ink">
             {item.title}
           </span>
         ) : (
           <Link
             to={`/notes/${item.noteId}`}
-            className="min-w-0 max-w-full truncate text-[13px] font-medium text-ink hover:text-accent"
+            className="min-w-0 max-w-full truncate text-strong font-medium text-ink hover:text-accent"
           >
             {item.title}
           </Link>
@@ -69,7 +69,7 @@ export function SyncItemRow({
         <SyncStatusBadge status={item.status} />
       </div>
 
-      <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-[11px] text-ink-3">
+      <p className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-meta text-ink-3">
         {item.previousPath ? (
           <>
             <span className="min-w-0 truncate font-mono" title={item.previousPath}>
@@ -88,12 +88,12 @@ export function SyncItemRow({
         ) : null}
       </p>
 
-      <p className="text-[11.5px] leading-relaxed text-ink-3">
+      <p className="text-meta leading-relaxed text-ink-3">
         {item.message ?? SYNC_STATUS_DESCRIPTIONS[item.status]}
       </p>
 
       {item.noteUpdatedAt !== null || item.fileUpdatedAt !== null ? (
-        <p className="flex flex-wrap gap-x-3 text-[11px] text-ink-3">
+        <p className="flex flex-wrap gap-x-3 text-meta text-ink-3">
           {item.noteUpdatedAt !== null ? (
             <span>Vaultwork changed {formatEventTime(item.noteUpdatedAt, now, today)}</span>
           ) : null}
@@ -104,7 +104,7 @@ export function SyncItemRow({
       ) : null}
 
       {options.length === 0 ? (
-        <p className="text-[11px] italic text-ink-3">
+        <p className="text-meta italic text-ink-3">
           Nothing can be done safely here. Resolve it in Obsidian, then scan again.
         </p>
       ) : (
@@ -124,7 +124,7 @@ export function SyncItemRow({
                 title={option.hint}
                 onClick={() => onDecide(option.decision)}
                 className={cn(
-                  'rounded-md border px-2 py-1 text-[11.5px] transition-colors',
+                  'rounded-md border px-2 py-1 text-meta transition-colors',
                   'duration-[var(--duration-fast)]',
                   chosen
                     ? option.destructive
@@ -144,7 +144,7 @@ export function SyncItemRow({
             <button
               type="button"
               onClick={onCompare}
-              className="inline-flex items-center gap-1 rounded-md border border-line px-2 py-1 text-[11.5px] text-ink-3 hover:border-line-strong hover:text-ink-2"
+              className="inline-flex items-center gap-1 rounded-md border border-line px-2 py-1 text-meta text-ink-3 hover:border-line-strong hover:text-ink-2"
             >
               <GitCompare size={11} aria-hidden />
               Compare

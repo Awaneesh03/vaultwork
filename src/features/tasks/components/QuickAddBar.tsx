@@ -61,7 +61,7 @@ export interface QuickAddBarProps {
 
 function Chip({ label, value }: { label: string; value: string }) {
   return (
-    <span className="inline-flex items-center gap-1 rounded-sm bg-sunken px-1.5 py-px text-[11px]">
+    <span className="inline-flex items-center gap-1 rounded-sm bg-sunken px-1.5 py-px text-meta">
       <span className="text-ink-3">{label}</span>
       <span className="text-ink-2">{value}</span>
     </span>
@@ -222,7 +222,7 @@ export function QuickAddBar({
           {draft.title.trim().length > 0 ? (
             <Chip label="title" value={draft.title} />
           ) : (
-            <span className="text-[11px] text-ink-3">Type a title.</span>
+            <span className="text-meta text-ink-3">Type a title.</span>
           )}
           {draft.dueDate ? (
             <Chip
@@ -248,7 +248,7 @@ export function QuickAddBar({
           {draft.description ? <Chip label="note" value={draft.description} /> : null}
 
           {parse.unknown.length > 0 ? (
-            <span className="inline-flex items-center gap-1 text-[11px] text-warn">
+            <span className="inline-flex items-center gap-1 text-meta text-warn">
               <AlertCircle size={11} aria-hidden />
               kept in the title: {parse.unknown.join(' ')}
             </span>
@@ -257,7 +257,7 @@ export function QuickAddBar({
       ) : (
         <div className="hidden flex-wrap items-center gap-x-3 gap-y-1 border-t border-line px-3 py-2 sm:flex">
           {SYNTAX_HINTS.map((hint) => (
-            <span key={hint.token} className="inline-flex items-center gap-1.5 text-[11px]">
+            <span key={hint.token} className="inline-flex items-center gap-1.5 text-meta">
               <Kbd>{hint.token}</Kbd>
               <span className="text-ink-3">{hint.means}</span>
             </span>

@@ -37,7 +37,7 @@ function Notice({ tone, children }: { tone: 'warn' | 'plain'; children: React.Re
       {tone === 'warn' ? (
         <AlertTriangle size={14} className="mt-0.5 shrink-0 text-danger" aria-hidden />
       ) : null}
-      <div className="min-w-0 flex-1 text-[13px] text-ink">{children}</div>
+      <div className="min-w-0 flex-1 text-strong text-ink">{children}</div>
     </div>
   )
 }
@@ -63,7 +63,7 @@ function StepChoices({
 }) {
   return (
     <fieldset className="flex flex-col gap-2" disabled={disabled}>
-      <legend className="text-[12.5px] text-ink-2">
+      <legend className="text-body text-ink-2">
         {`Which task did you mean for “${step.query}”?`}
       </legend>
       <div className="flex flex-col gap-1.5">
@@ -75,18 +75,18 @@ function StepChoices({
               type="button"
               aria-pressed={picked}
               onClick={() => onChoose(step.id, choice.id)}
-              className={`flex items-center gap-2.5 rounded-md border px-3 py-2 text-left text-[13px] transition-colors ${
+              className={`flex items-center gap-2.5 rounded-md border px-3 py-2 text-left text-strong transition-colors ${
                 picked
                   ? 'border-accent-line bg-accent-soft text-ink'
                   : 'border-line bg-surface text-ink-2 hover:border-accent-line hover:text-ink'
               }`}
             >
-              <span className="tabular shrink-0 font-mono text-[12px] text-ink-3">
+              <span className="tabular shrink-0 font-mono text-body text-ink-3">
                 {choice.index}.
               </span>
               <span className="min-w-0 break-words">{choice.label}</span>
               {picked ? (
-                <span className="ml-auto shrink-0 text-[11.5px] text-ink-3">chosen</span>
+                <span className="ml-auto shrink-0 text-meta text-ink-3">chosen</span>
               ) : null}
             </button>
           )
@@ -113,13 +113,13 @@ export function AiTurnView({
 }) {
   return (
     <article className="flex flex-col gap-3">
-      <p className="self-end max-w-[85%] break-words rounded-lg border border-line bg-elevated px-3 py-2 text-[13px] text-ink">
+      <p className="self-end max-w-[85%] break-words rounded-lg border border-line bg-elevated px-3 py-2 text-strong text-ink">
         {request}
       </p>
 
       {result === null ? (
         <Bubble>
-          <p className="text-[13px] text-ink-3" role="status" aria-live="polite">
+          <p className="text-strong text-ink-3" role="status" aria-live="polite">
             Thinking…
           </p>
         </Bubble>
@@ -127,7 +127,7 @@ export function AiTurnView({
 
       {result?.kind === 'answer' ? (
         <Bubble>
-          <div className="text-[13.5px] leading-relaxed text-ink">
+          <div className="text-strong leading-relaxed text-ink">
             <Markdown source={result.message} />
           </div>
         </Bubble>
@@ -136,15 +136,15 @@ export function AiTurnView({
       {result?.kind === 'clarification' ? (
         <Bubble>
           <div className="flex flex-col gap-2">
-            <p className="text-[13.5px] text-ink">{result.message}</p>
+            <p className="text-strong text-ink">{result.message}</p>
             <ul className="flex flex-col gap-1 pl-4">
               {result.options.map((option) => (
-                <li key={option} className="list-disc break-words text-[13px] text-ink-2">
+                <li key={option} className="list-disc break-words text-strong text-ink-2">
                   {option}
                 </li>
               ))}
             </ul>
-            <p className="text-[12px] text-ink-3">Ask again with the one you meant.</p>
+            <p className="text-body text-ink-3">Ask again with the one you meant.</p>
           </div>
         </Bubble>
       ) : null}
@@ -152,7 +152,7 @@ export function AiTurnView({
       {result?.kind === 'choices' ? (
         <Bubble>
           <div className="flex flex-col gap-3">
-            <p className="text-[13.5px] text-ink">{result.message}</p>
+            <p className="text-strong text-ink">{result.message}</p>
             {result.steps.map((step) =>
               step.status === 'ambiguous' ? (
                 <StepChoices
@@ -174,7 +174,7 @@ export function AiTurnView({
                 Use this
               </Button>
             </div>
-            <p className="text-[11.5px] text-ink-3">
+            <p className="text-meta text-ink-3">
               You will still be asked to confirm before anything changes.
             </p>
           </div>
@@ -185,7 +185,7 @@ export function AiTurnView({
         <Bubble>
           <Notice tone="warn">
             <p className="break-words">{result.message}</p>
-            <p className="mt-1 text-[12px] text-ink-3">
+            <p className="mt-1 text-body text-ink-3">
               Nothing was changed. Try naming it the way it appears in your list.
             </p>
           </Notice>

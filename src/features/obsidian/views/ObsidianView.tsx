@@ -43,7 +43,7 @@ const ORDER: SyncStatus[] = [
 function CountChip({ status, count }: { status: SyncStatus; count: number }) {
   return (
     <span
-      className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-2 py-1 text-[11.5px] text-ink-2"
+      className="inline-flex items-center gap-1.5 rounded-md border border-line bg-surface px-2 py-1 text-meta text-ink-2"
       title={SYNC_STATUS_DESCRIPTIONS[status]}
     >
       <SyncStatusBadge status={status} />
@@ -100,7 +100,7 @@ export function ObsidianView() {
             </Button>
             <Link
               to="/obsidian/sync"
-              className="inline-flex h-7 items-center gap-1.5 rounded-md border border-line px-2.5 text-[12.5px] font-medium text-ink-2 hover:border-accent-line hover:text-ink"
+              className="inline-flex h-7 items-center gap-1.5 rounded-md border border-line px-2.5 text-body font-medium text-ink-2 hover:border-accent-line hover:text-ink"
             >
               <GitCompare size={12} aria-hidden />
               Sync center
@@ -125,7 +125,7 @@ export function ObsidianView() {
           </div>
 
           {scan === null ? (
-            <p className="text-[12.5px] text-ink-3">
+            <p className="text-body text-ink-3">
               Scan to see what is in sync before changing anything.
             </p>
           ) : (
@@ -147,7 +147,7 @@ export function ObsidianView() {
               {scan.errors.length > 0 ? (
                 <div
                   role="alert"
-                  className="flex flex-col gap-1 rounded-md border border-danger/40 bg-danger-soft px-2.5 py-2 text-[12px] text-danger"
+                  className="flex flex-col gap-1 rounded-md border border-danger/40 bg-danger-soft px-2.5 py-2 text-body text-danger"
                 >
                   <span className="inline-flex items-start gap-1.5">
                     <AlertCircle size={12} className="mt-[2px] shrink-0" aria-hidden />
@@ -157,7 +157,7 @@ export function ObsidianView() {
                   </span>
                   <ul className="flex flex-col gap-0.5 pl-5">
                     {scan.errors.slice(0, 5).map((entry) => (
-                      <li key={entry.path} className="break-words font-mono text-[11.5px]">
+                      <li key={entry.path} className="break-words font-mono text-meta">
                         {entry.path} — {entry.message}
                       </li>
                     ))}
@@ -188,7 +188,7 @@ export function ObsidianView() {
                 ).map(([label, count, tone]) => (
                   <div key={label} className="flex flex-col gap-0.5 bg-surface px-3 py-2.5">
                     <dt className="t-eyebrow text-ink-3">{label}</dt>
-                    <dd className={`tabular text-[20px] leading-none font-semibold ${tone}`}>
+                    <dd className={`tabular text-display leading-none font-semibold ${tone}`}>
                       {count}
                     </dd>
                   </div>
@@ -196,7 +196,7 @@ export function ObsidianView() {
               </dl>
 
               {scan.untrackedDocuments.length > 0 ? (
-                <p className="flex flex-wrap items-center gap-1.5 text-[12px] text-ink-2">
+                <p className="flex flex-wrap items-center gap-1.5 text-body text-ink-2">
                   <FileText size={12} className="shrink-0 text-ink-3" aria-hidden />
                   {scan.untrackedDocuments.length} PDF
                   {scan.untrackedDocuments.length === 1 ? '' : 's'} not read yet.
@@ -213,7 +213,7 @@ export function ObsidianView() {
               scan.reports.length === 0 ? (
                 <p
                   role="status"
-                  className="flex flex-col gap-1 rounded-md border border-line bg-sunken px-2.5 py-2 text-[12px] text-ink-2"
+                  className="flex flex-col gap-1 rounded-md border border-line bg-sunken px-2.5 py-2 text-body text-ink-2"
                 >
                   <span className="inline-flex items-start gap-1.5">
                     <FileQuestion size={12} className="mt-[2px] shrink-0" aria-hidden />
@@ -222,7 +222,7 @@ export function ObsidianView() {
                     or PDFs.
                   </span>
                   {scan.skipped.examples.length > 0 ? (
-                    <span className="pl-5 break-words font-mono text-[11px] text-ink-3">
+                    <span className="pl-5 break-words font-mono text-meta text-ink-3">
                       {scan.skipped.examples.join(', ')}
                     </span>
                   ) : null}
@@ -236,7 +236,7 @@ export function ObsidianView() {
               {scan.counts.conflict > 0 ? (
                 <p
                   role="alert"
-                  className="inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger"
+                  className="inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger"
                 >
                   <AlertCircle size={12} className="mt-[2px] shrink-0" aria-hidden />
                   {scan.counts.conflict} note{scan.counts.conflict === 1 ? '' : 's'} changed on both
@@ -244,7 +244,7 @@ export function ObsidianView() {
                 </p>
               ) : null}
 
-              {bulk ? <p className="text-[12px] text-ink-2">{bulk}</p> : null}
+              {bulk ? <p className="text-body text-ink-2">{bulk}</p> : null}
 
               <ul className="flex flex-col divide-y divide-line rounded-md border border-line">
                 {scan.reports
@@ -253,11 +253,11 @@ export function ObsidianView() {
                   .map((report) => (
                     <li
                       key={report.noteId}
-                      className="flex flex-wrap items-center gap-2 px-2.5 py-1.5 text-[12.5px]"
+                      className="flex flex-wrap items-center gap-2 px-2.5 py-1.5 text-body"
                     >
                       <Link
                         to={`/notes/${report.noteId}`}
-                        className="min-w-0 flex-1 truncate font-mono text-[11.5px] text-ink-2 hover:text-accent"
+                        className="min-w-0 flex-1 truncate font-mono text-meta text-ink-2 hover:text-accent"
                         title={report.vaultPath ?? 'No vault path'}
                       >
                         {report.vaultPath ?? 'No vault path'}
@@ -274,10 +274,10 @@ export function ObsidianView() {
                     {scan.untracked.slice(0, 10).map((path) => (
                       <li
                         key={path}
-                        className="flex flex-wrap items-center gap-2 px-2.5 py-1.5 text-[12.5px]"
+                        className="flex flex-wrap items-center gap-2 px-2.5 py-1.5 text-body"
                       >
                         <span
-                          className="min-w-0 flex-1 truncate font-mono text-[11.5px] text-ink-2"
+                          className="min-w-0 flex-1 truncate font-mono text-meta text-ink-2"
                           title={path}
                         >
                           {path}
@@ -293,7 +293,7 @@ export function ObsidianView() {
                       </li>
                     ))}
                   </ul>
-                  <p className="text-[11px] text-ink-3">
+                  <p className="text-meta text-ink-3">
                     Export never deletes these. They are yours.
                   </p>
                 </section>
@@ -304,7 +304,7 @@ export function ObsidianView() {
           {vaultScan.error ? (
             <p
               role="alert"
-              className="rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger"
+              className="rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger"
             >
               {vaultScan.error}
             </p>
@@ -362,9 +362,9 @@ function ImportConfirmation({
         }}
         className="flex w-full max-w-md flex-col gap-3 rounded-lg border border-line bg-elevated p-4 shadow-xl [animation:panel-in_var(--duration-base)_var(--ease-out)]"
       >
-        <h2 className="text-[14px] font-semibold tracking-tight text-ink">Import from Obsidian</h2>
+        <h2 className="text-strong font-semibold tracking-tight text-ink">Import from Obsidian</h2>
 
-        <dl className="flex flex-col gap-1.5 text-[12.5px]">
+        <dl className="flex flex-col gap-1.5 text-body">
           <div className="flex gap-2">
             <dt className="w-20 shrink-0 text-ink-3">Title</dt>
             <dd className="min-w-0 flex-1 truncate text-ink">{preview.title}</dd>
@@ -372,7 +372,7 @@ function ImportConfirmation({
           <div className="flex gap-2">
             <dt className="w-20 shrink-0 text-ink-3">File</dt>
             <dd
-              className="min-w-0 flex-1 truncate font-mono text-[11.5px] text-ink-2"
+              className="min-w-0 flex-1 truncate font-mono text-meta text-ink-2"
               title={preview.path}
             >
               {preview.path}
@@ -396,7 +396,7 @@ function ImportConfirmation({
           <p
             role="alert"
             className={cn(
-              'inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger',
+              'inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger',
             )}
           >
             <AlertCircle size={12} className="mt-[2px] shrink-0" aria-hidden />

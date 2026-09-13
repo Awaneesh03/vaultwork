@@ -23,7 +23,7 @@ export function DesktopSection() {
 
   return (
     <div className="flex flex-col gap-2">
-      <label className="flex items-start gap-2.5 text-[12.5px] text-ink">
+      <label className="flex items-start gap-2.5 text-body text-ink">
         <input
           type="checkbox"
           className="mt-[3px]"
@@ -33,7 +33,7 @@ export function DesktopSection() {
         />
         <span className="flex flex-col gap-0.5">
           <span className="font-medium">Launch Vaultwork at login</span>
-          <span className="text-[12px] text-ink-3">
+          <span className="text-body text-ink-3">
             Adds Vaultwork to your macOS login items. Combine it with “Start Telegram automatically”
             if you want the bot answering before you open the window.
           </span>
@@ -41,7 +41,7 @@ export function DesktopSection() {
       </label>
 
       {launch.error !== null ? (
-        <p role="alert" className="text-[12px] text-danger">
+        <p role="alert" className="text-body text-danger">
           {launch.error}
         </p>
       ) : null}

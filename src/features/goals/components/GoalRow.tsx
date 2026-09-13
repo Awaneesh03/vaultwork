@@ -96,7 +96,7 @@ export function GoalRow({
             onClick={onOpen}
             title={goal.title}
             className={cn(
-              'min-w-0 max-w-full truncate text-left text-[13.5px] font-medium leading-snug',
+              'min-w-0 max-w-full truncate text-left text-strong font-medium leading-snug',
               completed ? 'text-ink-2' : 'text-ink',
               'hover:text-accent',
             )}
@@ -106,7 +106,7 @@ export function GoalRow({
 
           <span
             className={cn(
-              'shrink-0 rounded-sm px-1.5 py-px text-[10.5px]',
+              'shrink-0 rounded-sm px-1.5 py-px text-micro',
               GOAL_HEALTH_CLASSES[health],
             )}
           >
@@ -114,21 +114,19 @@ export function GoalRow({
           </span>
 
           {goal.targetDate !== null && !completed ? (
-            <span className="tabular shrink-0 text-[11px] text-ink-3">
+            <span className="tabular shrink-0 text-meta text-ink-3">
               {formatGoalDate(goal.targetDate, today)}
             </span>
           ) : null}
 
           {goal.status === 'paused' || archived ? (
-            <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-[10.5px] text-ink-3">
+            <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-3">
               {GOAL_STATUS_LABELS[goal.status]}
             </span>
           ) : null}
         </div>
 
-        {goal.why ? (
-          <p className="mt-0.5 line-clamp-1 text-[11.5px] text-ink-3">{goal.why}</p>
-        ) : null}
+        {goal.why ? <p className="mt-0.5 line-clamp-1 text-meta text-ink-3">{goal.why}</p> : null}
 
         <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1.5">
           <GoalProgress
@@ -138,14 +136,14 @@ export function GoalRow({
             className="w-full max-w-[180px]"
           />
 
-          <span className="tabular whitespace-nowrap text-[11.5px] text-ink-3">
+          <span className="tabular whitespace-nowrap text-meta text-ink-3">
             <span className="text-ink-2">{progress.percent}%</span> ·{' '}
             {describeBasis(milestones.total, tasks.total)}
           </span>
 
           {milestones.total > 0 ? (
             <span
-              className="tabular whitespace-nowrap text-[11.5px] text-ink-3"
+              className="tabular whitespace-nowrap text-meta text-ink-3"
               aria-label={`${milestones.done} of ${milestones.total} milestones complete`}
             >
               {milestones.done}/{milestones.total} done
@@ -154,7 +152,7 @@ export function GoalRow({
 
           {tasks.total > 0 && milestones.total > 0 ? (
             <span
-              className="tabular hidden whitespace-nowrap text-[11.5px] text-ink-3 sm:inline"
+              className="tabular hidden whitespace-nowrap text-meta text-ink-3 sm:inline"
               aria-label={`${tasks.done} of ${tasks.total} related tasks complete`}
             >
               {tasks.done}/{tasks.total} tasks
@@ -162,7 +160,7 @@ export function GoalRow({
           ) : null}
 
           {overdueMilestones > 0 ? (
-            <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-[11.5px] text-danger">
+            <span className="inline-flex shrink-0 items-center gap-1 whitespace-nowrap text-meta text-danger">
               <Flag size={10} aria-hidden />
               {overdueMilestones} late
             </span>

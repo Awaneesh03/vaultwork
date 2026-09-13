@@ -87,7 +87,7 @@ function Row({
 
       <span
         className={cn(
-          'min-w-0 flex-1 truncate text-[13px]',
+          'min-w-0 flex-1 truncate text-strong',
           subtask.done ? 'text-ink-3 line-through decoration-ink-3/50' : 'text-ink-2',
         )}
       >
@@ -172,7 +172,7 @@ export function SubtaskList({ subtasks, onAdd, onToggle, onDelete, onMove }: Sub
           onBlur={submit}
           placeholder="Add a subtask…"
           aria-label="Add a subtask"
-          className="h-7 flex-1 bg-transparent text-[13px] text-ink placeholder:text-ink-3"
+          className="h-7 flex-1 bg-transparent text-strong text-ink placeholder:text-ink-3"
         />
       </div>
     </div>
@@ -211,7 +211,7 @@ export function DraftSubtaskList({
               className="h-[15px] w-[15px] shrink-0 rounded-sm border border-line-strong"
               aria-hidden
             />
-            <span className="min-w-0 flex-1 truncate text-[13px] text-ink-2">{title}</span>
+            <span className="min-w-0 flex-1 truncate text-strong text-ink-2">{title}</span>
             <button
               type="button"
               onClick={() => onChange(titles.filter((_, i) => i !== index))}
@@ -238,7 +238,7 @@ export function DraftSubtaskList({
           onBlur={submit}
           placeholder="Add a subtask…"
           aria-label="Add a subtask"
-          className="h-7 flex-1 bg-transparent text-[13px] text-ink placeholder:text-ink-3"
+          className="h-7 flex-1 bg-transparent text-strong text-ink placeholder:text-ink-3"
         />
       </div>
     </div>

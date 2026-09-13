@@ -156,7 +156,7 @@ export function NoteDetailView() {
         title="No such note"
         description="It may have been permanently deleted."
         action={
-          <Link to="/notes" className="text-[12.5px] text-accent underline decoration-dotted">
+          <Link to="/notes" className="text-body text-accent underline decoration-dotted">
             Back to notes
           </Link>
         }
@@ -172,7 +172,7 @@ export function NoteDetailView() {
         <div className="flex flex-wrap items-center gap-2">
           <Link
             to="/notes"
-            className="inline-flex items-center gap-1 text-[12px] text-ink-3 hover:text-accent"
+            className="inline-flex items-center gap-1 text-body text-ink-3 hover:text-accent"
           >
             <ArrowLeft size={12} aria-hidden />
             Notes
@@ -226,12 +226,12 @@ export function NoteDetailView() {
           aria-label="Note title"
           className={cn(
             'w-full rounded-md border border-transparent bg-transparent px-1 py-1',
-            'text-[19px] font-semibold tracking-tight text-ink',
+            'text-display font-semibold tracking-tight text-ink',
             'placeholder:text-ink-3 hover:border-line focus:border-accent-line focus:bg-surface',
           )}
         />
 
-        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-[11.5px] text-ink-3">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 px-1 text-meta text-ink-3">
           <span>Edited {formatEventTime(detail.note.updatedAt, detail.now, detail.today)}</span>
           {detail.tags.length > 0 ? (
             <span className="inline-flex items-center gap-1">
@@ -241,7 +241,7 @@ export function NoteDetailView() {
           ) : null}
           {detail.note.vaultPath ? (
             <span
-              className="inline-flex items-center gap-1 font-mono text-[10.5px]"
+              className="inline-flex items-center gap-1 font-mono text-micro"
               title="Where this note will live in your Obsidian vault"
             >
               <FolderTree size={10} aria-hidden />
@@ -249,7 +249,7 @@ export function NoteDetailView() {
             </span>
           ) : null}
           {deleted ? (
-            <span className="rounded-sm bg-sunken px-1.5 py-px text-[10.5px]">Deleted</span>
+            <span className="rounded-sm bg-sunken px-1.5 py-px text-micro">Deleted</span>
           ) : null}
         </div>
       </header>

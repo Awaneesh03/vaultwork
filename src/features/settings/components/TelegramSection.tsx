@@ -23,8 +23,8 @@ export function TelegramSection() {
   if (!telegram.supported) {
     return (
       <div className="flex flex-col gap-2">
-        <p className="text-[12.5px] text-ink-2">Unsupported in this runtime.</p>
-        <p className="max-w-prose text-[12.5px] text-ink-3">
+        <p className="text-body text-ink-2">Unsupported in this runtime.</p>
+        <p className="max-w-prose text-body text-ink-3">
           Telegram needs a process that stays running, which a browser tab is not. Open the desktop
           app to connect a bot.
         </p>
@@ -34,7 +34,7 @@ export function TelegramSection() {
 
   return (
     <div className="flex flex-col gap-3.5">
-      <dl className="flex flex-col gap-1.5 font-mono text-[12px] text-ink-2">
+      <dl className="flex flex-col gap-1.5 font-mono text-body text-ink-2">
         <div className="flex justify-between gap-3">
           <dt>status</dt>
           <dd className={status.running ? 'text-ok' : 'text-ink'}>{state}</dd>
@@ -54,12 +54,12 @@ export function TelegramSection() {
       </dl>
 
       {status.lastError !== null ? (
-        <p className="text-[12.5px] text-danger">{status.lastError}</p>
+        <p className="text-body text-danger">{status.lastError}</p>
       ) : null}
 
       {!status.configured ? (
         <div className="flex flex-col gap-2">
-          <label className="flex flex-col gap-1 text-[12.5px] text-ink-2">
+          <label className="flex flex-col gap-1 text-body text-ink-2">
             Bot token
             <input
               type="password"
@@ -69,10 +69,10 @@ export function TelegramSection() {
               aria-label="Telegram bot token"
               autoComplete="off"
               spellCheck={false}
-              className="rounded-md border border-line bg-surface px-2.5 py-1.5 font-mono text-[12px] text-ink placeholder:text-ink-3 focus:border-accent-line"
+              className="rounded-md border border-line bg-surface px-2.5 py-1.5 font-mono text-body text-ink placeholder:text-ink-3 focus:border-accent-line"
             />
           </label>
-          <p className="max-w-prose text-[12px] text-ink-3">
+          <p className="max-w-prose text-body text-ink-3">
             Saved to your operating system&apos;s credential store, never to Vaultwork&apos;s
             database or a backup file. It is not shown again after saving.
           </p>
@@ -97,12 +97,12 @@ export function TelegramSection() {
 
       {status.configured && status.pendingChatId !== null ? (
         <div className="flex flex-col gap-2 rounded-lg border border-accent-line bg-accent-soft p-3">
-          <p className="text-[12.5px] text-ink">
+          <p className="text-body text-ink">
             {status.pendingChatName === null
               ? 'A chat is asking for access.'
               : `${status.pendingChatName} is asking for access.`}
           </p>
-          <p className="text-[12px] text-ink-2">
+          <p className="text-body text-ink-2">
             Approve it only if that is you. The approved chat can create, complete and delete your
             tasks.
           </p>
@@ -168,7 +168,7 @@ export function TelegramSection() {
         <div className="flex flex-col gap-2 rounded-lg border border-line bg-sunken p-3">
           <h4 className="t-eyebrow text-ink-3">Automation</h4>
 
-          <label className="flex items-start gap-2.5 text-[12.5px] text-ink">
+          <label className="flex items-start gap-2.5 text-body text-ink">
             <input
               type="checkbox"
               className="mt-[3px]"
@@ -178,7 +178,7 @@ export function TelegramSection() {
             />
             <span className="flex flex-col gap-0.5">
               <span className="font-medium">Start Telegram automatically</span>
-              <span className="text-[12px] text-ink-3">
+              <span className="text-body text-ink-3">
                 Starts the worker when Vaultwork opens, so you do not have to come here and press
                 Start. Turning the bot off here, or disconnecting it, also turns this off.
               </span>
@@ -191,7 +191,7 @@ export function TelegramSection() {
             that answers overnight should learn that here and not by wondering
             why nothing replied.
           */}
-          <p className="border-t border-line pt-2 text-[11.5px] text-ink-3">
+          <p className="border-t border-line pt-2 text-meta text-ink-3">
             Telegram runs only while Vaultwork is running. Closing the app stops the bot until you
             open it again.
           </p>
@@ -200,8 +200,8 @@ export function TelegramSection() {
 
       {confirmingDisconnect ? (
         <div className="flex flex-col gap-2 rounded-lg border border-line bg-surface p-3">
-          <p className="text-[12.5px] text-ink">Remove the bot token?</p>
-          <p className="text-[12px] text-ink-2">
+          <p className="text-body text-ink">Remove the bot token?</p>
+          <p className="text-body text-ink-2">
             Stops polling and clears the token and the authorized chat from this machine. Your
             tasks, notes, projects, goals, habits and Obsidian vault are untouched.
           </p>
@@ -225,10 +225,7 @@ export function TelegramSection() {
       ) : null}
 
       {telegram.notice !== null ? (
-        <p
-          role="status"
-          className={`text-[12.5px] ${telegram.notice.ok ? 'text-ok' : 'text-danger'}`}
-        >
+        <p role="status" className={`text-body ${telegram.notice.ok ? 'text-ok' : 'text-danger'}`}>
           {telegram.notice.text}
         </p>
       ) : null}

@@ -141,7 +141,7 @@ export function TaskRow({
             type="button"
             onClick={onOpen}
             className={cn(
-              'min-w-0 truncate text-left text-[13.5px] leading-snug',
+              'min-w-0 truncate text-left text-strong leading-snug',
               'transition-colors duration-[var(--duration-base)]',
               done ? 'text-ink-3 line-through decoration-ink-3/40' : 'text-ink hover:text-accent',
             )}
@@ -152,7 +152,7 @@ export function TaskRow({
         </div>
 
         {hasMeta ? (
-          <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[11.5px] text-ink-3">
+          <div className="mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-0.5 text-meta text-ink-3">
             {hideDueDate ? null : <DueDate task={task} today={today} />}
 
             {task.dueTime ? (
@@ -181,7 +181,7 @@ export function TaskRow({
             {taskTags.map((tag) => (
               <span
                 key={tag.id}
-                className="rounded-sm bg-sunken px-1.5 py-px text-[10.5px] text-ink-2"
+                className="rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-2"
               >
                 #{tag.name}
               </span>

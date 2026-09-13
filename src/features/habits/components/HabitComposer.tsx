@@ -35,7 +35,7 @@ const FREQUENCIES: { id: HabitFrequency; label: string; hint: string }[] = [
 ]
 
 const FIELD =
-  'w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-[13px] text-ink placeholder:text-ink-3 focus:border-accent-line'
+  'w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-strong text-ink placeholder:text-ink-3 focus:border-accent-line'
 
 function Label({ htmlFor, children }: { htmlFor?: string; children: string }) {
   return (
@@ -127,7 +127,7 @@ export function HabitComposer({
         }}
       >
         <header className="flex items-center gap-2 border-b border-line px-4 py-3">
-          <h2 className="flex-1 text-[14px] font-semibold tracking-tight text-ink">
+          <h2 className="flex-1 text-strong font-semibold tracking-tight text-ink">
             {editing ? 'Edit habit' : 'New habit'}
           </h2>
           <button
@@ -159,7 +159,7 @@ export function HabitComposer({
               <p
                 id={`${ids}-error`}
                 role="alert"
-                className="inline-flex items-center gap-1 text-[11.5px] text-danger"
+                className="inline-flex items-center gap-1 text-meta text-danger"
               >
                 <AlertCircle size={11} aria-hidden />
                 {message}
@@ -178,7 +178,7 @@ export function HabitComposer({
                   aria-pressed={value.frequency === frequency.id}
                   title={frequency.hint}
                   className={cn(
-                    'rounded-md border px-2 py-1.5 text-left text-[12.5px] transition-colors',
+                    'rounded-md border px-2 py-1.5 text-left text-body transition-colors',
                     value.frequency === frequency.id
                       ? 'border-accent bg-accent-soft text-ink'
                       : 'border-line text-ink-2 hover:border-line-strong hover:text-ink',
@@ -204,7 +204,7 @@ export function HabitComposer({
                       aria-pressed={on}
                       aria-label={WEEKDAY_NAMES[day] ?? ''}
                       className={cn(
-                        'grid h-7 w-7 place-items-center rounded-md border text-[12px] transition-colors',
+                        'grid h-7 w-7 place-items-center rounded-md border text-body transition-colors',
                         on
                           ? 'border-accent bg-accent-soft font-medium text-ink'
                           : 'border-line text-ink-3 hover:border-line-strong hover:text-ink',
@@ -258,7 +258,7 @@ export function HabitComposer({
         </div>
 
         <footer className="flex items-center gap-2 border-t border-line px-4 py-3">
-          <span className="flex-1 text-[11px] text-ink-3">
+          <span className="flex-1 text-meta text-ink-3">
             <Kbd>esc</Kbd> to cancel
           </span>
           <Button variant="ghost" size="sm" onClick={onCancel}>

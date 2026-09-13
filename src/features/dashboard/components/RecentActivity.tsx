@@ -30,7 +30,7 @@ export function RecentActivity({
 
         return (
           <li key={entry.id} className="flex items-baseline gap-2.5 px-3.5 py-2">
-            <span className="min-w-0 flex-1 truncate text-[12.5px] text-ink-2">
+            <span className="min-w-0 flex-1 truncate text-body text-ink-2">
               {entry.href ? (
                 <Link to={entry.href} className="hover:text-accent">
                   {entry.label}
@@ -43,7 +43,7 @@ export function RecentActivity({
                 attribute is the instant it actually refers to. */}
             <time
               dateTime={new Date(entry.at).toISOString()}
-              className="tabular shrink-0 text-[11px] text-ink-3"
+              className="tabular shrink-0 text-meta text-ink-3"
             >
               {when}
             </time>

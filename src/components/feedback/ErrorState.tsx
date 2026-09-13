@@ -18,9 +18,9 @@ export function ErrorState({
     <div className="flex flex-col items-start gap-3 rounded-lg border border-line bg-surface p-5">
       <div className="flex items-center gap-2 text-danger">
         <AlertTriangle size={16} aria-hidden />
-        <p className="text-[13.5px] font-medium">{title}</p>
+        <p className="text-strong font-medium">{title}</p>
       </div>
-      <p className="font-mono text-[12.5px] leading-relaxed text-ink-2">{error.message}</p>
+      <p className="font-mono text-body leading-relaxed text-ink-2">{error.message}</p>
       {onRetry ? (
         <Button size="sm" onClick={onRetry}>
           Try again

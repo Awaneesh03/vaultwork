@@ -30,7 +30,7 @@ const TODAY: { id: HabitTodayFilter; label: string }[] = [
 const FREQUENCIES: (HabitFrequency | 'any')[] = ['any', 'daily', 'weekdays', 'custom', 'weekly']
 
 const SELECT =
-  'h-7 rounded-md border border-line bg-surface px-2 text-[12.5px] text-ink-2 hover:border-line-strong focus:border-accent-line'
+  'h-7 rounded-md border border-line bg-surface px-2 text-body text-ink-2 hover:border-line-strong focus:border-accent-line'
 
 export function HabitToolbar({
   filter,
@@ -81,7 +81,7 @@ export function HabitToolbar({
           }}
           placeholder="Search habits by name…"
           aria-label="Search habits"
-          className="min-w-0 flex-1 bg-transparent text-[12.5px] text-ink placeholder:text-ink-3"
+          className="min-w-0 flex-1 bg-transparent text-body text-ink placeholder:text-ink-3"
         />
         {filter.search.length > 0 ? (
           <button
@@ -110,14 +110,14 @@ export function HabitToolbar({
               onClick={() => onState(state.id)}
               aria-pressed={filter.state === state.id}
               className={cn(
-                'inline-flex h-6 items-center gap-1.5 rounded px-2 text-[12px] transition-colors',
+                'inline-flex h-6 items-center gap-1.5 rounded px-2 text-body transition-colors',
                 filter.state === state.id
                   ? 'bg-accent-soft font-medium text-ink'
                   : 'text-ink-3 hover:text-ink',
               )}
             >
               {state.label}
-              <span className="tabular text-[10.5px] text-ink-3">{countFor(state.id)}</span>
+              <span className="tabular text-micro text-ink-3">{countFor(state.id)}</span>
             </button>
           ))}
         </div>

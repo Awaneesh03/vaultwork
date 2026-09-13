@@ -26,8 +26,8 @@ export function AssistantSection() {
   if (!ai.available) {
     return (
       <div className="flex flex-col gap-2">
-        <p className="text-[12.5px] text-ink-2">Unsupported in this runtime.</p>
-        <p className="max-w-prose text-[12.5px] text-ink-3">
+        <p className="text-body text-ink-2">Unsupported in this runtime.</p>
+        <p className="max-w-prose text-body text-ink-3">
           A browser cannot hold a provider key — anything in the bundle is public. Open the desktop
           app to configure the assistant.
         </p>
@@ -37,7 +37,7 @@ export function AssistantSection() {
 
   return (
     <div className="flex flex-col gap-3.5">
-      <dl className="flex flex-col gap-1.5 font-mono text-[12px] text-ink-2">
+      <dl className="flex flex-col gap-1.5 font-mono text-body text-ink-2">
         <div className="flex justify-between gap-3">
           <dt>status</dt>
           <dd className={status.enabled ? 'text-ok' : 'text-ink'}>
@@ -63,12 +63,12 @@ export function AssistantSection() {
       </dl>
 
       {status.lastError !== null ? (
-        <p className="text-[12.5px] text-danger">{status.lastError}</p>
+        <p className="text-body text-danger">{status.lastError}</p>
       ) : null}
 
       {!status.configured ? (
         <div className="flex flex-col gap-2">
-          <label className="flex flex-col gap-1 text-[12.5px] text-ink-2">
+          <label className="flex flex-col gap-1 text-body text-ink-2">
             Provider API key
             <input
               type="password"
@@ -78,10 +78,10 @@ export function AssistantSection() {
               aria-label="AI provider API key"
               autoComplete="off"
               spellCheck={false}
-              className="rounded-md border border-line bg-surface px-2.5 py-1.5 font-mono text-[12px] text-ink placeholder:text-ink-3 focus:border-accent-line"
+              className="rounded-md border border-line bg-surface px-2.5 py-1.5 font-mono text-body text-ink placeholder:text-ink-3 focus:border-accent-line"
             />
           </label>
-          <p className="max-w-prose text-[12px] text-ink-3">
+          <p className="max-w-prose text-body text-ink-3">
             Saved to your operating system&apos;s credential store, never to Vaultwork&apos;s
             database or a backup file. It is not shown again after saving, and the assistant stays
             switched off until you enable it below.
@@ -122,7 +122,7 @@ export function AssistantSection() {
       ) : null}
 
       {status.configured ? (
-        <label className="flex items-center gap-2 text-[12.5px] text-ink-2">
+        <label className="flex items-center gap-2 text-body text-ink-2">
           <input
             type="checkbox"
             checked={status.enabled}
@@ -135,8 +135,8 @@ export function AssistantSection() {
 
       {confirmingDisconnect ? (
         <div className="flex flex-col gap-2 rounded-lg border border-line bg-surface p-3">
-          <p className="text-[12.5px] text-ink">Remove the provider key?</p>
-          <p className="text-[12px] text-ink-2">
+          <p className="text-body text-ink">Remove the provider key?</p>
+          <p className="text-body text-ink-2">
             Clears the key from this machine and switches the assistant off. Your tasks, notes,
             projects, goals, habits and Obsidian vault are untouched.
           </p>
@@ -160,7 +160,7 @@ export function AssistantSection() {
       ) : null}
 
       {ai.notice !== null ? (
-        <p role="status" className={`text-[12.5px] ${ai.notice.ok ? 'text-ok' : 'text-danger'}`}>
+        <p role="status" className={`text-body ${ai.notice.ok ? 'text-ok' : 'text-danger'}`}>
           {ai.notice.text}
         </p>
       ) : null}

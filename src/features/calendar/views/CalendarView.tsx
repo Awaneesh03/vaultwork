@@ -448,7 +448,7 @@ export function CalendarView() {
               </div>
             </DndContext>
 
-            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-ink-3">
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 text-meta text-ink-3">
               <span className="inline-flex items-center gap-1">
                 <Kbd>←</Kbd>
                 <Kbd>→</Kbd> day

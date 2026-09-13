@@ -42,9 +42,9 @@ export function DashboardProjects({ projects }: { projects: ProjectSummary[] }) 
 
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-1.5">
-                  <span className="min-w-0 truncate text-[13px] text-ink">{project.name}</span>
+                  <span className="min-w-0 truncate text-strong text-ink">{project.name}</span>
                   {stats.overdue > 0 ? (
-                    <span className="tabular inline-flex shrink-0 items-center gap-0.5 rounded-sm bg-danger-soft px-1 text-[10px] text-danger">
+                    <span className="tabular inline-flex shrink-0 items-center gap-0.5 rounded-sm bg-danger-soft px-1 text-micro text-danger">
                       <TriangleAlert size={9} aria-hidden />
                       {stats.overdue}
                     </span>
@@ -57,7 +57,7 @@ export function DashboardProjects({ projects }: { projects: ProjectSummary[] }) 
                     accent={accent}
                     className="min-w-[40px] flex-1"
                   />
-                  <span className="tabular shrink-0 text-[10.5px] text-ink-3">
+                  <span className="tabular shrink-0 text-micro text-ink-3">
                     {stats.remaining} left
                   </span>
                 </span>

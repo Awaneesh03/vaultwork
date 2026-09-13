@@ -22,7 +22,7 @@ import { TagPicker } from './TagPicker'
  */
 
 const FIELD =
-  'h-8 w-full rounded-md border border-line bg-surface px-2.5 text-[13px] text-ink focus:border-line-strong'
+  'h-8 w-full rounded-md border border-line bg-surface px-2.5 text-strong text-ink focus:border-line-strong'
 
 function Label({ children, htmlFor }: { children: string; htmlFor?: string }) {
   return (
@@ -117,7 +117,7 @@ export function TaskComposer({
           value={value.title}
           onChange={(event) => set('title', event.target.value)}
           placeholder="What needs doing?"
-          className={cn(FIELD, 'h-9 text-[14px]')}
+          className={cn(FIELD, 'h-9 text-strong')}
           required
         />
       </div>
@@ -170,7 +170,7 @@ export function TaskComposer({
                   onClick={() => set('priority', priority)}
                   aria-pressed={value.priority === priority}
                   className={cn(
-                    'inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[12.5px]',
+                    'inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-body',
                     'transition-colors duration-[var(--duration-fast)]',
                     value.priority === priority
                       ? 'border-accent bg-accent-soft text-ink'
@@ -265,7 +265,7 @@ export function TaskComposer({
           </Button>
         ) : null}
 
-        <span className="hidden items-center gap-1 text-[11.5px] text-ink-3 sm:flex">
+        <span className="hidden items-center gap-1 text-meta text-ink-3 sm:flex">
           <Kbd>⌘</Kbd>
           <Kbd>↵</Kbd>
         </span>

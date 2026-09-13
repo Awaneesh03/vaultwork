@@ -94,16 +94,16 @@ export function NotesView() {
       <header className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2.5">
           <FileText size={18} className="text-accent" aria-hidden />
-          <h2 className="text-[19px] font-semibold tracking-tight text-ink">Notes</h2>
+          <h2 className="text-display font-semibold tracking-tight text-ink">Notes</h2>
           {data ? (
-            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-[11.5px] text-ink-2">
+            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-meta text-ink-2">
               {data.counts.all}
             </span>
           ) : null}
           <span className="flex-1" />
           <Link
             to="/notes/graph"
-            className="inline-flex h-7 items-center gap-1.5 rounded-md border border-line px-2.5 text-[12.5px] font-medium text-ink-2 hover:border-accent-line hover:text-ink"
+            className="inline-flex h-7 items-center gap-1.5 rounded-md border border-line px-2.5 text-body font-medium text-ink-2 hover:border-accent-line hover:text-ink"
           >
             <Network size={12} aria-hidden />
             Graph
@@ -117,7 +117,7 @@ export function NotesView() {
             New note
           </Button>
         </div>
-        <p className="max-w-prose text-[13px] text-ink-2">
+        <p className="max-w-prose text-strong text-ink-2">
           Markdown, linked to the work it is about. Every note already reserves its place in an
           Obsidian vault, so syncing later moves files rather than migrating data.
         </p>
@@ -133,14 +133,14 @@ export function NotesView() {
       />
 
       {tagId !== null ? (
-        <p className="flex flex-wrap items-center gap-2 text-[12px] text-ink-2">
-          <span className="rounded-sm bg-accent-soft px-1.5 py-0.5 text-[11.5px] text-accent">
+        <p className="flex flex-wrap items-center gap-2 text-body text-ink-2">
+          <span className="rounded-sm bg-accent-soft px-1.5 py-0.5 text-meta text-accent">
             #{tags?.find((tag) => tag.id === tagId)?.name ?? 'tag'}
           </span>
           <button
             type="button"
             onClick={() => setTagId(null)}
-            className="text-[11.5px] text-accent underline decoration-dotted"
+            className="text-meta text-accent underline decoration-dotted"
           >
             Clear tag
           </button>
@@ -179,7 +179,7 @@ export function NotesView() {
                     setSearch('')
                     setFilter('all')
                   }}
-                  className="text-[12.5px] text-accent underline decoration-dotted"
+                  className="text-body text-accent underline decoration-dotted"
                 >
                   Clear filters
                 </button>
@@ -205,7 +205,7 @@ export function NotesView() {
               ))}
             </ul>
 
-            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-[11px] text-ink-3">
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-meta text-ink-3">
               <span className="inline-flex items-center gap-1">
                 <Kbd>shift N</Kbd> new note, anywhere
               </span>

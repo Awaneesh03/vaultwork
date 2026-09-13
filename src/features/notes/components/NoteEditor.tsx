@@ -53,7 +53,7 @@ export function EditorModeSwitch({
           onClick={() => onChange(id)}
           title={label}
           className={cn(
-            'inline-flex items-center gap-1 rounded-[5px] px-2 py-1 text-[11.5px]',
+            'inline-flex items-center gap-1 rounded-[5px] px-2 py-1 text-meta',
             'transition-colors duration-[var(--duration-fast)]',
             mode === id ? 'bg-elevated text-ink' : 'text-ink-3 hover:text-ink-2',
           )}
@@ -75,7 +75,7 @@ export function SaveIndicator({ state }: { state: SaveState }) {
       role="status"
       aria-live="polite"
       className={cn(
-        'inline-flex shrink-0 items-center gap-1.5 text-[11px]',
+        'inline-flex shrink-0 items-center gap-1.5 text-meta',
         state === 'error' ? 'text-danger' : 'text-ink-3',
       )}
     >
@@ -151,7 +151,7 @@ export function NoteEditor({
             }
             className={cn(
               'min-h-[320px] w-full resize-none rounded-md border border-line bg-surface p-3',
-              'font-mono text-[13px] leading-relaxed text-ink',
+              'font-mono text-strong leading-relaxed text-ink',
               'placeholder:text-ink-3 focus:border-accent-line',
             )}
           />
@@ -177,7 +177,7 @@ export function NoteEditor({
       <div className="flex items-center gap-2">
         <SaveIndicator state={saveState} />
         <span className="flex-1" />
-        <span className="hidden text-[11px] text-ink-3 sm:inline">Saves automatically</span>
+        <span className="hidden text-meta text-ink-3 sm:inline">Saves automatically</span>
       </div>
     </div>
   )

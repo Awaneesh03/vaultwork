@@ -39,7 +39,7 @@ export interface HighlightedInputProps {
 }
 
 /** Shared between the overlay and the input so the two cannot drift. */
-const TEXT = 'text-[13.5px] leading-[38px] font-sans tracking-normal'
+const TEXT = 'text-strong leading-[38px] font-sans tracking-normal'
 
 export function HighlightedInput({
   value,

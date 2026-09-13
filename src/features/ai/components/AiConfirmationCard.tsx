@@ -81,10 +81,10 @@ export function AiConfirmationCard({
         {confirmation.summary.map((line, index) => (
           <li
             key={`${confirmation.id}-${index}`}
-            className="flex gap-2.5 bg-surface px-3 py-2.5 text-[13px] text-ink"
+            className="flex gap-2.5 bg-surface px-3 py-2.5 text-strong text-ink"
           >
             <span
-              className="tabular grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-accent-soft font-mono text-[10.5px] text-accent"
+              className="tabular grid h-[18px] w-[18px] shrink-0 place-items-center rounded-full bg-accent-soft font-mono text-micro text-accent"
               aria-hidden
             >
               {index + 1}
@@ -95,7 +95,7 @@ export function AiConfirmationCard({
       </ol>
 
       {confirmation.aiDescriptions.length > 0 ? (
-        <details className="text-[12px] text-ink-3">
+        <details className="text-body text-ink-3">
           <summary className="cursor-pointer">Why the assistant suggested this</summary>
           <ul className="mt-1.5 flex flex-col gap-1 pl-3.5">
             {confirmation.aiDescriptions.map((line, index) => (
@@ -122,10 +122,10 @@ export function AiConfirmationCard({
           Cancel
         </Button>
         <span className="flex-1" />
-        <p className="text-[11.5px] text-ink-3">Nothing has changed yet.</p>
+        <p className="text-meta text-ink-3">Nothing has changed yet.</p>
       </div>
 
-      <p className="text-[11.5px] text-ink-3">
+      <p className="text-meta text-ink-3">
         This proposal expires in a few minutes. Press Escape to dismiss it.
       </p>
     </div>

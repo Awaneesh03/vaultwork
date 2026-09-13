@@ -62,7 +62,7 @@ export function NoteToolbar({
           onChange={(event) => onSearch(event.target.value)}
           placeholder="Search titles, text and tags"
           aria-label="Search notes"
-          className="w-full rounded-md border border-line bg-surface py-1.5 pl-8 pr-7 text-[12.5px] text-ink placeholder:text-ink-3 focus:border-accent-line"
+          className="w-full rounded-md border border-line bg-surface py-1.5 pl-8 pr-7 text-body text-ink placeholder:text-ink-3 focus:border-accent-line"
         />
         {search.length > 0 ? (
           <button
@@ -89,7 +89,7 @@ export function NoteToolbar({
             title={option.hint}
             onClick={() => onFilter(option.id)}
             className={cn(
-              'rounded-[5px] px-2 py-1 text-[11.5px] transition-colors duration-[var(--duration-fast)]',
+              'rounded-[5px] px-2 py-1 text-meta transition-colors duration-[var(--duration-fast)]',
               filter === option.id ? 'bg-elevated text-ink' : 'text-ink-3 hover:text-ink-2',
             )}
           >

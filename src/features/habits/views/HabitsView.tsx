@@ -197,9 +197,9 @@ export function HabitsView() {
       <header className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2.5">
           <Repeat size={18} className="text-accent" aria-hidden />
-          <h2 className="text-[19px] font-semibold tracking-tight text-ink">Habits</h2>
+          <h2 className="text-display font-semibold tracking-tight text-ink">Habits</h2>
           {data ? (
-            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-[11.5px] text-ink-2">
+            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-meta text-ink-2">
               {data.activeTotal}
             </span>
           ) : null}
@@ -213,7 +213,7 @@ export function HabitsView() {
             New habit
           </Button>
         </div>
-        <p className="max-w-prose text-[13px] text-ink-2">
+        <p className="max-w-prose text-strong text-ink-2">
           A habit is what you intend to repeat; its history is what actually happened. Days a habit
           is not scheduled never count against it.
         </p>
@@ -226,12 +226,12 @@ export function HabitsView() {
         >
           <span className="t-eyebrow text-ink-3">Today</span>
           <span
-            className="tabular text-[15px] font-semibold text-ink"
+            className="tabular text-title font-semibold text-ink"
             aria-label={`${data.summary.completed} of ${data.summary.scheduled} habits complete today`}
           >
             {data.summary.completed} / {data.summary.scheduled}
           </span>
-          <span className="text-[12px] text-ink-3">
+          <span className="text-body text-ink-3">
             {data.summary.scheduled === 0
               ? 'Nothing scheduled today.'
               : data.summary.remaining === 0
@@ -285,7 +285,7 @@ export function HabitsView() {
                 <button
                   type="button"
                   onClick={clearFilter}
-                  className="text-[12.5px] text-accent underline decoration-dotted"
+                  className="text-body text-accent underline decoration-dotted"
                 >
                   Clear filters
                 </button>
@@ -309,7 +309,7 @@ export function HabitsView() {
               <section className="flex flex-col gap-1">
                 <div className="flex items-baseline gap-2 px-2">
                   <h3 className="t-eyebrow text-ink-3">Active</h3>
-                  <span className="tabular text-[11px] text-ink-3">{value.active.length}</span>
+                  <span className="tabular text-meta text-ink-3">{value.active.length}</span>
                 </div>
                 <HabitList
                   items={value.active}
@@ -333,8 +333,8 @@ export function HabitsView() {
                     <Archive size={11} aria-hidden />
                     Archived
                   </h3>
-                  <span className="tabular text-[11px] text-ink-3">{value.archived.length}</span>
-                  <span className="text-[11px] text-ink-3">— history kept</span>
+                  <span className="tabular text-meta text-ink-3">{value.archived.length}</span>
+                  <span className="text-meta text-ink-3">— history kept</span>
                 </div>
                 <HabitList
                   items={value.archived}
@@ -353,7 +353,7 @@ export function HabitsView() {
 
             <p
               className={cn(
-                'flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-[11px] text-ink-3',
+                'flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-meta text-ink-3',
               )}
             >
               <span className="inline-flex items-center gap-1">

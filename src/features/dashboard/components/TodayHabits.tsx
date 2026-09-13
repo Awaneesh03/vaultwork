@@ -36,12 +36,12 @@ export function TodayHabits({
     <div className="flex flex-col">
       <div className="flex items-center gap-2 px-3.5 pb-1 pt-2.5">
         <span
-          className="tabular text-[15px] font-semibold text-ink"
+          className="tabular text-title font-semibold text-ink"
           aria-label={`${summary.completed} of ${summary.scheduled} habits complete today`}
         >
           {summary.completed} / {summary.scheduled}
         </span>
-        <span className="text-[11.5px] text-ink-3">
+        <span className="text-meta text-ink-3">
           {summary.remaining === 0 ? 'all done' : `${summary.remaining} to go`}
         </span>
         <span className="flex-1" />
@@ -89,7 +89,7 @@ export function TodayHabits({
             </button>
             <span
               className={cn(
-                'min-w-0 flex-1 truncate text-[12.5px]',
+                'min-w-0 flex-1 truncate text-body',
                 entry.completed ? 'text-ink-3 line-through decoration-ink-3/50' : 'text-ink-2',
               )}
             >
@@ -100,7 +100,7 @@ export function TodayHabits({
       </ul>
 
       {hidden > 0 ? (
-        <Link to={ROUTES.habits} className="px-3.5 py-1.5 text-[11px] text-ink-3 hover:text-accent">
+        <Link to={ROUTES.habits} className="px-3.5 py-1.5 text-meta text-ink-3 hover:text-accent">
           {hidden} more
         </Link>
       ) : null}

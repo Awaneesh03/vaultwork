@@ -284,19 +284,19 @@ export function TaskViewScreen({ view }: { view: TaskViewId }) {
       <header className="flex flex-col gap-1.5">
         <div className="flex items-center gap-2.5">
           <chrome.icon size={18} className="text-accent" aria-hidden />
-          <h2 className="text-[19px] font-semibold tracking-tight">{chrome.title}</h2>
+          <h2 className="text-display font-semibold tracking-tight">{chrome.title}</h2>
           {data ? (
-            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-[11.5px] text-ink-3">
+            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-meta text-ink-3">
               {data.tasks.length}
             </span>
           ) : null}
           {data && data.totalEstimateMin > 0 ? (
-            <span className="tabular text-[11.5px] text-ink-3">
+            <span className="tabular text-meta text-ink-3">
               ≈ {formatEstimate(data.totalEstimateMin)}
             </span>
           ) : null}
         </div>
-        <p className="max-w-prose text-[13px] text-ink-2">{chrome.blurb}</p>
+        <p className="max-w-prose text-strong text-ink-2">{chrome.blurb}</p>
       </header>
 
       {chrome.quickAdd ? (
@@ -355,7 +355,7 @@ export function TaskViewScreen({ view }: { view: TaskViewId }) {
                     <button
                       type="button"
                       onClick={clearFilter}
-                      className="text-[12.5px] text-accent underline decoration-dotted"
+                      className="text-body text-accent underline decoration-dotted"
                     >
                       Clear filters
                     </button>
@@ -382,13 +382,13 @@ export function TaskViewScreen({ view }: { view: TaskViewId }) {
                         {group.label}
                       </h3>
                       {group.hint ? (
-                        <span className="tabular text-[11px] text-ink-3">{group.hint}</span>
+                        <span className="tabular text-meta text-ink-3">{group.hint}</span>
                       ) : null}
                     </div>
                   ) : null}
 
                   {group.tasks.length === 0 ? (
-                    <p className="px-2 py-1 text-[12px] text-ink-3" aria-label="No tasks">
+                    <p className="px-2 py-1 text-body text-ink-3" aria-label="No tasks">
                       —
                     </p>
                   ) : (
@@ -411,7 +411,7 @@ export function TaskViewScreen({ view }: { view: TaskViewId }) {
                 </section>
               ))}
 
-            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-[11px] text-ink-3">
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-meta text-ink-3">
               <span className="inline-flex items-center gap-1">
                 <Kbd>J</Kbd>
                 <Kbd>K</Kbd> move

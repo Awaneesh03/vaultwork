@@ -342,7 +342,7 @@ export function DashboardView() {
                               type="button"
                               onClick={() => openTask(task.id)}
                               title={task.title}
-                              className="block w-full truncate rounded px-1 py-0.5 text-left text-[12.5px] text-ink-2 hover:bg-elevated hover:text-ink"
+                              className="block w-full truncate rounded px-1 py-0.5 text-left text-body text-ink-2 hover:bg-elevated hover:text-ink"
                             >
                               {task.title}
                             </button>
@@ -400,7 +400,7 @@ export function DashboardView() {
               </DashboardCard>
             </div>
 
-            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-line pt-3 text-[11px] text-ink-3">
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-line pt-3 text-meta text-ink-3">
               <span className="tabular">
                 {value.counts['tasks'] ?? 0} tasks · {value.counts['projects'] ?? 0} projects ·{' '}
                 {value.counts['tags'] ?? 0} tags · {value.eventCount} events

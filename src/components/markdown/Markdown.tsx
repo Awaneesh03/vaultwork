@@ -62,12 +62,12 @@ function renderInline(nodes: Inline[], keyPrefix = ''): ReactNode {
 }
 
 const HEADING_CLASS: Record<number, string> = {
-  1: 'text-[18px] font-semibold tracking-tight text-ink mt-4 first:mt-0',
-  2: 'text-[15.5px] font-semibold tracking-tight text-ink mt-4 first:mt-0',
-  3: 'text-[14px] font-semibold text-ink mt-3 first:mt-0',
-  4: 'text-[13px] font-semibold text-ink-2 mt-3 first:mt-0',
-  5: 'text-[12.5px] font-semibold text-ink-2 mt-2 first:mt-0',
-  6: 'text-[12px] font-semibold uppercase tracking-wide text-ink-3 mt-2 first:mt-0',
+  1: 'text-display font-semibold tracking-tight text-ink mt-4 first:mt-0',
+  2: 'text-title font-semibold tracking-tight text-ink mt-4 first:mt-0',
+  3: 'text-strong font-semibold text-ink mt-3 first:mt-0',
+  4: 'text-strong font-semibold text-ink-2 mt-3 first:mt-0',
+  5: 'text-body font-semibold text-ink-2 mt-2 first:mt-0',
+  6: 'text-body font-semibold uppercase tracking-wide text-ink-3 mt-2 first:mt-0',
 }
 
 export interface MarkdownProps {
@@ -99,7 +99,7 @@ export function Markdown({ source, className, onToggleCheckbox }: MarkdownProps)
 
       case 'paragraph':
         return (
-          <p key={key} className="whitespace-pre-wrap text-[13.5px] leading-relaxed text-ink-2">
+          <p key={key} className="whitespace-pre-wrap text-strong leading-relaxed text-ink-2">
             {renderInline(block.content, `${key}.`)}
           </p>
         )
@@ -108,7 +108,7 @@ export function Markdown({ source, className, onToggleCheckbox }: MarkdownProps)
         return (
           <pre
             key={key}
-            className="overflow-x-auto rounded-md border border-line bg-sunken p-3 text-[12.5px] leading-relaxed"
+            className="overflow-x-auto rounded-md border border-line bg-sunken p-3 text-body leading-relaxed"
           >
             <code className="font-mono text-ink-2">{block.code}</code>
           </pre>
@@ -121,7 +121,7 @@ export function Markdown({ source, className, onToggleCheckbox }: MarkdownProps)
             key={key}
             start={block.ordered ? block.start : undefined}
             className={cn(
-              'flex flex-col gap-1 text-[13.5px] leading-relaxed text-ink-2',
+              'flex flex-col gap-1 text-strong leading-relaxed text-ink-2',
               block.ordered ? 'list-decimal pl-5' : 'list-disc pl-5',
               // A checkbox list carries its own markers.
               block.items.every((item) => item.checked !== null) && 'list-none pl-0',
@@ -179,7 +179,7 @@ export function Markdown({ source, className, onToggleCheckbox }: MarkdownProps)
   }
 
   if (blocks.length === 0) {
-    return <p className={cn('text-[13px] italic text-ink-3', className)}>Nothing written yet.</p>
+    return <p className={cn('text-strong italic text-ink-3', className)}>Nothing written yet.</p>
   }
 
   return (

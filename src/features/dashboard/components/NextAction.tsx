@@ -48,7 +48,7 @@ export function NextAction({
           <Sparkles size={12} aria-hidden />
           Next action
         </span>
-        <p className="text-[16px] font-medium text-ink">You&rsquo;re clear.</p>
+        <p className="text-title font-medium text-ink">You&rsquo;re clear.</p>
         <p className="t-meta text-ink-3">
           Nothing open. Capture the next thing before it turns into a memory test.
         </p>
@@ -106,12 +106,12 @@ export function NextAction({
             type="button"
             onClick={() => onOpen(task)}
             title={task.title}
-            className="max-w-full truncate text-left text-[16.5px] leading-snug font-medium text-ink transition-colors hover:text-accent"
+            className="max-w-full truncate text-left text-title leading-snug font-medium text-ink transition-colors hover:text-accent"
           >
             {task.title}
           </button>
 
-          <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-[11.5px] text-ink-3">
+          <div className="mt-1 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-meta text-ink-3">
             {/* The dot is decorative; the words carry the meaning, so priority
                 is never communicated by colour alone. */}
             {task.priority !== 'none' ? (

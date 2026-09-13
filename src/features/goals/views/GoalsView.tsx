@@ -288,14 +288,14 @@ export function GoalsView() {
       <header className="flex flex-col gap-2">
         <div className="flex flex-wrap items-center gap-2.5">
           <Target size={18} className="text-accent" aria-hidden />
-          <h2 className="text-[19px] font-semibold tracking-tight text-ink">Goals</h2>
+          <h2 className="text-display font-semibold tracking-tight text-ink">Goals</h2>
           {data ? (
-            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-[11.5px] text-ink-2">
+            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-meta text-ink-2">
               {data.totals.active}
             </span>
           ) : null}
           {data && data.totals.overdue > 0 ? (
-            <span className="rounded-sm bg-danger-soft px-1.5 py-0.5 text-[11.5px] text-danger">
+            <span className="rounded-sm bg-danger-soft px-1.5 py-0.5 text-meta text-danger">
               {data.totals.overdue} overdue
             </span>
           ) : null}
@@ -309,7 +309,7 @@ export function GoalsView() {
             New goal
           </Button>
         </div>
-        <p className="max-w-prose text-[13px] text-ink-2">
+        <p className="max-w-prose text-strong text-ink-2">
           A goal is an outcome, a milestone is a checkpoint, and a task is an action. Progress comes
           from milestones when a goal has them, and from its related tasks when it does not —
           completing a goal never completes its tasks.
@@ -354,7 +354,7 @@ export function GoalsView() {
                 <button
                   type="button"
                   onClick={clearFilter}
-                  className="text-[12.5px] text-accent underline decoration-dotted"
+                  className="text-body text-accent underline decoration-dotted"
                 >
                   Clear filters
                 </button>
@@ -383,7 +383,7 @@ export function GoalsView() {
               onSelect={select}
             />
 
-            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-[11px] text-ink-3">
+            <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-meta text-ink-3">
               <span className="inline-flex items-center gap-1">
                 <Kbd>J</Kbd>
                 <Kbd>K</Kbd> move

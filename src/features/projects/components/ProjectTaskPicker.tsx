@@ -57,14 +57,14 @@ function TaskLine({
       <span className="min-w-0 flex-1">
         <span
           className={cn(
-            'block truncate text-[13px]',
+            'block truncate text-strong',
             task.status === 'done' ? 'text-ink-3 line-through' : 'text-ink',
           )}
         >
           {task.title}
         </span>
         {task.dueDate ? (
-          <span className="tabular text-[11px] text-ink-3">
+          <span className="tabular text-meta text-ink-3">
             {formatDayLabel(task.dueDate, today)}
           </span>
         ) : null}
@@ -130,7 +130,7 @@ export function ProjectTaskPicker({
         }}
       >
         <header className="flex items-center gap-2 border-b border-line px-4 py-3">
-          <h2 className="flex-1 text-[14px] font-semibold tracking-tight text-ink">
+          <h2 className="flex-1 text-strong font-semibold tracking-tight text-ink">
             Tasks in {project.name}
           </h2>
           <button
@@ -152,7 +152,7 @@ export function ProjectTaskPicker({
               onChange={(event) => setQuery(event.target.value)}
               placeholder="Search tasks…"
               aria-label="Search tasks to assign"
-              className="min-w-0 flex-1 bg-transparent text-[12.5px] text-ink placeholder:text-ink-3"
+              className="min-w-0 flex-1 bg-transparent text-body text-ink placeholder:text-ink-3"
             />
           </div>
         </div>
@@ -163,7 +163,7 @@ export function ProjectTaskPicker({
               In this project · {shownMembers.length}
             </h3>
             {shownMembers.length === 0 ? (
-              <p className="px-2 py-1 text-[12px] text-ink-3">Nothing filed here yet.</p>
+              <p className="px-2 py-1 text-body text-ink-3">Nothing filed here yet.</p>
             ) : (
               <ul>
                 {shownMembers.map((task) => (
@@ -186,7 +186,7 @@ export function ProjectTaskPicker({
               Other open tasks · {shownCandidates.length}
             </h3>
             {shownCandidates.length === 0 ? (
-              <p className="px-2 py-1 text-[12px] text-ink-3">
+              <p className="px-2 py-1 text-body text-ink-3">
                 {query.length > 0 ? 'Nothing matches that.' : 'Every open task is already here.'}
               </p>
             ) : (
@@ -207,7 +207,7 @@ export function ProjectTaskPicker({
           </section>
         </div>
 
-        <footer className="flex items-center gap-2 border-t border-line px-4 py-2 text-[11px] text-ink-3">
+        <footer className="flex items-center gap-2 border-t border-line px-4 py-2 text-meta text-ink-3">
           <Kbd>esc</Kbd>
           <span>to close. Removing a task keeps it — it moves to the Inbox.</span>
         </footer>

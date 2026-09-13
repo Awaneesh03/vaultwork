@@ -52,7 +52,7 @@ export function Badge({
       title={title}
       className={cn(
         'inline-flex shrink-0 items-center gap-1 rounded-full border px-2 py-[1.5px]',
-        'text-[11px] font-medium whitespace-nowrap',
+        'text-meta font-medium whitespace-nowrap',
         TONES[tone],
         className,
       )}
@@ -85,7 +85,7 @@ export function CountBadge({
     <span
       className={cn(
         'tabular inline-flex h-[17px] min-w-[17px] shrink-0 items-center justify-center',
-        'rounded-full border px-1 text-[10.5px] font-medium',
+        'rounded-full border px-1 text-micro font-medium',
         TONES[tone],
         className,
       )}

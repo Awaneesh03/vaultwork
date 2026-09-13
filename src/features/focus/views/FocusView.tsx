@@ -51,12 +51,12 @@ function HistoryRow({ session }: { session: FocusSession }) {
       ) : (
         <Check size={13} className="shrink-0 text-ok" aria-hidden />
       )}
-      <span className="flex-1 text-[13px] text-ink">{KIND_LABEL[session.kind]}</span>
-      <span className="tabular font-mono text-[12px] text-ink-3">
+      <span className="flex-1 text-strong text-ink">{KIND_LABEL[session.kind]}</span>
+      <span className="tabular font-mono text-body text-ink-3">
         {session.actualMin}m
         {session.actualMin !== session.plannedMin ? ` of ${session.plannedMin}m` : ''}
       </span>
-      <span className="text-[11.5px] text-ink-3">{aborted ? 'stopped' : 'finished'}</span>
+      <span className="text-meta text-ink-3">{aborted ? 'stopped' : 'finished'}</span>
     </li>
   )
 }
@@ -191,14 +191,14 @@ export function FocusView() {
                 Stop
               </Button>
             </div>
-            <p className="relative text-[11.5px] text-ink-3">
+            <p className="relative text-meta text-ink-3">
               Stopping still records the time you spent.
             </p>
           </>
         )}
 
         {focus.error ? (
-          <p role="status" className="text-[12.5px] text-danger">
+          <p role="status" className="text-body text-danger">
             {focus.error}
           </p>
         ) : null}

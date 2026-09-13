@@ -51,7 +51,7 @@ export function NoteObsidianPanel({
     return (
       <section className={cn('flex flex-col gap-1.5', className)}>
         <h3 className="t-eyebrow text-ink-3">Obsidian</h3>
-        <p className="text-[12px] text-ink-3">
+        <p className="text-body text-ink-3">
           No vault connected. This note works exactly as it does now — connect a vault on the
           Obsidian screen to write it to a file.
         </p>
@@ -81,10 +81,10 @@ export function NoteObsidianPanel({
         </button>
       </div>
 
-      <p className="text-[11.5px] leading-relaxed text-ink-3">{SYNC_STATUS_DESCRIPTIONS[status]}</p>
+      <p className="text-meta leading-relaxed text-ink-3">{SYNC_STATUS_DESCRIPTIONS[status]}</p>
 
       {report?.vaultPath ? (
-        <p className="flex items-center gap-1.5 text-[11px] text-ink-3">
+        <p className="flex items-center gap-1.5 text-meta text-ink-3">
           <FolderTree size={10} className="shrink-0" aria-hidden />
           <span className="min-w-0 truncate font-mono" title={report.vaultPath}>
             {report.vaultPath}
@@ -93,7 +93,7 @@ export function NoteObsidianPanel({
       ) : null}
 
       {report?.pathError ? (
-        <p role="alert" className="rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger">
+        <p role="alert" className="rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger">
           {report.pathError}
         </p>
       ) : null}
@@ -145,7 +145,7 @@ export function NoteObsidianPanel({
       </div>
 
       {canRename ? (
-        <p className="text-[11px] text-ink-3">
+        <p className="text-meta text-ink-3">
           Its title now suggests{' '}
           <span className="font-mono" title={suggestedPath}>
             {suggestedPath}
@@ -166,7 +166,7 @@ export function NoteObsidianPanel({
           }
           className="flex flex-col gap-2 rounded-md border border-line bg-sunken p-2.5"
         >
-          <p className="inline-flex items-start gap-1.5 text-[12px] text-ink-2">
+          <p className="inline-flex items-start gap-1.5 text-body text-ink-2">
             <AlertCircle size={12} className="mt-[2px] shrink-0 text-warn" aria-hidden />
             {confirming === 'export'
               ? 'The vault file has changes this note does not have. Exporting replaces them.'
@@ -198,9 +198,9 @@ export function NoteObsidianPanel({
         </div>
       ) : null}
 
-      {message ? <p className="text-[11.5px] text-ink-2">{message}</p> : null}
+      {message ? <p className="text-meta text-ink-2">{message}</p> : null}
       {error ? (
-        <p role="alert" className="rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger">
+        <p role="alert" className="rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger">
           {error}
         </p>
       ) : null}

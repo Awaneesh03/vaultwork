@@ -83,7 +83,7 @@ function Section({
             className={cn('shrink-0 text-ink-3 transition-transform', open && 'rotate-90')}
           />
           <SyncStatusBadge status={status} />
-          <span className="tabular text-[12px] text-ink-2">{items.length}</span>
+          <span className="tabular text-body text-ink-2">{items.length}</span>
         </button>
       </h3>
       {open ? (
@@ -135,24 +135,24 @@ export function SyncCenterView() {
       <header className="flex flex-col gap-2">
         <Link
           to="/obsidian"
-          className="inline-flex w-fit items-center gap-1 text-[12px] text-ink-3 hover:text-accent"
+          className="inline-flex w-fit items-center gap-1 text-body text-ink-3 hover:text-accent"
         >
           <ArrowLeft size={12} aria-hidden />
           Obsidian
         </Link>
         <div className="flex flex-wrap items-center gap-2.5">
-          <h2 className="text-[19px] font-semibold tracking-tight text-ink">Sync</h2>
+          <h2 className="text-display font-semibold tracking-tight text-ink">Sync</h2>
           <VaultStatusBadge state={connection.status?.state ?? null} />
           {connection.status?.vaultName ? (
             <span
-              className="min-w-0 max-w-[220px] truncate font-mono text-[11.5px] text-ink-3"
+              className="min-w-0 max-w-[220px] truncate font-mono text-meta text-ink-3"
               title={connection.status.vaultName}
             >
               {connection.status.vaultName}
             </span>
           ) : null}
         </div>
-        <p className="max-w-prose text-[13px] text-ink-2">
+        <p className="max-w-prose text-strong text-ink-2">
           Scan to see what differs, choose what to do with each item, then apply. Nothing is written
           until you confirm, and nothing is ever merged for you.
         </p>
@@ -169,7 +169,7 @@ export function SyncCenterView() {
             'Connect a vault on the Obsidian screen. Notes work normally without one.'
           }
           action={
-            <Link to="/obsidian" className="text-[12.5px] text-accent underline decoration-dotted">
+            <Link to="/obsidian" className="text-body text-accent underline decoration-dotted">
               Go to Obsidian
             </Link>
           }
@@ -213,7 +213,7 @@ export function SyncCenterView() {
 
           {plan !== null ? (
             <p
-              className="text-[11.5px] text-ink-3"
+              className="text-meta text-ink-3"
               // Announced so the outcome of a scan is not visible only.
               role="status"
             >
@@ -229,7 +229,7 @@ export function SyncCenterView() {
           {sync.result ? (
             <p
               role="status"
-              className="rounded-md border border-line bg-surface px-3 py-2 text-[12.5px] text-ink-2"
+              className="rounded-md border border-line bg-surface px-3 py-2 text-body text-ink-2"
             >
               {/* Never "everything synced" unless it genuinely was. */}
               Sync finished — {describeSyncResult(sync.result)}
@@ -239,7 +239,7 @@ export function SyncCenterView() {
           {sync.error ? (
             <p
               role="alert"
-              className="inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger"
+              className="inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger"
             >
               <AlertCircle size={12} className="mt-[2px] shrink-0" aria-hidden />
               {sync.error}
@@ -247,7 +247,7 @@ export function SyncCenterView() {
           ) : null}
 
           {plan === null ? (
-            <p className="text-[12.5px] text-ink-3">
+            <p className="text-body text-ink-3">
               Nothing has been read yet. A scan changes nothing — it only looks.
             </p>
           ) : plan.items.length === 0 && plan.errors.length === 0 ? (
@@ -272,7 +272,7 @@ export function SyncCenterView() {
                 action={
                   <Link
                     to="/obsidian"
-                    className="text-[12.5px] text-accent underline decoration-dotted"
+                    className="text-body text-accent underline decoration-dotted"
                   >
                     Choose a different folder
                   </Link>
@@ -365,7 +365,7 @@ export function SyncCenterView() {
                   <h3 className="t-eyebrow text-ink-3">Could not be read</h3>
                   <ul className="flex flex-col gap-1">
                     {plan.errors.map((error) => (
-                      <li key={error.path} className="text-[11.5px] text-ink-3">
+                      <li key={error.path} className="text-meta text-ink-3">
                         <span className="font-mono" title={error.path}>
                           {error.path}
                         </span>{' '}
@@ -373,7 +373,7 @@ export function SyncCenterView() {
                       </li>
                     ))}
                   </ul>
-                  <p className="text-[11px] text-ink-3">
+                  <p className="text-meta text-ink-3">
                     These were skipped. Nothing about them was changed.
                   </p>
                 </section>
@@ -461,11 +461,11 @@ function ConfirmApply({
         }}
         className="flex w-full max-w-sm flex-col gap-3 rounded-lg border border-line bg-elevated p-4 shadow-xl [animation:panel-in_var(--duration-base)_var(--ease-out)]"
       >
-        <h2 className="text-[14px] font-semibold tracking-tight text-ink">
+        <h2 className="text-strong font-semibold tracking-tight text-ink">
           Apply {summary.total} change{summary.total === 1 ? '' : 's'}
         </h2>
 
-        <dl className="flex flex-col gap-1 text-[12.5px]">
+        <dl className="flex flex-col gap-1 text-body">
           {rows
             .filter(([, count]) => count > 0)
             .map(([label, count]) => (
@@ -485,7 +485,7 @@ function ConfirmApply({
         {summary.destructive > 0 ? (
           <p
             role="alert"
-            className="inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger"
+            className="inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger"
           >
             <AlertCircle size={12} className="mt-[2px] shrink-0" aria-hidden />
             {summary.destructive} of these replace content that will be lost.

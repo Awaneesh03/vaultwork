@@ -138,14 +138,14 @@ export function CalendarTimeGrid({
             <span className="t-eyebrow text-ink-3">{weekdayName(day.date).slice(0, 3)}</span>
             <span
               className={cn(
-                'tabular grid h-[20px] min-w-[20px] place-items-center rounded-full px-1 text-[12px]',
+                'tabular grid h-[20px] min-w-[20px] place-items-center rounded-full px-1 text-body',
                 day.isToday ? 'bg-accent font-semibold text-accent-ink' : 'text-ink',
               )}
             >
               {Number(day.date.slice(8))}
             </span>
             {day.isToday ? (
-              <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-accent">
+              <span className="font-mono text-micro font-semibold uppercase tracking-[0.1em] text-accent">
                 Today
               </span>
             ) : null}
@@ -159,7 +159,7 @@ export function CalendarTimeGrid({
           className="grid border-b border-line"
           style={{ gridTemplateColumns: `44px repeat(${days.length}, minmax(0, 1fr))` }}
         >
-          <div className="px-1 py-1 text-right font-mono text-[10px] uppercase tracking-[0.1em] text-ink-3">
+          <div className="px-1 py-1 text-right font-mono text-micro uppercase tracking-[0.1em] text-ink-3">
             All day
           </div>
           {days.map((day) => (
@@ -194,7 +194,7 @@ export function CalendarTimeGrid({
                 style={{ height: HOUR_HEIGHT }}
                 className="relative border-b border-line/60"
               >
-                <span className="tabular absolute -top-[6px] right-1 bg-surface px-0.5 text-[9.5px] text-ink-3">
+                <span className="tabular absolute -top-[6px] right-1 bg-surface px-0.5 text-micro text-ink-3">
                   {hour === 0 ? '' : formatHour(hour)}
                 </span>
               </div>

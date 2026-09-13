@@ -56,7 +56,7 @@ export function VaultConnection({
     <section className="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4 shadow-[var(--shadow-sm)]">
       <div className="flex flex-wrap items-center gap-2">
         <FolderOpen size={15} className="shrink-0 text-accent" aria-hidden />
-        <h3 className="text-[13.5px] font-semibold text-ink">Obsidian vault</h3>
+        <h3 className="text-strong font-semibold text-ink">Obsidian vault</h3>
         <VaultStatusBadge state={state} />
         <span className="flex-1" />
 
@@ -94,11 +94,11 @@ export function VaultConnection({
       </div>
 
       {status?.vaultName ? (
-        <p className="flex flex-wrap items-baseline gap-x-2 text-[12px] text-ink-3">
+        <p className="flex flex-wrap items-baseline gap-x-2 text-body text-ink-3">
           <span>Folder</span>
           {/* A long folder name truncates but stays readable in full on hover. */}
           <span
-            className="min-w-0 max-w-full truncate font-mono text-[11.5px] text-ink-2"
+            className="min-w-0 max-w-full truncate font-mono text-meta text-ink-2"
             title={status.vaultName}
           >
             {status.vaultName}
@@ -106,12 +106,12 @@ export function VaultConnection({
         </p>
       ) : null}
 
-      <p className="text-[12px] leading-relaxed text-ink-3">
+      <p className="text-body leading-relaxed text-ink-3">
         {status?.message ?? 'Checking the vault…'}
       </p>
 
       {status?.state === 'connected' && !status.restorable ? (
-        <p className="text-[11.5px] text-ink-3">
+        <p className="text-meta text-ink-3">
           This browser will ask you to choose the folder again after a reload.
         </p>
       ) : null}
@@ -119,14 +119,14 @@ export function VaultConnection({
       {error ? (
         <p
           role="alert"
-          className="inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger"
+          className="inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-body text-danger"
         >
           <AlertCircle size={12} className="mt-[2px] shrink-0" aria-hidden />
           {error}
         </p>
       ) : null}
 
-      <p className="text-[11.5px] leading-relaxed text-ink-3">
+      <p className="text-meta leading-relaxed text-ink-3">
         Notes live in this browser and work without a vault. Obsidian is an optional destination —
         nothing here is required to write, search or organise them.
       </p>

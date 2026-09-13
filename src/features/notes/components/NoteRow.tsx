@@ -46,30 +46,30 @@ export function NoteRow({
           <Link
             to={`/notes/${note.id}`}
             title={title}
-            className="min-w-0 max-w-full truncate text-[13.5px] font-medium leading-snug text-ink hover:text-accent"
+            className="min-w-0 max-w-full truncate text-strong font-medium leading-snug text-ink hover:text-accent"
           >
             {title}
           </Link>
 
           <span
-            className="tabular shrink-0 text-[11px] text-ink-3"
+            className="tabular shrink-0 text-meta text-ink-3"
             title={new Date(note.updatedAt).toLocaleString()}
           >
             {formatEventTime(note.updatedAt, now, today)}
           </span>
 
           {deleted ? (
-            <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-[10.5px] text-ink-3">
+            <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-3">
               Deleted
             </span>
           ) : null}
         </div>
 
         {excerpt.length > 0 ? (
-          <p className="mt-0.5 line-clamp-1 text-[11.5px] text-ink-3">{excerpt}</p>
+          <p className="mt-0.5 line-clamp-1 text-meta text-ink-3">{excerpt}</p>
         ) : null}
 
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px]">
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta">
           {tags.length > 0 ? (
             <span className="inline-flex items-center gap-1 text-ink-3">
               <TagIcon size={10} aria-hidden />
@@ -87,7 +87,7 @@ export function NoteRow({
 
           {note.vaultPath ? (
             <span
-              className="hidden truncate font-mono text-[10.5px] text-ink-3 sm:inline"
+              className="hidden truncate font-mono text-micro text-ink-3 sm:inline"
               title={note.vaultPath}
             >
               {note.vaultPath}

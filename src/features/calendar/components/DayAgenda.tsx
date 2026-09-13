@@ -43,24 +43,22 @@ export function DayAgenda({
         aria-current={day.isToday ? 'date' : undefined}
         className="flex w-full items-center gap-2 border-b border-line px-3 py-1.5 text-left"
       >
-        <span
-          className={cn('text-[12.5px]', day.isToday ? 'font-semibold text-accent' : 'text-ink')}
-        >
+        <span className={cn('text-body', day.isToday ? 'font-semibold text-accent' : 'text-ink')}>
           {formatFullDate(day.date)}
         </span>
         {day.isToday ? (
-          <span className="font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-accent">
+          <span className="font-mono text-micro font-semibold uppercase tracking-[0.1em] text-accent">
             Today
           </span>
         ) : null}
         <span className="flex-1" />
         {day.tasks.length > 0 ? (
-          <span className="tabular text-[10.5px] text-ink-3">{day.tasks.length}</span>
+          <span className="tabular text-micro text-ink-3">{day.tasks.length}</span>
         ) : null}
       </button>
 
       {day.tasks.length === 0 ? (
-        <p className="px-3 py-2 text-[11.5px] text-ink-3">Nothing scheduled.</p>
+        <p className="px-3 py-2 text-meta text-ink-3">Nothing scheduled.</p>
       ) : (
         <div className="flex flex-col gap-1 p-2">
           {day.tasks.map((task) => (

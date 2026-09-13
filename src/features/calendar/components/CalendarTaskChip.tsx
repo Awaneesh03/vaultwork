@@ -119,7 +119,7 @@ export function CalendarTaskChip({
         aria-label={label}
         title={label}
         onClick={() => onOpen(task)}
-        className="min-w-0 flex-1 cursor-pointer truncate text-[10.5px] leading-tight"
+        className="min-w-0 flex-1 cursor-pointer truncate text-micro leading-tight"
       >
         {showTime && task.dueTime ? (
           <span className="tabular mr-1 text-ink-3">{formatTime(task.dueTime)}</span>

@@ -58,7 +58,7 @@ export function NoteLinkPicker({
           type="button"
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
-          className="inline-flex items-center gap-1 rounded-md border border-line px-2 py-1 text-[11.5px] text-ink-2 hover:border-accent-line hover:text-ink"
+          className="inline-flex items-center gap-1 rounded-md border border-line px-2 py-1 text-meta text-ink-2 hover:border-accent-line hover:text-ink"
         >
           <Plus size={11} aria-hidden />
           Link
@@ -66,7 +66,7 @@ export function NoteLinkPicker({
       </div>
 
       {links.length === 0 ? (
-        <p className="text-[12px] text-ink-3">
+        <p className="text-body text-ink-3">
           Not linked to anything yet. A note can reference a task, project, goal or habit.
         </p>
       ) : (
@@ -77,7 +77,7 @@ export function NoteLinkPicker({
               <li key={`${link.refType}:${link.refId}`}>
                 <span
                   className={cn(
-                    'inline-flex items-center gap-1.5 rounded-md border py-1 pl-2 pr-1 text-[12px]',
+                    'inline-flex items-center gap-1.5 rounded-md border py-1 pl-2 pr-1 text-body',
                     link.missing
                       ? 'border-line bg-sunken text-ink-3'
                       : 'border-line bg-surface text-ink-2',
@@ -116,11 +116,11 @@ export function NoteLinkPicker({
             onChange={(event) => setQuery(event.target.value)}
             placeholder="Find a task, project, goal or habit"
             aria-label="Find something to link"
-            className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-[12.5px] text-ink placeholder:text-ink-3 focus:border-accent-line"
+            className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-body text-ink placeholder:text-ink-3 focus:border-accent-line"
           />
 
           {matches.length === 0 ? (
-            <p className="px-1 py-1 text-[11.5px] text-ink-3">Nothing else to link.</p>
+            <p className="px-1 py-1 text-meta text-ink-3">Nothing else to link.</p>
           ) : (
             <ul className="flex flex-col">
               {matches.map((candidate) => {
@@ -133,11 +133,11 @@ export function NoteLinkPicker({
                         onAttach(candidate.refType, candidate.refId)
                         setQuery('')
                       }}
-                      className="flex w-full items-center gap-2 rounded px-1.5 py-1 text-left text-[12.5px] text-ink-2 hover:bg-elevated hover:text-ink"
+                      className="flex w-full items-center gap-2 rounded px-1.5 py-1 text-left text-body text-ink-2 hover:bg-elevated hover:text-ink"
                     >
                       <Icon size={11} aria-hidden className="shrink-0 text-ink-3" />
                       <span className="min-w-0 flex-1 truncate">{candidate.label}</span>
-                      <span className="shrink-0 text-[10.5px] uppercase tracking-wide text-ink-3">
+                      <span className="shrink-0 text-micro uppercase tracking-wide text-ink-3">
                         {candidate.refType}
                       </span>
                     </button>

@@ -115,7 +115,7 @@ export function HabitRow({
             onClick={onOpen}
             title={habit.name}
             className={cn(
-              'min-w-0 max-w-full truncate text-left text-[13.5px] font-medium leading-snug',
+              'min-w-0 max-w-full truncate text-left text-strong font-medium leading-snug',
               completedToday ? 'text-ink-2' : 'text-ink',
               'hover:text-accent',
             )}
@@ -123,7 +123,7 @@ export function HabitRow({
             {habit.name}
           </button>
 
-          <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-[10.5px] text-ink-3">
+          <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-3">
             {scheduleText(item)}
           </span>
 
@@ -131,17 +131,17 @@ export function HabitRow({
           <span className="sr-only">{state}</span>
 
           {!scheduledToday && !archived ? (
-            <span className="shrink-0 text-[10.5px] text-ink-3">Not today</span>
+            <span className="shrink-0 text-micro text-ink-3">Not today</span>
           ) : null}
 
           {archived ? (
-            <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-[10.5px] text-ink-3">
+            <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-3">
               Archived
             </span>
           ) : null}
         </div>
 
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px]">
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta">
           <span className="tabular inline-flex items-center gap-1 whitespace-nowrap text-ink-3">
             <Flame size={11} aria-hidden />
             <span aria-label={`Current streak ${item.currentStreak}`}>{item.currentStreak}</span>

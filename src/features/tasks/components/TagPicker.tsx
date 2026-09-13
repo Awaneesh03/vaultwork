@@ -56,7 +56,7 @@ export function TagPicker({ selected, tags, onChange, onCreate }: TagPickerProps
         <ul className="flex flex-wrap gap-1">
           {chosen.map((tag) => (
             <li key={tag.id}>
-              <span className="inline-flex items-center gap-1 rounded-sm bg-sunken py-0.5 pl-1.5 pr-1 text-[11.5px] text-ink-2">
+              <span className="inline-flex items-center gap-1 rounded-sm bg-sunken py-0.5 pl-1.5 pr-1 text-meta text-ink-2">
                 #{tag.name}
                 <button
                   type="button"
@@ -88,7 +88,7 @@ export function TagPicker({ selected, tags, onChange, onCreate }: TagPickerProps
           }
         }}
         placeholder="Add a tag…"
-        className="h-8 w-full rounded-md border border-line bg-surface px-2.5 text-[13px] text-ink placeholder:text-ink-3 focus:border-line-strong"
+        className="h-8 w-full rounded-md border border-line bg-surface px-2.5 text-strong text-ink placeholder:text-ink-3 focus:border-line-strong"
       />
 
       {suggestions.length > 0 || canCreate ? (
@@ -98,7 +98,7 @@ export function TagPicker({ selected, tags, onChange, onCreate }: TagPickerProps
               <button
                 type="button"
                 onClick={() => add(tag.id)}
-                className="rounded-sm border border-line px-1.5 py-0.5 text-[11.5px] text-ink-2 hover:border-line-strong hover:text-ink"
+                className="rounded-sm border border-line px-1.5 py-0.5 text-meta text-ink-2 hover:border-line-strong hover:text-ink"
               >
                 #{tag.name}
               </button>
@@ -111,7 +111,7 @@ export function TagPicker({ selected, tags, onChange, onCreate }: TagPickerProps
                 onClick={() => void create()}
                 className={cn(
                   'inline-flex items-center gap-1 rounded-sm border border-dashed border-line px-1.5 py-0.5',
-                  'text-[11.5px] text-accent hover:border-accent',
+                  'text-meta text-accent hover:border-accent',
                 )}
               >
                 <Plus size={10} aria-hidden />

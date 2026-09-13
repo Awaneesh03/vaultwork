@@ -95,36 +95,36 @@ export function ProjectRow({
             type="button"
             onClick={onOpen}
             title={project.name}
-            className="min-w-0 max-w-full truncate text-left text-[13.5px] font-medium leading-snug text-ink hover:text-accent"
+            className="min-w-0 max-w-full truncate text-left text-strong font-medium leading-snug text-ink hover:text-accent"
           >
             {project.name}
           </button>
 
-          <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-[10.5px] text-ink-3">
+          <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-px text-micro text-ink-3">
             {PROJECT_STATUS_LABELS[project.status]}
           </span>
 
           {stats.overdue > 0 ? (
-            <span className="tabular inline-flex shrink-0 items-center gap-1 rounded-sm bg-danger-soft px-1.5 py-px text-[10.5px] text-danger">
+            <span className="tabular inline-flex shrink-0 items-center gap-1 rounded-sm bg-danger-soft px-1.5 py-px text-micro text-danger">
               <TriangleAlert size={10} aria-hidden />
               {stats.overdue} overdue
             </span>
           ) : null}
 
           {project.deadline ? (
-            <span className="tabular shrink-0 text-[11px] text-ink-3">
+            <span className="tabular shrink-0 text-meta text-ink-3">
               {formatDayLabel(project.deadline, today)}
             </span>
           ) : null}
         </div>
 
         {project.description ? (
-          <p className="mt-0.5 truncate text-[12px] text-ink-3">{project.description}</p>
+          <p className="mt-0.5 truncate text-body text-ink-3">{project.description}</p>
         ) : null}
 
-        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px]">
+        <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-meta">
           {stats.total === 0 ? (
-            <span className="text-[11.5px] text-ink-3">No tasks yet</span>
+            <span className="text-meta text-ink-3">No tasks yet</span>
           ) : (
             <>
               <Stat value={stats.total} label={plural(stats.total, 'task', 'tasks')} />
@@ -140,7 +140,7 @@ export function ProjectRow({
               accent={accent}
               className="min-w-[48px] flex-1"
             />
-            <span className="tabular w-[34px] shrink-0 text-right text-[11px] text-ink-3">
+            <span className="tabular w-[34px] shrink-0 text-right text-meta text-ink-3">
               {stats.progress}%
             </span>
           </span>

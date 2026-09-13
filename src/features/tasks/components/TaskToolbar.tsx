@@ -82,7 +82,7 @@ function Pill({
       onClick={onClick}
       aria-pressed={active}
       className={cn(
-        'rounded-md border px-2 py-0.5 text-[12px] transition-colors duration-[var(--duration-fast)]',
+        'rounded-md border px-2 py-0.5 text-body transition-colors duration-[var(--duration-fast)]',
         active
           ? 'border-accent bg-accent-soft text-ink'
           : 'border-line text-ink-2 hover:border-line-strong hover:text-ink',
@@ -94,7 +94,7 @@ function Pill({
 }
 
 const SELECT =
-  'h-7 rounded-md border border-line bg-surface px-2 text-[12.5px] text-ink-2 focus:border-line-strong'
+  'h-7 rounded-md border border-line bg-surface px-2 text-body text-ink-2 focus:border-line-strong'
 
 export function TaskToolbar({
   view,
@@ -145,7 +145,7 @@ export function TaskToolbar({
             }}
             placeholder="Search title, notes, tags, project…"
             aria-label="Search tasks"
-            className="min-w-0 flex-1 bg-transparent text-[12.5px] text-ink placeholder:text-ink-3"
+            className="min-w-0 flex-1 bg-transparent text-body text-ink placeholder:text-ink-3"
           />
           {filter.search.length > 0 ? (
             <button
@@ -181,7 +181,7 @@ export function TaskToolbar({
           <button
             type="button"
             onClick={() => onSort(sort, direction === 'asc' ? 'desc' : 'asc')}
-            className="hidden h-7 shrink-0 rounded-md border border-line px-2 text-[12px] text-ink-2 hover:border-line-strong hover:text-ink sm:block"
+            className="hidden h-7 shrink-0 rounded-md border border-line px-2 text-body text-ink-2 hover:border-line-strong hover:text-ink sm:block"
             aria-label={direction === 'asc' ? 'Sort ascending' : 'Sort descending'}
           >
             {direction === 'asc' ? '↑' : '↓'}
@@ -193,7 +193,7 @@ export function TaskToolbar({
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
           className={cn(
-            'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-[12.5px]',
+            'inline-flex h-8 shrink-0 items-center gap-1.5 rounded-md border px-2.5 text-body',
             'transition-colors duration-[var(--duration-fast)]',
             activeCount > 0
               ? 'border-accent bg-accent-soft text-ink'
@@ -293,7 +293,7 @@ export function TaskToolbar({
                 <button
                   type="button"
                   onClick={() => onTagMode(filter.tagMode === 'any' ? 'all' : 'any')}
-                  className="ml-1 rounded-md border border-line px-2 py-0.5 text-[11.5px] text-ink-3 hover:text-ink"
+                  className="ml-1 rounded-md border border-line px-2 py-0.5 text-meta text-ink-3 hover:text-ink"
                 >
                   match {filter.tagMode}
                 </button>
@@ -306,7 +306,7 @@ export function TaskToolbar({
               <button
                 type="button"
                 onClick={onClear}
-                className="text-[12px] text-ink-3 underline decoration-dotted hover:text-ink"
+                className="text-body text-ink-3 underline decoration-dotted hover:text-ink"
               >
                 Clear all filters
               </button>

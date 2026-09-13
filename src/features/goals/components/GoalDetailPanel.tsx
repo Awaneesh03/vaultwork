@@ -46,8 +46,8 @@ function Stat({ label, value, hint }: { label: string; value: string; hint?: str
   return (
     <div className="flex min-w-0 flex-col gap-0.5 rounded-md border border-line bg-surface px-2.5 py-1.5">
       <span className="t-eyebrow text-ink-3">{label}</span>
-      <span className="tabular text-[15px] font-semibold leading-tight text-ink">{value}</span>
-      {hint ? <span className="text-[10.5px] text-ink-3">{hint}</span> : null}
+      <span className="tabular text-title font-semibold leading-tight text-ink">{value}</span>
+      {hint ? <span className="text-micro text-ink-3">{hint}</span> : null}
     </div>
   )
 }
@@ -122,12 +122,12 @@ export function GoalDetailPanel({
         <header className="flex items-start gap-2 border-b border-line px-4 py-3">
           <Target size={16} className="mt-[3px] shrink-0 text-accent" aria-hidden />
           <div className="min-w-0 flex-1">
-            <h2 className="text-[15px] font-semibold leading-snug tracking-tight text-ink">
+            <h2 className="text-title font-semibold leading-snug tracking-tight text-ink">
               {goal.title}
             </h2>
-            <p className="flex flex-wrap items-center gap-x-2 text-[11.5px] text-ink-3">
+            <p className="flex flex-wrap items-center gap-x-2 text-meta text-ink-3">
               <span
-                className={cn('rounded-sm px-1.5 py-px text-[10.5px]', GOAL_HEALTH_CLASSES[health])}
+                className={cn('rounded-sm px-1.5 py-px text-micro', GOAL_HEALTH_CLASSES[health])}
               >
                 {GOAL_HEALTH_LABELS[health]}
               </span>
@@ -148,7 +148,7 @@ export function GoalDetailPanel({
 
         <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4">
           {goal.why ? (
-            <p className="rounded-md border border-line bg-surface px-3 py-2 text-[12.5px] leading-relaxed text-ink-2">
+            <p className="rounded-md border border-line bg-surface px-3 py-2 text-body leading-relaxed text-ink-2">
               {goal.why}
             </p>
           ) : null}
@@ -159,7 +159,7 @@ export function GoalDetailPanel({
               progress={progress}
               tone={completed || archived ? 'muted' : 'accent'}
             />
-            <p className="text-[11.5px] text-ink-3">
+            <p className="text-meta text-ink-3">
               <span className="tabular text-ink-2">{progress.percent}%</span> — measured from{' '}
               {describeBasis(milestones.total, tasks.total)}
               {milestones.total > 0 && tasks.total > 0
@@ -196,7 +196,7 @@ export function GoalDetailPanel({
             </div>
 
             {milestoneViews.length === 0 ? (
-              <p className="rounded-md border border-dashed border-line px-3 py-3 text-[12.5px] text-ink-3">
+              <p className="rounded-md border border-dashed border-line px-3 py-3 text-body text-ink-3">
                 No checkpoints yet. Until there are, this goal&rsquo;s progress is measured from its
                 related tasks.
               </p>
@@ -219,11 +219,11 @@ export function GoalDetailPanel({
                 {detail.projects.map((project) => (
                   <li
                     key={project.id}
-                    className="flex items-center gap-2 px-2.5 py-1.5 text-[12.5px] text-ink-2"
+                    className="flex items-center gap-2 px-2.5 py-1.5 text-body text-ink-2"
                   >
                     <FolderKanban size={12} className="shrink-0 text-ink-3" aria-hidden />
                     <span className="min-w-0 flex-1 truncate">{project.name}</span>
-                    <span className="shrink-0 text-[11px] text-ink-3">
+                    <span className="shrink-0 text-meta text-ink-3">
                       {project.status.replace('_', ' ')}
                     </span>
                   </li>
@@ -237,7 +237,7 @@ export function GoalDetailPanel({
               <h3 className="t-eyebrow text-ink-3">Work with no checkpoint</h3>
               <ul className="flex flex-col divide-y divide-line rounded-md border border-line">
                 {detail.unassignedTasks.slice(0, 8).map((task) => (
-                  <li key={task.id} className="flex items-center gap-2 px-2.5 py-1.5 text-[12.5px]">
+                  <li key={task.id} className="flex items-center gap-2 px-2.5 py-1.5 text-body">
                     <Check
                       size={12}
                       className={cn(
@@ -258,7 +258,7 @@ export function GoalDetailPanel({
                 ))}
               </ul>
               {detail.unassignedTasks.length > 8 ? (
-                <p className="text-[11px] text-ink-3">
+                <p className="text-meta text-ink-3">
                   and {detail.unassignedTasks.length - 8} more.
                 </p>
               ) : null}
@@ -270,7 +270,7 @@ export function GoalDetailPanel({
             onCreate={() => openNoteComposer({ refType: 'goal', refId: goal.id })}
           />
 
-          <p className="inline-flex items-start gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1.5 text-[11.5px] text-ink-3">
+          <p className="inline-flex items-start gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1.5 text-meta text-ink-3">
             <Info size={11} className="mt-[2px] shrink-0" aria-hidden />
             Completing or deleting this goal never completes or deletes a task. A goal is an
             outcome; the tasks are work that still has to be done.

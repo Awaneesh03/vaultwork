@@ -51,7 +51,7 @@ export function CalendarToolbar({
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
         <CalendarClock size={18} className="shrink-0 text-accent" aria-hidden />
-        <h2 className="text-[19px] font-semibold tracking-tight text-ink">Calendar</h2>
+        <h2 className="text-display font-semibold tracking-tight text-ink">Calendar</h2>
 
         <span className="flex-1" />
 
@@ -78,7 +78,7 @@ export function CalendarToolbar({
           <button
             type="button"
             onClick={onToday}
-            className="border-x border-line px-2 py-1 text-[12px] text-ink-2 transition-colors hover:bg-elevated hover:text-ink"
+            className="border-x border-line px-2 py-1 text-body text-ink-2 transition-colors hover:bg-elevated hover:text-ink"
           >
             Today
           </button>
@@ -95,7 +95,7 @@ export function CalendarToolbar({
         {/* `aria-live` so a keyboard user hears the period they moved to. */}
         <p
           aria-live="polite"
-          className="min-w-0 truncate text-[14px] font-medium tracking-tight text-ink"
+          className="min-w-0 truncate text-strong font-medium tracking-tight text-ink"
         >
           {data.title}
         </p>
@@ -103,7 +103,7 @@ export function CalendarToolbar({
         <span className="flex-1" />
 
         {data.counts.overdue > 0 ? (
-          <span className="tabular inline-flex shrink-0 items-center gap-1 rounded-sm bg-danger-soft px-1.5 py-0.5 text-[10.5px] text-danger">
+          <span className="tabular inline-flex shrink-0 items-center gap-1 rounded-sm bg-danger-soft px-1.5 py-0.5 text-micro text-danger">
             <TriangleAlert size={10} aria-hidden />
             {data.counts.overdue} overdue
           </span>
@@ -114,7 +114,7 @@ export function CalendarToolbar({
           <select
             value={status}
             onChange={(event) => onStatus(event.target.value as TaskStatusFilter)}
-            className="h-7 rounded-md border border-line bg-surface px-2 text-[12.5px] text-ink-2 hover:border-line-strong focus:border-accent-line"
+            className="h-7 rounded-md border border-line bg-surface px-2 text-body text-ink-2 hover:border-line-strong focus:border-accent-line"
           >
             {FILTERS.map((filter) => (
               <option key={filter.id} value={filter.id}>
@@ -137,7 +137,7 @@ export function CalendarToolbar({
               aria-pressed={data.mode === mode.id}
               title={`${mode.label} (shift ${mode.key})`}
               className={cn(
-                'inline-flex h-6 items-center gap-1.5 rounded px-2 text-[12px]',
+                'inline-flex h-6 items-center gap-1.5 rounded px-2 text-body',
                 'transition-colors duration-[var(--duration-fast)]',
                 data.mode === mode.id
                   ? 'bg-accent-soft font-medium text-ink'

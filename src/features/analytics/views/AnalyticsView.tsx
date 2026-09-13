@@ -116,7 +116,7 @@ export function AnalyticsView() {
               aria-pressed={option === range}
               onClick={() => setRange(option)}
               className={cn(
-                'rounded-[5px] px-2.5 py-1 text-[12px] font-medium',
+                'rounded-[5px] px-2.5 py-1 text-body font-medium',
                 'transition-colors duration-[var(--duration-fast)]',
                 option === range
                   ? 'bg-surface text-ink shadow-[var(--shadow-sm)]'

@@ -26,8 +26,8 @@ import { UpcomingView } from '@/features/upcoming/views/UpcomingView'
 function NotFound() {
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-[19px] font-semibold tracking-tight">No such screen</h2>
-      <p className="text-[13.5px] text-ink-2">
+      <h2 className="text-display font-semibold tracking-tight">No such screen</h2>
+      <p className="text-strong text-ink-2">
         That route does not exist. Press ⌘K to jump somewhere that does.
       </p>
     </div>

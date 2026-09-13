@@ -81,7 +81,7 @@ function Metric({
       <span className="t-eyebrow text-ink-3">{label}</span>
       <span
         className={cn(
-          'tabular text-[15px] font-semibold leading-tight',
+          'tabular text-title font-semibold leading-tight',
           tone === 'warn' ? 'text-danger' : 'text-ink',
         )}
       >
@@ -311,7 +311,7 @@ export function ProjectDetailView() {
       <section className="flex flex-col gap-4">
         <Link
           to="/projects"
-          className="inline-flex w-fit items-center gap-1.5 text-[12.5px] text-ink-2 hover:text-ink"
+          className="inline-flex w-fit items-center gap-1.5 text-body text-ink-2 hover:text-ink"
         >
           <ArrowLeft size={13} aria-hidden />
           All projects
@@ -332,7 +332,7 @@ export function ProjectDetailView() {
     <section className="flex flex-col gap-4">
       <Link
         to="/projects"
-        className="inline-flex w-fit items-center gap-1.5 text-[12.5px] text-ink-2 hover:text-ink"
+        className="inline-flex w-fit items-center gap-1.5 text-body text-ink-2 hover:text-ink"
       >
         <ArrowLeft size={13} aria-hidden />
         All projects
@@ -353,14 +353,14 @@ export function ProjectDetailView() {
                 >
                   <Icon size={15} />
                 </span>
-                <h2 className="min-w-0 text-[19px] font-semibold tracking-tight text-ink">
+                <h2 className="min-w-0 text-display font-semibold tracking-tight text-ink">
                   {value.project.name}
                 </h2>
-                <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-0.5 text-[10.5px] text-ink-2">
+                <span className="shrink-0 rounded-sm bg-sunken px-1.5 py-0.5 text-micro text-ink-2">
                   {PROJECT_STATUS_LABELS[value.project.status]}
                 </span>
                 {value.project.deadline ? (
-                  <span className="tabular shrink-0 text-[11.5px] text-ink-3">
+                  <span className="tabular shrink-0 text-meta text-ink-3">
                     due {formatDayLabel(value.project.deadline, value.today)}
                   </span>
                 ) : null}
@@ -419,11 +419,11 @@ export function ProjectDetailView() {
               </div>
 
               {value.project.description ? (
-                <p className="max-w-prose text-[13px] text-ink-2">{value.project.description}</p>
+                <p className="max-w-prose text-strong text-ink-2">{value.project.description}</p>
               ) : null}
 
               {value.project.status === 'archived' ? (
-                <p className="inline-flex w-fit items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1 text-[12px] text-ink-2">
+                <p className="inline-flex w-fit items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1 text-body text-ink-2">
                   <Archive size={12} aria-hidden />
                   Archived. Every task below is still here, and restoring brings the project back as
                   it was.
@@ -449,16 +449,14 @@ export function ProjectDetailView() {
                 accent={accent}
                 className="flex-1"
               />
-              <span className="tabular shrink-0 text-[11.5px] text-ink-3">
-                {value.stats.progress}%
-              </span>
+              <span className="tabular shrink-0 text-meta text-ink-3">{value.stats.progress}%</span>
               {value.stats.remainingEstimateMin > 0 ? (
-                <span className="tabular shrink-0 text-[11.5px] text-ink-3">
+                <span className="tabular shrink-0 text-meta text-ink-3">
                   ≈ {formatEstimate(value.stats.remainingEstimateMin)} left
                 </span>
               ) : null}
               {value.stats.overdue > 0 ? (
-                <span className="inline-flex shrink-0 items-center gap-1 text-[11.5px] text-danger">
+                <span className="inline-flex shrink-0 items-center gap-1 text-meta text-danger">
                   <TriangleAlert size={11} aria-hidden />
                   {value.stats.overdue} overdue
                 </span>
@@ -517,7 +515,7 @@ export function ProjectDetailView() {
                     <button
                       type="button"
                       onClick={clearFilter}
-                      className="text-[12.5px] text-accent underline decoration-dotted"
+                      className="text-body text-accent underline decoration-dotted"
                     >
                       Clear filters
                     </button>
@@ -540,7 +538,7 @@ export function ProjectDetailView() {
                     <div className="flex items-baseline gap-2 px-2">
                       <h3 className="t-eyebrow text-ink-3">{group.label}</h3>
                       {group.hint ? (
-                        <span className="tabular text-[11px] text-ink-3">{group.hint}</span>
+                        <span className="tabular text-meta text-ink-3">{group.hint}</span>
                       ) : null}
                     </div>
                     <TaskList
@@ -563,7 +561,7 @@ export function ProjectDetailView() {
                   </section>
                 ))}
 
-                <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-[11px] text-ink-3">
+                <p className="flex flex-wrap items-center gap-x-3 gap-y-1 px-2 pt-1 text-meta text-ink-3">
                   <span className="inline-flex items-center gap-1">
                     <Kbd>J</Kbd>
                     <Kbd>K</Kbd> move

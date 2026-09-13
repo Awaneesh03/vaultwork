@@ -92,7 +92,7 @@ function DayCell({
           onDoubleClick={onOpenDay}
           aria-label={`Select ${formatFullDate(day.date)}`}
           className={cn(
-            'tabular grid h-[19px] min-w-[19px] shrink-0 place-items-center rounded-full px-1 text-[11px]',
+            'tabular grid h-[19px] min-w-[19px] shrink-0 place-items-center rounded-full px-1 text-meta',
             'transition-colors duration-[var(--duration-fast)]',
             day.isToday
               ? 'bg-accent font-semibold text-accent-ink'
@@ -106,7 +106,7 @@ function DayCell({
 
         {/* "Today" in words as well as in colour. */}
         {day.isToday ? (
-          <span className="hidden font-mono text-[10px] font-semibold uppercase tracking-[0.1em] text-accent sm:inline">
+          <span className="hidden font-mono text-micro font-semibold uppercase tracking-[0.1em] text-accent sm:inline">
             Today
           </span>
         ) : null}
@@ -115,7 +115,7 @@ function DayCell({
 
         {day.overdueCount > 0 ? (
           <span
-            className="tabular hidden shrink-0 rounded-sm bg-danger-soft px-1 text-[9px] text-danger sm:inline"
+            className="tabular hidden shrink-0 rounded-sm bg-danger-soft px-1 text-micro text-danger sm:inline"
             title={`${day.overdueCount} overdue`}
           >
             {day.overdueCount}!
@@ -139,7 +139,7 @@ function DayCell({
           />
         ))}
         {day.tasks.length > 4 ? (
-          <span className="tabular text-[10px] text-ink-3">+{day.tasks.length - 4}</span>
+          <span className="tabular text-micro text-ink-3">+{day.tasks.length - 4}</span>
         ) : null}
       </div>
 
@@ -161,7 +161,7 @@ function DayCell({
             type="button"
             onClick={onOpenDay}
             aria-label={`Show all ${day.tasks.length} tasks on ${formatFullDate(day.date)}`}
-            className="rounded px-1 text-left text-[10px] text-ink-3 hover:bg-elevated hover:text-accent"
+            className="rounded px-1 text-left text-micro text-ink-3 hover:bg-elevated hover:text-accent"
           >
             +{hidden} more
           </button>

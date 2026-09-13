@@ -7,7 +7,7 @@ import { useTheme } from '@/hooks/useTheme'
 function BootScreen({ message }: { message: string }) {
   return (
     <div className="flex min-h-dvh items-center justify-center bg-canvas">
-      <p className="font-mono text-[12.5px] text-ink-3">{message}</p>
+      <p className="font-mono text-body text-ink-3">{message}</p>
     </div>
   )
 }
@@ -15,11 +15,11 @@ function BootScreen({ message }: { message: string }) {
 function BootFailure({ error }: { error: Error }) {
   return (
     <div className="mx-auto flex min-h-dvh max-w-lg flex-col justify-center gap-4 p-6">
-      <h1 className="text-[18px] font-semibold">Vaultwork could not open its database</h1>
-      <p className="text-[13.5px] text-ink-2">
+      <h1 className="text-display font-semibold">Vaultwork could not open its database</h1>
+      <p className="text-strong text-ink-2">
         Everything lives in this browser, so without IndexedDB there is nothing to show.
       </p>
-      <pre className="overflow-x-auto rounded-md border border-line bg-surface p-3 font-mono text-[12px] text-ink-2">
+      <pre className="overflow-x-auto rounded-md border border-line bg-surface p-3 font-mono text-body text-ink-2">
         {error.message}
       </pre>
     </div>

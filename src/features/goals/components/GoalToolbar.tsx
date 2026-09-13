@@ -56,7 +56,7 @@ function Segment<T extends string>({
             aria-pressed={active}
             onClick={() => onChange(option.id)}
             className={cn(
-              'rounded-[5px] px-2 py-1 text-[11.5px] transition-colors duration-[var(--duration-fast)]',
+              'rounded-[5px] px-2 py-1 text-meta transition-colors duration-[var(--duration-fast)]',
               active ? 'bg-elevated text-ink' : 'text-ink-3 hover:text-ink-2',
             )}
           >
@@ -112,7 +112,7 @@ export function GoalToolbar({
           onChange={(event) => onSearch(event.target.value)}
           placeholder="Search goals"
           aria-label="Search goals"
-          className="w-full rounded-md border border-line bg-surface py-1.5 pl-8 pr-7 text-[12.5px] text-ink placeholder:text-ink-3 focus:border-accent-line"
+          className="w-full rounded-md border border-line bg-surface py-1.5 pl-8 pr-7 text-body text-ink placeholder:text-ink-3 focus:border-accent-line"
         />
         {filter.search.length > 0 ? (
           <button
@@ -140,13 +140,13 @@ export function GoalToolbar({
         onChange={onHealth}
       />
 
-      <label className="flex shrink-0 items-center gap-1.5 text-[11.5px] text-ink-3">
+      <label className="flex shrink-0 items-center gap-1.5 text-meta text-ink-3">
         <span className="sr-only sm:not-sr-only">Sort</span>
         <select
           value={sort}
           onChange={(event) => onSort(event.target.value as GoalSort)}
           aria-label="Sort goals"
-          className="rounded-md border border-line bg-surface px-2 py-1.5 text-[11.5px] text-ink-2 focus:border-accent-line"
+          className="rounded-md border border-line bg-surface px-2 py-1.5 text-meta text-ink-2 focus:border-accent-line"
         >
           {GOAL_SORT_OPTIONS.map((option) => (
             <option key={option.id} value={option.id}>

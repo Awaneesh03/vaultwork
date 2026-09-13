@@ -56,7 +56,7 @@ export function ReschedulePopover({
         }}
         className="w-full max-w-xs rounded-lg border border-line bg-elevated p-3 shadow-xl"
       >
-        <p className="mb-2 truncate text-[12.5px] text-ink-3" title={task.title}>
+        <p className="mb-2 truncate text-body text-ink-3" title={task.title}>
           {task.title}
         </p>
 
@@ -81,7 +81,7 @@ export function ReschedulePopover({
             value={value}
             onChange={(event) => setValue(event.target.value)}
             aria-label="Due date"
-            className="h-8 flex-1 rounded-md border border-line bg-surface px-2.5 text-[13px] text-ink focus:border-line-strong"
+            className="h-8 flex-1 rounded-md border border-line bg-surface px-2.5 text-strong text-ink focus:border-line-strong"
           />
           <Button
             variant="primary"

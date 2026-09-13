@@ -37,7 +37,7 @@ export function BacklinksPanel({
           <button
             type="button"
             onClick={onCreate}
-            className="inline-flex items-center gap-1 rounded-md border border-line px-2 py-0.5 text-[11px] text-ink-2 hover:border-accent-line hover:text-ink"
+            className="inline-flex items-center gap-1 rounded-md border border-line px-2 py-0.5 text-meta text-ink-2 hover:border-accent-line hover:text-ink"
           >
             <Plus size={10} aria-hidden />
             Note
@@ -46,9 +46,9 @@ export function BacklinksPanel({
       </div>
 
       {backlinks === undefined ? (
-        <p className="text-[12px] text-ink-3">Loading…</p>
+        <p className="text-body text-ink-3">Loading…</p>
       ) : notes.length === 0 ? (
-        <p className="text-[12px] text-ink-3">No notes reference this yet.</p>
+        <p className="text-body text-ink-3">No notes reference this yet.</p>
       ) : (
         <ul className="flex flex-col divide-y divide-line rounded-md border border-line">
           {notes.map((note) => (
@@ -59,9 +59,9 @@ export function BacklinksPanel({
               >
                 <FileText size={12} className="mt-[3px] shrink-0 text-ink-3" aria-hidden />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[12.5px] text-ink-2">{note.title}</span>
+                  <span className="block truncate text-body text-ink-2">{note.title}</span>
                   {note.excerpt.length > 0 ? (
-                    <span className="block truncate text-[11px] text-ink-3">{note.excerpt}</span>
+                    <span className="block truncate text-meta text-ink-3">{note.excerpt}</span>
                   ) : null}
                 </span>
               </Link>

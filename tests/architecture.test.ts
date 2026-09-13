@@ -1001,6 +1001,30 @@ describe('the AI boundary', () => {
     }
   })
 
+  it('sizes text from the scale, not by hand', () => {
+    /*
+     * There were twenty distinct hand-picked `text-[Npx]` values across 493
+     * call sites, where the difference between 11px and 11.5px was nobody's
+     * decision. They are now six named steps in globals.css.
+     *
+     * The two exceptions are the Focus countdown, which is display type rather
+     * than UI type and is deliberately outside the scale. Anything else
+     * appearing here means a screen has started inventing its own sizes again.
+     */
+    const ALLOWED = new Set(['52px', '68px'])
+    const offenders: string[] = []
+
+    for (const file of walk(SRC)) {
+      const rel = posix.normalize(relative(ROOT, file).split('\\').join('/'))
+      for (const match of readFileSync(file, 'utf8').matchAll(/text-\[([0-9.]+px)\]/g)) {
+        const size = match[1] ?? ''
+        if (!ALLOWED.has(size)) offenders.push(`${rel}: ${size}`)
+      }
+    }
+
+    expect(offenders).toEqual([])
+  })
+
   it('advertises no keyboard shortcut twice', () => {
     /*
      * A shortcut shown beside a nav item is a promise about what that key does.

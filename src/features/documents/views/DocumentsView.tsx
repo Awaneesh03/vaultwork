@@ -48,12 +48,12 @@ function HitRow({ hit }: { hit: KnowledgeHit }) {
         {isNote ? (
           <Link
             to={`/notes/${hit.id}`}
-            className="text-[13px] font-medium text-ink hover:text-accent"
+            className="text-strong font-medium text-ink hover:text-accent"
           >
             {hit.title}
           </Link>
         ) : (
-          <span className="text-[13px] font-medium text-ink">{hit.title}</span>
+          <span className="text-strong font-medium text-ink">{hit.title}</span>
         )}
         {/* The kind is a word and an icon, never colour alone. */}
         <Badge
@@ -64,11 +64,11 @@ function HitRow({ hit }: { hit: KnowledgeHit }) {
         </Badge>
       </div>
       {hit.path ? (
-        <p className="truncate font-mono text-[11px] text-ink-3" title={hit.path}>
+        <p className="truncate font-mono text-meta text-ink-3" title={hit.path}>
           {hit.path}
         </p>
       ) : null}
-      <p className="text-[12.5px] leading-relaxed text-ink-2">{hit.snippet}</p>
+      <p className="text-body leading-relaxed text-ink-2">{hit.snippet}</p>
     </li>
   )
 }
@@ -97,7 +97,7 @@ export function DocumentsView() {
           value={query}
           onChange={(event) => setQuery(event.target.value)}
           placeholder="Search notes and documents…"
-          className="min-w-0 flex-1 bg-transparent text-[13px] text-ink placeholder:text-ink-3"
+          className="min-w-0 flex-1 bg-transparent text-strong text-ink placeholder:text-ink-3"
         />
       </label>
 
@@ -132,7 +132,7 @@ export function DocumentsView() {
                 action={
                   <Link
                     to="/obsidian/sync"
-                    className="text-[12.5px] text-accent underline decoration-dotted"
+                    className="text-body text-accent underline decoration-dotted"
                   >
                     Open Sync center
                   </Link>
@@ -147,7 +147,7 @@ export function DocumentsView() {
                   return (
                     <li key={document.id} className="flex flex-col gap-1 px-3.5 py-2.5">
                       <div className="flex flex-wrap items-baseline gap-x-2">
-                        <span className="inline-flex items-center gap-2 text-[13.5px] font-medium text-ink">
+                        <span className="inline-flex items-center gap-2 text-strong font-medium text-ink">
                           <span
                             className="grid h-5 w-5 shrink-0 place-items-center rounded bg-accent-2-soft text-accent-2"
                             aria-hidden
@@ -156,20 +156,20 @@ export function DocumentsView() {
                           </span>
                           {document.title}
                         </span>
-                        <span className="font-mono text-[11px] text-ink-3">
+                        <span className="font-mono text-meta text-ink-3">
                           {readableSize(document.bytes)}
                         </span>
                       </div>
                       <p
-                        className="truncate font-mono text-[11px] text-ink-3"
+                        className="truncate font-mono text-meta text-ink-3"
                         title={document.vaultPath}
                       >
                         {document.vaultPath}
                       </p>
                       {note ? (
-                        <p className="text-[11.5px] text-warn">{note}</p>
+                        <p className="text-meta text-warn">{note}</p>
                       ) : (
-                        <p className="text-[11.5px] text-ink-3">
+                        <p className="text-meta text-ink-3">
                           {document.chars.toLocaleString()} characters indexed
                         </p>
                       )}

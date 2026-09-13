@@ -50,7 +50,7 @@ export function ToastHost() {
         >
           <span className={cn('h-1.5 w-1.5 shrink-0 rounded-full', DOTS[toast.tone])} aria-hidden />
 
-          <p className="min-w-0 flex-1 whitespace-pre-line text-[13px] leading-snug">
+          <p className="min-w-0 flex-1 whitespace-pre-line text-strong leading-snug">
             {toast.message}
           </p>
 
@@ -62,7 +62,7 @@ export function ToastHost() {
                 dismiss(toast.id)
                 if (intent) void dispatch(intent, { notify: 'always' })
               }}
-              className="shrink-0 rounded-md px-2 py-1 text-[12.5px] font-medium text-accent transition-colors hover:bg-accent-soft"
+              className="shrink-0 rounded-md px-2 py-1 text-body font-medium text-accent transition-colors hover:bg-accent-soft"
             >
               {toast.action.label}
             </button>

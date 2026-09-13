@@ -50,7 +50,7 @@ function Section({
   )
 }
 
-const EMPTY = (text: string) => <p className="text-[12px] text-ink-3">{text}</p>
+const EMPTY = (text: string) => <p className="text-body text-ink-3">{text}</p>
 
 export function NoteKnowledgePanel({
   knowledge,
@@ -62,7 +62,7 @@ export function NoteKnowledgePanel({
   onOpenNote?: (noteId: string) => void
 }) {
   if (knowledge === undefined) {
-    return <p className={cn('text-[12px] text-ink-3', className)}>Loading connections…</p>
+    return <p className={cn('text-body text-ink-3', className)}>Loading connections…</p>
   }
   if (knowledge === null) return null
 
@@ -85,13 +85,11 @@ export function NoteKnowledgePanel({
                   }
                   className="flex flex-wrap items-baseline gap-x-2 px-2.5 py-1.5 hover:bg-elevated"
                 >
-                  <span className="min-w-0 flex-1 truncate text-[12.5px] text-ink-2">
-                    {link.label}
-                  </span>
+                  <span className="min-w-0 flex-1 truncate text-body text-ink-2">{link.label}</span>
                   {link.heading !== null ? (
                     <span
                       className={cn(
-                        'shrink-0 text-[11px]',
+                        'shrink-0 text-meta',
                         link.headingMissing ? 'text-warn' : 'text-ink-3',
                       )}
                     >
@@ -102,7 +100,7 @@ export function NoteKnowledgePanel({
                       {link.headingMissing ? ' · no such heading' : ''}
                     </span>
                   ) : null}
-                  <span className="shrink-0 font-mono text-[10.5px] text-ink-3">{link.raw}</span>
+                  <span className="shrink-0 font-mono text-micro text-ink-3">{link.raw}</span>
                 </Link>
               </li>
             ))}
@@ -116,14 +114,14 @@ export function NoteKnowledgePanel({
             {unresolved.map((link, index) => (
               <li
                 key={`${link.raw}-${index}`}
-                className="flex flex-wrap items-baseline gap-x-2 px-2.5 py-1.5 text-[12.5px]"
+                className="flex flex-wrap items-baseline gap-x-2 px-2.5 py-1.5 text-body"
               >
-                <span className="min-w-0 flex-1 truncate font-mono text-[11.5px] text-ink-2">
+                <span className="min-w-0 flex-1 truncate font-mono text-meta text-ink-2">
                   {link.raw}
                 </span>
                 <span
                   className={cn(
-                    'shrink-0 rounded-sm px-1.5 py-px text-[10.5px]',
+                    'shrink-0 rounded-sm px-1.5 py-px text-micro',
                     link.reason === 'deleted'
                       ? 'bg-danger-soft text-danger'
                       : 'bg-sunken text-ink-3',
@@ -134,7 +132,7 @@ export function NoteKnowledgePanel({
                 {link.deletedNoteId !== null ? (
                   <Link
                     to={`/notes/${link.deletedNoteId}`}
-                    className="shrink-0 text-[11.5px] text-accent underline decoration-dotted"
+                    className="shrink-0 text-meta text-accent underline decoration-dotted"
                   >
                     Open it
                   </Link>
@@ -153,9 +151,9 @@ export function NoteKnowledgePanel({
                 key={`${link.raw}-${index}`}
                 className="flex flex-col gap-1 rounded-md border border-line px-2.5 py-1.5"
               >
-                <p className="flex flex-wrap items-baseline gap-x-2 text-[12.5px]">
-                  <span className="font-mono text-[11.5px] text-ink-2">{link.raw}</span>
-                  <span className="text-[11px] text-ink-3">
+                <p className="flex flex-wrap items-baseline gap-x-2 text-body">
+                  <span className="font-mono text-meta text-ink-2">{link.raw}</span>
+                  <span className="text-meta text-ink-3">
                     matches {link.candidates.length} notes — Vaultwork will not choose
                   </span>
                 </p>
@@ -164,7 +162,7 @@ export function NoteKnowledgePanel({
                     <li key={candidate.noteId}>
                       <Link
                         to={`/notes/${candidate.noteId}`}
-                        className="rounded-md border border-line px-2 py-0.5 text-[11.5px] text-ink-2 hover:border-accent-line hover:text-ink"
+                        className="rounded-md border border-line px-2 py-0.5 text-meta text-ink-2 hover:border-accent-line hover:text-ink"
                       >
                         {candidate.title}
                       </Link>
@@ -188,11 +186,11 @@ export function NoteKnowledgePanel({
                   to={`/notes/${backlink.noteId}`}
                   className="flex flex-wrap items-baseline gap-x-2 px-2.5 py-1.5 hover:bg-elevated"
                 >
-                  <span className="min-w-0 flex-1 truncate text-[12.5px] text-ink-2">
+                  <span className="min-w-0 flex-1 truncate text-body text-ink-2">
                     {backlink.title}
                   </span>
                   {backlink.contexts.length > 1 ? (
-                    <span className="tabular shrink-0 text-[11px] text-ink-3">
+                    <span className="tabular shrink-0 text-meta text-ink-3">
                       {backlink.contexts.length} mentions
                     </span>
                   ) : null}
@@ -214,14 +212,12 @@ export function NoteKnowledgePanel({
                   to={`/notes/${row.noteId}`}
                   className="flex flex-wrap items-baseline gap-x-2 px-2.5 py-1.5 hover:bg-elevated"
                 >
-                  <span className="min-w-0 flex-1 truncate text-[12.5px] text-ink-2">
-                    {row.title}
-                  </span>
+                  <span className="min-w-0 flex-1 truncate text-body text-ink-2">{row.title}</span>
                   {/* The score is explained rather than asserted: three facts a
                       user can check, not a number they have to trust. */}
-                  <span className="shrink-0 text-[11px] text-ink-3">{row.reasons.join(' · ')}</span>
+                  <span className="shrink-0 text-meta text-ink-3">{row.reasons.join(' · ')}</span>
                   <span
-                    className="tabular shrink-0 text-[11px] text-ink-3"
+                    className="tabular shrink-0 text-meta text-ink-3"
                     aria-label={`Relatedness score ${row.score}`}
                   >
                     {row.score}
@@ -235,7 +231,7 @@ export function NoteKnowledgePanel({
 
       <Section icon={Network} title="Local graph">
         {isOrphan ? (
-          <p className="inline-flex items-start gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1.5 text-[11.5px] text-ink-3">
+          <p className="inline-flex items-start gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1.5 text-meta text-ink-3">
             <CircleHelp size={11} className="mt-[2px] shrink-0" aria-hidden />
             Nothing links here and this links nowhere — an orphan. Tags do not change that; a tag is
             a label, a link is a relationship.
