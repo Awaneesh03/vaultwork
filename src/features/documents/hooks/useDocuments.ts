@@ -1,6 +1,13 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import { listDocuments, searchKnowledge, type DocumentSummary, type KnowledgeHit } from '@/services'
+import {
+  getDocument,
+  listDocuments,
+  searchKnowledge,
+  type DocumentSummary,
+  type KnowledgeHit,
+} from '@/services'
+import type { Id, VaultDocument } from '@/types/entities'
 
 /**
  * Imported PDF documents, and search across everything Vaultwork has read.
@@ -32,4 +39,19 @@ export function useDocuments(): DocumentsController {
   )
 
   return { documents, results, query, setQuery }
+}
+
+/**
+ * One document, text included, for the reading pane.
+ *
+ * Separate from `listDocuments` on purpose: the list query deliberately drops
+ * the `text` column, because a hundred PDFs' worth of extracted characters is
+ * not something a sidebar should be carrying around. The text is fetched only
+ * for the one document actually being read.
+ *
+ * `null` when nothing is open or the document is gone; `undefined` while the
+ * query is in flight, which is the loading signal the pane renders against.
+ */
+export function useDocument(id: Id | null): VaultDocument | null | undefined {
+  return useLiveQuery(async () => (id === null ? null : await getDocument(id)), [id])
 }
