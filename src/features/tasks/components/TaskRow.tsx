@@ -97,7 +97,15 @@ export function TaskRow({
           : task.priority === 'high' && !done
             ? 'before:bg-priority-high'
             : 'before:bg-transparent',
-        selected ? 'bg-accent-soft' : 'hover:bg-sunken',
+        selected
+          ? [
+              'bg-accent-soft',
+              // The keyboard cursor. A tint alone is a shade of grey to anyone
+              // not looking for it, and this list is walked with j/k.
+              'after:absolute after:inset-y-0 after:right-0 after:w-[2px]',
+              'after:rounded-l-full after:bg-accent',
+            ]
+          : 'hover:bg-sunken',
         // A dragged row lifts rather than only fading, so the gap it left and
         // the thing being moved are both legible at once.
         dragging && 'scale-[0.99] opacity-45 shadow-[var(--shadow-lg)]',

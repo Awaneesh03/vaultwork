@@ -379,24 +379,40 @@ export function TaskViewScreen({ view }: { view: TaskViewId }) {
               .map((group) => (
                 <section key={group.id} className="flex flex-col gap-1">
                   {group.label ? (
-                    <div className="flex items-baseline gap-2 px-2">
+                    /*
+                      A labelled band with a rule running to the edge, rather
+                      than a floating caption. On a screen of five groups the
+                      rule is what says where one ends and the next begins,
+                      which a bare heading has to leave to spacing alone.
+                    */
+                    <div className="mb-1 flex items-center gap-2.5 px-2">
                       <h3
                         className={cn(
-                          't-eyebrow',
+                          't-eyebrow shrink-0',
                           group.id === 'overdue' ? 'text-danger' : 'text-ink-3',
                         )}
                       >
                         {group.label}
                       </h3>
                       {group.hint ? (
-                        <span className="tabular text-meta text-ink-3">{group.hint}</span>
+                        <span className="tabular shrink-0 text-meta text-ink-3">{group.hint}</span>
                       ) : null}
+                      <span
+                        className={cn(
+                          'h-px min-w-4 flex-1',
+                          group.id === 'overdue' ? 'bg-danger/25' : 'bg-line',
+                        )}
+                        aria-hidden
+                      />
                     </div>
                   ) : null}
 
                   {group.tasks.length === 0 ? (
-                    <p className="px-2 py-1 text-body text-ink-3" aria-label="No tasks">
-                      —
+                    // A named group that is empty says so in words. An em dash
+                    // is a shrug, and on Today an empty "Scheduled" band is
+                    // information rather than an absence of it.
+                    <p className="px-2 py-1 text-meta text-ink-3" aria-label="No tasks">
+                      Nothing here.
                     </p>
                   ) : (
                     <TaskList
