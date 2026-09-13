@@ -20,39 +20,33 @@ export function useProjectDetail(projectId: Id | undefined): ProjectDetailData |
   const sort = useTaskUiStore((s) => s.sort)
   const direction = useTaskUiStore((s) => s.direction)
 
-  return useLiveQuery(
-    async () => {
-      if (!projectId) return null
-      const data = await getProjectDetail(projectId, {
-        // `status` is forced to 'all': the detail view shows open and completed
-        // work in two sections, so the toolbar's status is not its business.
-        filter: { ...filter, status: 'all' },
-        sort: sort ?? 'manual',
-        ...(direction === null ? {} : { direction }),
-      })
-      return data ?? null
-    },
-    [
-      projectId,
-      sort,
-      direction,
-      filter.search,
-      filter.due,
-      filter.hasEstimate,
-      filter.tagMode,
-      filter.priorities.join(','),
-      filter.tagIds.join(','),
-    ],
-  )
+  return useLiveQuery(async () => {
+    if (!projectId) return null
+    const data = await getProjectDetail(projectId, {
+      // `status` is forced to 'all': the detail view shows open and completed
+      // work in two sections, so the toolbar's status is not its business.
+      filter: { ...filter, status: 'all' },
+      sort: sort ?? 'manual',
+      ...(direction === null ? {} : { direction }),
+    })
+    return data ?? null
+  }, [
+    projectId,
+    sort,
+    direction,
+    filter.search,
+    filter.due,
+    filter.hasEstimate,
+    filter.tagMode,
+    filter.priorities.join(','),
+    filter.tagIds.join(','),
+  ])
 }
 
 /** Just the project row — for the composer, which needs no task counts. */
 export function useProject(projectId: Id | null): Project | null | undefined {
-  return useLiveQuery(
-    async () => {
-      if (!projectId) return null
-      return (await getProject(projectId)) ?? null
-    },
-    [projectId],
-  )
+  return useLiveQuery(async () => {
+    if (!projectId) return null
+    return (await getProject(projectId)) ?? null
+  }, [projectId])
 }

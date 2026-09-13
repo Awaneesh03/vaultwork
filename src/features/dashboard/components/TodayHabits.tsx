@@ -100,10 +100,7 @@ export function TodayHabits({
       </ul>
 
       {hidden > 0 ? (
-        <Link
-          to={ROUTES.habits}
-          className="px-3.5 py-1.5 text-[11px] text-ink-3 hover:text-accent"
-        >
+        <Link to={ROUTES.habits} className="px-3.5 py-1.5 text-[11px] text-ink-3 hover:text-accent">
           {hidden} more
         </Link>
       ) : null}

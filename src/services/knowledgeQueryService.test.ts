@@ -140,7 +140,11 @@ describe('heading links', () => {
     const a = await createNote({ title: 'A', body: '[[Java DSA#Recursion]]' })
 
     const link = (await getOutgoingLinks(a.id))[0]
-    expect(link).toMatchObject({ heading: 'Recursion', headingSlug: 'recursion', headingMissing: false })
+    expect(link).toMatchObject({
+      heading: 'Recursion',
+      headingSlug: 'recursion',
+      headingMissing: false,
+    })
   })
 
   it('keeps the note resolved when only the heading is missing', async () => {
@@ -261,9 +265,7 @@ describe('the graph', () => {
       'Tagged',
     ])
     expect((await getGraph({ filter: 'tagged' })).nodes.map((n) => n.title)).toEqual(['Tagged'])
-    expect((await getGraph({ filter: 'unresolved' })).nodes.map((n) => n.title)).toEqual([
-      'Broken',
-    ])
+    expect((await getGraph({ filter: 'unresolved' })).nodes.map((n) => n.title)).toEqual(['Broken'])
   })
 
   it('keeps an edge only when both ends survive the filter', async () => {
@@ -283,9 +285,7 @@ describe('the graph', () => {
     await createNote({ title: 'Java note', tagIds: [java.id] })
     await createNote({ title: 'Other note', tagIds: [other.id] })
 
-    expect((await getGraph({ tagId: java.id })).nodes.map((n) => n.title)).toEqual([
-      'Java note',
-    ])
+    expect((await getGraph({ tagId: java.id })).nodes.map((n) => n.title)).toEqual(['Java note'])
   })
 
   it('is empty and harmless with no notes', async () => {

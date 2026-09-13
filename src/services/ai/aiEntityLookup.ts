@@ -1,8 +1,4 @@
-import type {
-  AiEntityLookup,
-  AiRefResolution,
-  AiRefScope,
-} from '@/ai/bridge/aiBridgeTypes'
+import type { AiEntityLookup, AiRefResolution, AiRefScope } from '@/ai/bridge/aiBridgeTypes'
 import type { Task } from '@/types/entities'
 import { resolveTaskByText, taskChoices } from '../commands/entityResolver'
 import { getTaskView, type TaskViewData } from '../taskQueryService'

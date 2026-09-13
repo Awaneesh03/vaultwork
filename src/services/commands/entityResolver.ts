@@ -18,9 +18,7 @@ import type { CommandChoice } from './intents'
 export const MAX_CHOICES = 8
 
 export type Resolution<T> =
-  | { status: 'resolved'; entity: T }
-  | { status: 'ambiguous'; candidates: T[] }
-  | { status: 'none' }
+  { status: 'resolved'; entity: T } | { status: 'ambiguous'; candidates: T[] } | { status: 'none' }
 
 const TIER = {
   exact: 4,

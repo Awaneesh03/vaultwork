@@ -75,9 +75,7 @@ describe('the test notification', () => {
   it('asks for permission when it has not been granted yet', async () => {
     vi.spyOn(platform.notifications, 'isSupported', 'get').mockReturnValue(true)
     vi.spyOn(platform.notifications, 'permission').mockReturnValue('default')
-    const ask = vi
-      .spyOn(platform.notifications, 'requestPermission')
-      .mockResolvedValue('granted')
+    const ask = vi.spyOn(platform.notifications, 'requestPermission').mockResolvedValue('granted')
     const notify = vi.spyOn(platform.notifications, 'notify').mockResolvedValue()
 
     const result = await sendTestNotification()

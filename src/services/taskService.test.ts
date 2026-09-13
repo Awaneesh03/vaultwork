@@ -368,10 +368,7 @@ describe('subtasks', () => {
     const second = await addSubtask(task.id, 'Preorder')
 
     expect(second.sortOrder).toBeGreaterThan(first.sortOrder)
-    expect((await subtaskRepo.byTask(task.id)).map((s) => s.title)).toEqual([
-      'Inorder',
-      'Preorder',
-    ])
+    expect((await subtaskRepo.byTask(task.id)).map((s) => s.title)).toEqual(['Inorder', 'Preorder'])
   })
 
   it('refuses a blank subtask title', async () => {

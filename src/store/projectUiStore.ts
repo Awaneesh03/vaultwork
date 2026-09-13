@@ -1,9 +1,5 @@
 import { create } from 'zustand'
-import type {
-  ProjectProgressFilter,
-  ProjectSort,
-  ProjectStateFilter,
-} from '@/services'
+import type { ProjectProgressFilter, ProjectSort, ProjectStateFilter } from '@/services'
 import type { Id } from '@/types/entities'
 import type { ProjectStatus } from '@/types/enums'
 
@@ -38,9 +34,7 @@ export const EMPTY_PROJECT_FILTER: ProjectToolbarFilter = {
  * which are possible with an `open` flag and a separate id.
  */
 export type ComposerState =
-  | { mode: 'closed' }
-  | { mode: 'create' }
-  | { mode: 'edit'; projectId: Id }
+  { mode: 'closed' } | { mode: 'create' } | { mode: 'edit'; projectId: Id }
 
 interface ProjectUiState {
   filter: ProjectToolbarFilter

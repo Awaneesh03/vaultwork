@@ -26,10 +26,7 @@ const FIELD =
 
 function Label({ children, htmlFor }: { children: string; htmlFor?: string }) {
   return (
-    <label
-      htmlFor={htmlFor}
-      className="t-eyebrow text-ink-3"
-    >
+    <label htmlFor={htmlFor} className="t-eyebrow text-ink-3">
       {children}
     </label>
   )

@@ -236,10 +236,7 @@ async function statusBeforeArchive(id: Id): Promise<ProjectStatus> {
  * `unarchiveProject` able to put the project back where it was rather than
  * flattening every archived project to "active" on the way out.
  */
-export async function archiveProject(
-  id: Id,
-  options: ProjectWriteOptions = {},
-): Promise<Project> {
+export async function archiveProject(id: Id, options: ProjectWriteOptions = {}): Promise<Project> {
   const source: EventSource = options.source ?? 'ui'
   const current = await projectRepo.getOrThrow(id)
   if (current.status === 'archived') return current
@@ -311,10 +308,7 @@ export async function deleteProject(
 }
 
 /** Undoes a soft delete. Every task that still names the project works again. */
-export function restoreProject(
-  id: Id,
-  options: ProjectWriteOptions = {},
-): Promise<Project> {
+export function restoreProject(id: Id, options: ProjectWriteOptions = {}): Promise<Project> {
   return projectRepo.restore(id, { source: options.source ?? 'ui' })
 }
 

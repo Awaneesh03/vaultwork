@@ -127,8 +127,8 @@ export function VaultConnection({
       ) : null}
 
       <p className="text-[11.5px] leading-relaxed text-ink-3">
-        Notes live in this browser and work without a vault. Obsidian is an optional
-        destination — nothing here is required to write, search or organise them.
+        Notes live in this browser and work without a vault. Obsidian is an optional destination —
+        nothing here is required to write, search or organise them.
       </p>
     </section>
   )

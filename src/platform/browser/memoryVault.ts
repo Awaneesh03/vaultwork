@@ -117,11 +117,8 @@ export function createMemoryVault(options: MemoryVaultOptions = {}): MemoryVault
     directories,
 
     failListing(path, error) {
-
       unreadableFolders.set(path, error)
-
     },
-
 
     failNext(operation, error) {
       failures.set(operation, error)

@@ -115,7 +115,10 @@ describe('ambiguity', () => {
 
   it('is no longer ambiguous once one candidate is deleted', () => {
     const [prog, college] = twins()
-    const result = resolveTarget('Java', index([prog as KnowledgeNote, { ...(college as KnowledgeNote), deleted: true }]))
+    const result = resolveTarget(
+      'Java',
+      index([prog as KnowledgeNote, { ...(college as KnowledgeNote), deleted: true }]),
+    )
     expect(result).toEqual({ status: 'resolved', noteId: 'prog' })
   })
 })
@@ -317,11 +320,11 @@ describe('local graph', () => {
   })
 
   it('reaches further at a greater depth', () => {
-    expect(localGraph(index(web()), 'a', 2).nodes.map((n) => n.id).sort()).toEqual([
-      'a',
-      'b',
-      'c',
-    ])
+    expect(
+      localGraph(index(web()), 'a', 2)
+        .nodes.map((n) => n.id)
+        .sort(),
+    ).toEqual(['a', 'b', 'c'])
   })
 
   it('excludes an unconnected note', () => {

@@ -4,7 +4,11 @@ import { buildAiContext } from '@/ai/context/aiContextBuilder'
 import { purposeFor } from '@/ai/context/aiContextPurpose'
 import type { AiContextPurpose } from '@/ai/context/aiContextTypes'
 import { resolveAiResponse } from '@/ai/bridge/aiIntentBridge'
-import { PLAN_NOT_ATTEMPTED, type AiResolution, type AiStepOutcome } from '@/ai/bridge/aiBridgeTypes'
+import {
+  PLAN_NOT_ATTEMPTED,
+  type AiResolution,
+  type AiStepOutcome,
+} from '@/ai/bridge/aiBridgeTypes'
 import { AiError, platform, type AiStatus } from '@/platform'
 import type { Id } from '@/types/entities'
 import type { CommandIntent } from '../commands/intents'
@@ -122,7 +126,11 @@ export async function askAi(text: string): Promise<AiAskResult> {
       return { kind: 'choices', message: response.message, steps: resolution.steps }
     }
     if (resolution.status === 'invalid') {
-      return { kind: 'unresolved', message: describeProblem(resolution.steps), steps: resolution.steps }
+      return {
+        kind: 'unresolved',
+        message: describeProblem(resolution.steps),
+        steps: resolution.steps,
+      }
     }
 
     const confirmation = await createAiConfirmation(resolution)
@@ -138,9 +146,7 @@ export async function askAi(text: string): Promise<AiAskResult> {
     return {
       kind: 'error',
       message:
-        error instanceof AiError
-          ? error.message
-          : 'The assistant could not complete that request.',
+        error instanceof AiError ? error.message : 'The assistant could not complete that request.',
     }
   }
 }

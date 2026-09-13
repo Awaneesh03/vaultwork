@@ -9,14 +9,7 @@ import type { DateStr, Task } from '@/types/entities'
  * future Telegram `/today` can render the same structure as text.
  */
 
-export const TASK_VIEW_IDS = [
-  'inbox',
-  'today',
-  'upcoming',
-  'overdue',
-  'completed',
-  'all',
-] as const
+export const TASK_VIEW_IDS = ['inbox', 'today', 'upcoming', 'overdue', 'completed', 'all'] as const
 export type TaskViewId = (typeof TASK_VIEW_IDS)[number]
 
 export const TASK_VIEW_PATHS: Record<TaskViewId, string> = {

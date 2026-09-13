@@ -77,7 +77,10 @@ function quote(value: string): string {
   if (value.length === 0) return '""'
   // Anything that could be read as a number, boolean, null, or that carries
   // YAML punctuation, gets quoted; a plain word does not.
-  if (/^[A-Za-z][A-Za-z0-9 _.\-/]*$/.test(value) && !/^(true|false|null|yes|no|on|off)$/i.test(value)) {
+  if (
+    /^[A-Za-z][A-Za-z0-9 _.\-/]*$/.test(value) &&
+    !/^(true|false|null|yes|no|on|off)$/i.test(value)
+  ) {
     return value
   }
   return `"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`

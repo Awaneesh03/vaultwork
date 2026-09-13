@@ -21,9 +21,7 @@ import type { TaskViewId } from '@/services/tasks/taskViews'
 
 /** A reference the user typed: a list position, or text to resolve. */
 export type TelegramRef =
-  | { by: 'index'; index: number }
-  | { by: 'text'; query: string }
-  | { by: 'none' }
+  { by: 'index'; index: number } | { by: 'text'; query: string } | { by: 'none' }
 
 export type TelegramAction =
   | { kind: 'start' }

@@ -108,9 +108,7 @@ describe('inline', () => {
       text(' c'),
     ])
     // Snug on the outside, spaces within: that is a real run.
-    expect(parseInline('*two words*')).toEqual([
-      { kind: 'em', content: [text('two words')] },
-    ])
+    expect(parseInline('*two words*')).toEqual([{ kind: 'em', content: [text('two words')] }])
   })
 
   it('keeps raw HTML as text, because it is never rendered as markup', () => {

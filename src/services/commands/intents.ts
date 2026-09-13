@@ -87,7 +87,17 @@ export type CommandIntent =
   | Intent<'subtask.move', { taskId: Id; fromIndex: number; toIndex: number }>
   | Intent<'tag.assign', { taskId: Id; tagIds: Id[] }>
   | Intent<'task.assignProject', { taskId: Id; projectId: Id | null }>
-  | Intent<'project.add', { name: string; description: string | null; color: string | null; icon: string | null; status: ProjectStatus | null; deadline: DateStr | null }>
+  | Intent<
+      'project.add',
+      {
+        name: string
+        description: string | null
+        color: string | null
+        icon: string | null
+        status: ProjectStatus | null
+        deadline: DateStr | null
+      }
+    >
   | Intent<'project.update', { projectId: Id; patch: ProjectPatch }>
   | Intent<'project.archive', { ref: EntityRef }>
   | Intent<'project.unarchive', { projectId: Id }>
@@ -121,10 +131,7 @@ export type CommandIntent =
   | Intent<'milestone.restore', { milestoneId: Id }>
   | Intent<'milestone.move', { goalId: Id; orderedIds: Id[]; fromIndex: number; toIndex: number }>
   | Intent<'task.assignMilestone', { taskId: Id; milestoneId: Id | null }>
-  | Intent<
-      'note.add',
-      { title: string; body: string; tagIds: Id[]; links: NoteLinkInput[] }
-    >
+  | Intent<'note.add', { title: string; body: string; tagIds: Id[]; links: NoteLinkInput[] }>
   | Intent<'note.update', { noteId: Id; patch: NotePatch }>
   | Intent<'note.delete', { ref: EntityRef }>
   | Intent<'note.restore', { noteId: Id }>

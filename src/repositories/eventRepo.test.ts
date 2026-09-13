@@ -53,7 +53,11 @@ describe('immutability', () => {
   })
 
   it('rejects a put over an existing event', async () => {
-    const event = await eventRepo.append({ type: 'habit.checked', entityType: 'habit', source: 'ui' })
+    const event = await eventRepo.append({
+      type: 'habit.checked',
+      entityType: 'habit',
+      source: 'ui',
+    })
 
     await expect(db.events.put({ ...event, source: 'ai' })).rejects.toThrow(/append-only/)
     expect((await eventRepo.list())[0]?.source).toBe('ui')

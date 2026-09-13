@@ -58,7 +58,11 @@ export function HabitToolbar({
   }, [focusNonce])
 
   const countFor = (state: HabitStateFilter) =>
-    state === 'active' ? activeCount : state === 'archived' ? archivedCount : activeCount + archivedCount
+    state === 'active'
+      ? activeCount
+      : state === 'archived'
+        ? archivedCount
+        : activeCount + archivedCount
 
   return (
     <div className="flex flex-col gap-2">

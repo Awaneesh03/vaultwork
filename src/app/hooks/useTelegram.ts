@@ -27,7 +27,9 @@ export function useTelegram(): void {
     // A promise chain, so overlapping deliveries queue rather than interleave.
     let queue: Promise<void> = Promise.resolve()
 
-    const handle = async (message: Parameters<Parameters<typeof platform.telegram.subscribe>[0]>[0]) => {
+    const handle = async (
+      message: Parameters<Parameters<typeof platform.telegram.subscribe>[0]>[0],
+    ) => {
       const status = await platform.telegram.status()
 
       const outcome = await processTelegramMessage(message, {

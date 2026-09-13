@@ -209,11 +209,7 @@ export function setTaskTags(id: Id, tagIds: Id[], options: TaskWriteOptions = {}
   return updateTask(id, { tagIds: [...new Set(tagIds)] }, options)
 }
 
-export async function addTaskTag(
-  id: Id,
-  tagId: Id,
-  options: TaskWriteOptions = {},
-): Promise<Task> {
+export async function addTaskTag(id: Id, tagId: Id, options: TaskWriteOptions = {}): Promise<Task> {
   const task = await taskRepo.getOrThrow(id)
   if (task.tagIds.includes(tagId)) return task
   return setTaskTags(id, [...task.tagIds, tagId], options)

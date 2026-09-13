@@ -55,9 +55,7 @@ describe('with no vault connected', () => {
     fireEvent.change(area, { target: { value: 'still works' } })
     fireEvent.blur(area)
 
-    await waitFor(async () =>
-      expect((await noteRepo.getOrThrow(note.id)).body).toBe('still works'),
-    )
+    await waitFor(async () => expect((await noteRepo.getOrThrow(note.id)).body).toBe('still works'))
   })
 })
 
@@ -164,9 +162,7 @@ describe('with a vault connected', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Import' }))
     fireEvent.click(await screen.findByRole('button', { name: 'Replace note' }))
 
-    await waitFor(async () =>
-      expect((await noteRepo.getOrThrow(note.id)).body).toContain('theirs'),
-    )
+    await waitFor(async () => expect((await noteRepo.getOrThrow(note.id)).body).toContain('theirs'))
   })
 
   it('offers to move the file when the title no longer matches the path', async () => {

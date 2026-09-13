@@ -4,7 +4,10 @@ import type { Settings } from '@/types/entities'
 import type { Density, EventSource, ThemePreference } from '@/types/enums'
 
 /** Pure: a preference plus the OS state gives one concrete theme. */
-export function resolveTheme(preference: ThemePreference, systemPrefersDark: boolean): 'light' | 'dark' {
+export function resolveTheme(
+  preference: ThemePreference,
+  systemPrefersDark: boolean,
+): 'light' | 'dark' {
   if (preference === 'system') return systemPrefersDark ? 'dark' : 'light'
   return preference
 }

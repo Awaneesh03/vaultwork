@@ -83,9 +83,7 @@ describe('the list', () => {
     await createNote({ title: 'Binary search' })
     mountList()
 
-    await waitFor(() =>
-      expect(screen.getByTitle('notes/binary-search.md')).toBeTruthy(),
-    )
+    await waitFor(() => expect(screen.getByTitle('notes/binary-search.md')).toBeTruthy())
   })
 
   it('titles an untitled note from its body', async () => {
@@ -362,9 +360,7 @@ describe('linking from the editor', () => {
 
     fireEvent.click(await screen.findByRole('button', { name: 'Unlink Study Trees' }))
 
-    await waitFor(() =>
-      expect(screen.queryByRole('link', { name: 'Study Trees' })).toBeNull(),
-    )
+    await waitFor(() => expect(screen.queryByRole('link', { name: 'Study Trees' })).toBeNull())
     expect(await taskRepo.get(task.id)).toBeDefined()
     expect(await listNotes()).toHaveLength(1)
   })

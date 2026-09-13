@@ -51,8 +51,7 @@ export function useAiSettings() {
       // stale status with no explanation — the M14 lesson, applied here.
       setStatus((previous) => ({
         ...previous,
-        lastError:
-          error instanceof Error ? error.message : 'Could not read the assistant status.',
+        lastError: error instanceof Error ? error.message : 'Could not read the assistant status.',
       }))
     }
   }, [])

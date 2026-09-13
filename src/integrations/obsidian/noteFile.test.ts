@@ -90,9 +90,7 @@ describe('serializing', () => {
   it('quotes a title that YAML would otherwise misread', () => {
     expect(serializeNote({ ...note, title: 'true' })).toContain('title: "true"')
     expect(serializeNote({ ...note, title: '2026: a year' })).toContain('title: "2026: a year"')
-    expect(serializeNote({ ...note, title: 'He said "hi"' })).toContain(
-      'title: "He said \\"hi\\""',
-    )
+    expect(serializeNote({ ...note, title: 'He said "hi"' })).toContain('title: "He said \\"hi\\""')
   })
 })
 

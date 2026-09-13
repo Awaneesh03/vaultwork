@@ -121,7 +121,11 @@ const normaliseTarget = (target: string) => lower(target).replace(/\.md$/i, '')
 export function resolveTarget(
   target: string,
   index: Pick<KnowledgeIndex, 'byId' | 'byTitle' | 'byPath' | 'byBasename'>,
-): { status: 'resolved'; noteId: string } | { status: 'missing' } | { status: 'deleted'; noteId: string } | { status: 'ambiguous'; noteIds: string[] } {
+):
+  | { status: 'resolved'; noteId: string }
+  | { status: 'missing' }
+  | { status: 'deleted'; noteId: string }
+  | { status: 'ambiguous'; noteIds: string[] } {
   const needle = normaliseTarget(target)
   if (needle.length === 0) return { status: 'missing' }
 
@@ -129,9 +133,7 @@ export function resolveTarget(
   const dead = (ids: string[]) => ids.filter((id) => index.byId.get(id)?.deleted === true)
 
   /** Decides one candidate set, or falls through when it is empty. */
-  const decide = (
-    ids: string[],
-  ): ReturnType<typeof resolveTarget> | null => {
+  const decide = (ids: string[]): ReturnType<typeof resolveTarget> | null => {
     if (ids.length === 0) return null
     const alive = live(ids)
     if (alive.length === 1) return { status: 'resolved', noteId: alive[0] as string }
@@ -346,9 +348,7 @@ export function buildGraph(index: KnowledgeIndex): KnowledgeGraph {
 
   // A stable order, so two renders of the same vault look the same.
   nodes.sort((a, b) => a.title.localeCompare(b.title) || a.id.localeCompare(b.id))
-  edges.sort(
-    (a, b) => a.source.localeCompare(b.source) || a.target.localeCompare(b.target),
-  )
+  edges.sort((a, b) => a.source.localeCompare(b.source) || a.target.localeCompare(b.target))
 
   return { nodes, edges }
 }
@@ -360,11 +360,7 @@ export function buildGraph(index: KnowledgeIndex): KnowledgeGraph {
  * note is connected to, and a note that links to you is as much a neighbour as
  * one you link to. Breadth-first with a visited set, so a cycle terminates.
  */
-export function localGraph(
-  index: KnowledgeIndex,
-  noteId: string,
-  depth = 1,
-): KnowledgeGraph {
+export function localGraph(index: KnowledgeIndex, noteId: string, depth = 1): KnowledgeGraph {
   const full = buildGraph(index)
   if (!index.byId.has(noteId) || index.byId.get(noteId)?.deleted !== false) {
     return { nodes: [], edges: [] }
@@ -392,9 +388,7 @@ export function localGraph(
 
   return {
     nodes: full.nodes.filter((node) => included.has(node.id)),
-    edges: full.edges.filter(
-      (edge) => included.has(edge.source) && included.has(edge.target),
-    ),
+    edges: full.edges.filter((edge) => included.has(edge.source) && included.has(edge.target)),
   }
 }
 
@@ -446,11 +440,7 @@ export const RELATED_WEIGHTS = {
  *
  * O(neighbours + notes sharing a tag), not O(N²): the tag index is built once.
  */
-export function relatedNotes(
-  index: KnowledgeIndex,
-  noteId: string,
-  limit = 10,
-): RelatedNote[] {
+export function relatedNotes(index: KnowledgeIndex, noteId: string, limit = 10): RelatedNote[] {
   const subject = index.byId.get(noteId)
   if (subject === undefined || subject.deleted) return []
 

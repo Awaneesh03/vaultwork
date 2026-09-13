@@ -83,9 +83,7 @@ describe('Shift+N', () => {
 
     fireEvent.keyDown(window, { key: 'Escape' })
 
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog', { name: 'New note' })).toBeNull(),
-    )
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'New note' })).toBeNull())
     expect(await listNotes()).toHaveLength(0)
   })
 
@@ -140,8 +138,6 @@ describe('Shift+N', () => {
     await screen.findByRole('dialog', { name: 'New note' })
     fireEvent.click(screen.getByRole('button', { name: 'Create' }))
 
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog', { name: 'New note' })).toBeNull(),
-    )
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'New note' })).toBeNull())
   })
 })

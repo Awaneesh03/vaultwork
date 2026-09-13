@@ -253,9 +253,7 @@ describe('deciding', () => {
     await scan()
     fireEvent.click(screen.getByRole('button', { name: 'Select safe changes' }))
 
-    await waitFor(() =>
-      expect(screen.getByRole('button', { name: /^Apply 1/ })).toBeTruthy(),
-    )
+    await waitFor(() => expect(screen.getByRole('button', { name: /^Apply 1/ })).toBeTruthy())
     const conflictRow = screen.getByRole('link', { name: 'Risky' }).closest('li') as HTMLElement
     expect(
       within(conflictRow).getByRole('radio', { name: 'Skip' }).getAttribute('aria-checked'),

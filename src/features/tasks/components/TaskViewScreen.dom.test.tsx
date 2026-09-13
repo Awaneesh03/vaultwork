@@ -52,9 +52,7 @@ describe('Today, rendered from Dexie', () => {
 
     await waitFor(() => expect(screen.getByText('Overdue')).toBeTruthy())
 
-    const headings = screen
-      .getAllByRole('heading', { level: 3 })
-      .map((node) => node.textContent)
+    const headings = screen.getAllByRole('heading', { level: 3 }).map((node) => node.textContent)
     expect(headings).toEqual(['Overdue', 'Scheduled', 'Anytime today'])
   })
 
@@ -139,10 +137,7 @@ describe('quick add, wired end to end', () => {
 
     const input = screen.getByLabelText('Quick add a task') as HTMLInputElement
     // React's controlled input needs its own setter to see a programmatic write.
-    const setter = Object.getOwnPropertyDescriptor(
-      window.HTMLInputElement.prototype,
-      'value',
-    )?.set
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, 'value')?.set
     setter?.call(input, 'Study Java tomorrow 7pm !high ~45m')
     input.dispatchEvent(new Event('input', { bubbles: true }))
 

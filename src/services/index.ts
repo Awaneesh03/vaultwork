@@ -92,10 +92,7 @@ export {
   type ResolvedWikilink,
   type UnresolvedWikilink,
 } from '@/integrations/obsidian/knowledgeIndex'
-export {
-  processTelegramMessage,
-  resetTelegramSessions,
-} from './telegramService'
+export { processTelegramMessage, resetTelegramSessions } from './telegramService'
 export type { ProcessOutcome, TelegramReply } from './telegramService'
 
 /* Milestone 15 — the assistant.

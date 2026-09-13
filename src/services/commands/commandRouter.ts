@@ -54,8 +54,18 @@ interface CommandSpec {
 }
 
 const SPECS: CommandSpec[] = [
-  { name: 'add', aliases: ['add', 'a', 'new'], usage: '/add <text>', summary: 'Capture a task. Bare text works too.' },
-  { name: 'done', aliases: ['done', 'complete', 'check'], usage: '/done <task>', summary: 'Complete a task by name.' },
+  {
+    name: 'add',
+    aliases: ['add', 'a', 'new'],
+    usage: '/add <text>',
+    summary: 'Capture a task. Bare text works too.',
+  },
+  {
+    name: 'done',
+    aliases: ['done', 'complete', 'check'],
+    usage: '/done <task>',
+    summary: 'Complete a task by name.',
+  },
   {
     name: 'undone',
     aliases: ['undone', 'uncomplete', 'uncheck', 'reopen'],
@@ -68,7 +78,12 @@ const SPECS: CommandSpec[] = [
     usage: '/delete <task>',
     summary: 'Soft-delete a task. Undoable.',
   },
-  { name: 'search', aliases: ['search', 'find', 's'], usage: '/search <text>', summary: 'Search every task.' },
+  {
+    name: 'search',
+    aliases: ['search', 'find', 's'],
+    usage: '/search <text>',
+    summary: 'Search every task.',
+  },
   { name: 'help', aliases: ['help', 'h', '?'], usage: '/help', summary: 'List the commands.' },
   {
     name: 'projects',
@@ -125,7 +140,13 @@ const SPECS: CommandSpec[] = [
     summary: 'Open the calendar. /month, /week and /day pick the view.',
   },
   { name: 'view', aliases: ['inbox'], usage: '/inbox', summary: 'Open the Inbox.', view: 'inbox' },
-  { name: 'view', aliases: ['today'], usage: '/today', summary: "Open today's plan.", view: 'today' },
+  {
+    name: 'view',
+    aliases: ['today'],
+    usage: '/today',
+    summary: "Open today's plan.",
+    view: 'today',
+  },
   {
     name: 'view',
     aliases: ['upcoming', 'next'],
@@ -133,7 +154,13 @@ const SPECS: CommandSpec[] = [
     summary: 'Open the next two weeks.',
     view: 'upcoming',
   },
-  { name: 'view', aliases: ['overdue', 'late'], usage: '/overdue', summary: 'Open what is late.', view: 'overdue' },
+  {
+    name: 'view',
+    aliases: ['overdue', 'late'],
+    usage: '/overdue',
+    summary: 'Open what is late.',
+    view: 'overdue',
+  },
   {
     name: 'view',
     aliases: ['completed'],
@@ -141,7 +168,13 @@ const SPECS: CommandSpec[] = [
     summary: 'Open what is finished.',
     view: 'completed',
   },
-  { name: 'view', aliases: ['tasks', 'all'], usage: '/tasks', summary: 'Open every task.', view: 'all' },
+  {
+    name: 'view',
+    aliases: ['tasks', 'all'],
+    usage: '/tasks',
+    summary: 'Open every task.',
+    view: 'all',
+  },
 ]
 
 const BY_ALIAS = new Map<string, CommandSpec>()
@@ -372,9 +405,7 @@ export function parseCommand(input: string, context: RouteContext): CommandInten
 export function describeIntent(intent: CommandIntent): string {
   switch (intent.kind) {
     case 'task.add':
-      return intent.draft.title.length > 0
-        ? `Add “${intent.draft.title}”`
-        : 'Add a task'
+      return intent.draft.title.length > 0 ? `Add “${intent.draft.title}”` : 'Add a task'
     case 'task.complete':
       return intent.ref.by === 'text' ? `Complete “${intent.ref.query}”` : 'Complete task'
     case 'task.uncomplete':

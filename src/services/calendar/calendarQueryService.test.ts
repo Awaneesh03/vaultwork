@@ -79,7 +79,7 @@ describe('task placement', () => {
 
   it('drops a task off the grid when its date is removed', async () => {
     const task = await createTask({ title: 'Study Java', dueDate: TODAY })
-    expect((await getTasksOnDate(TODAY))).toHaveLength(1)
+    expect(await getTasksOnDate(TODAY)).toHaveLength(1)
 
     await rescheduleTask(task.id, null)
 

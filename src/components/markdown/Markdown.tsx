@@ -129,16 +129,12 @@ export function Markdown({ source, className, onToggleCheckbox }: MarkdownProps)
           >
             {block.items.map((item, i) => {
               if (item.checked === null) {
-                return (
-                  <li key={`${key}.${i}`}>{renderInline(item.content, `${key}.${i}.`)}</li>
-                )
+                return <li key={`${key}.${i}`}>{renderInline(item.content, `${key}.${i}.`)}</li>
               }
 
               checkboxIndex += 1
               const index = checkboxIndex
-              const label = item.content
-                .map((node) => ('value' in node ? node.value : ''))
-                .join('')
+              const label = item.content.map((node) => ('value' in node ? node.value : '')).join('')
 
               return (
                 <li key={`${key}.${i}`} className="flex items-start gap-2 pl-0">

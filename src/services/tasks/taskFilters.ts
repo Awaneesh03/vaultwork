@@ -14,13 +14,7 @@ import type { Priority, TaskStatus } from '@/types/enums'
 export type TaskStatusFilter = TaskStatus | 'all'
 
 export type DueFilter =
-  | 'any'
-  | 'today'
-  | 'tomorrow'
-  | 'week'
-  | 'overdue'
-  | 'scheduled'
-  | 'unscheduled'
+  'any' | 'today' | 'tomorrow' | 'week' | 'overdue' | 'scheduled' | 'unscheduled'
 
 export type EstimateFilter = 'any' | 'yes' | 'no'
 

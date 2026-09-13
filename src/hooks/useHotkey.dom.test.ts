@@ -55,9 +55,7 @@ describe('isDragHandleTarget', () => {
   })
 
   it('is false for every other control in a row', () => {
-    const row = make(
-      '<div><button aria-label="Edit">e</button><input /><span>text</span></div>',
-    )
+    const row = make('<div><button aria-label="Edit">e</button><input /><span>text</span></div>')
     for (const node of row.children) {
       expect(isDragHandleTarget(node as HTMLElement)).toBe(false)
     }
@@ -65,9 +63,7 @@ describe('isDragHandleTarget', () => {
   })
 
   it('does not confuse a different roledescription for a drag handle', () => {
-    expect(isDragHandleTarget(make('<button aria-roledescription="button">x</button>'))).toBe(
-      false,
-    )
+    expect(isDragHandleTarget(make('<button aria-roledescription="button">x</button>'))).toBe(false)
   })
 })
 

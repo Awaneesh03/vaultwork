@@ -215,10 +215,7 @@ export async function completeGoal(id: Id, options: GoalWriteOptions = {}): Prom
   const current = await goalRepo.getOrThrow(id)
   if (isGoalCompleted(current)) return current
 
-  const [milestones, tasks] = await Promise.all([
-    milestoneRepo.byGoal(id),
-    listGoalTasks(id),
-  ])
+  const [milestones, tasks] = await Promise.all([milestoneRepo.byGoal(id), listGoalTasks(id)])
 
   const updated = await goalRepo.update(
     id,
@@ -315,10 +312,7 @@ export interface GoalDeletion {
  * the goal id, so the goal comes back whole — and it is why deleting a goal can
  * never cost you a task you still have to do.
  */
-export async function deleteGoal(
-  id: Id,
-  options: GoalWriteOptions = {},
-): Promise<GoalDeletion> {
+export async function deleteGoal(id: Id, options: GoalWriteOptions = {}): Promise<GoalDeletion> {
   const source: EventSource = options.source ?? 'ui'
   const goal = await goalRepo.getOrThrow(id)
   const [milestones, tasks] = await Promise.all([milestoneRepo.byGoal(id), listGoalTasks(id)])
@@ -423,10 +417,7 @@ export async function completeMilestone(
 }
 
 /** Reopens a checkpoint. Its tasks are likewise untouched. */
-export async function reopenMilestone(
-  id: Id,
-  options: GoalWriteOptions = {},
-): Promise<Milestone> {
+export async function reopenMilestone(id: Id, options: GoalWriteOptions = {}): Promise<Milestone> {
   const source: EventSource = options.source ?? 'ui'
   const current = await milestoneRepo.getOrThrow(id)
   if (!current.done) return current
@@ -444,10 +435,7 @@ export async function reopenMilestone(
   return updated
 }
 
-export async function toggleMilestone(
-  id: Id,
-  options: GoalWriteOptions = {},
-): Promise<Milestone> {
+export async function toggleMilestone(id: Id, options: GoalWriteOptions = {}): Promise<Milestone> {
   const current = await milestoneRepo.getOrThrow(id)
   return current.done ? reopenMilestone(id, options) : completeMilestone(id, options)
 }
@@ -483,10 +471,7 @@ export async function deleteMilestone(
   }
 }
 
-export function restoreMilestone(
-  id: Id,
-  options: GoalWriteOptions = {},
-): Promise<Milestone> {
+export function restoreMilestone(id: Id, options: GoalWriteOptions = {}): Promise<Milestone> {
   return milestoneRepo.restore(id, { source: options.source ?? 'ui' })
 }
 

@@ -89,7 +89,9 @@ describe('the card', () => {
   it('leaves the Next Action to tasks — no goal appears in it', async () => {
     const goal = await createGoal('Become strong in DSA')
     const milestone = await createMilestone(goal.id, 'Arrays')
-    await taskRepo.create(taskInput({ title: 'Solve two array problems', milestoneId: milestone.id }))
+    await taskRepo.create(
+      taskInput({ title: 'Solve two array problems', milestoneId: milestone.id }),
+    )
 
     const data = await getDashboard()
     // A goal is not an answer to "what should I do in the next ten minutes".

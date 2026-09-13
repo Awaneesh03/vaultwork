@@ -255,9 +255,8 @@ export async function getProjectCounts(): Promise<ProjectCounts> {
   return {
     active: summaries.filter((entry) => !isArchived(entry.project)).length,
     archived: summaries.filter((entry) => isArchived(entry.project)).length,
-    withOverdue: summaries.filter(
-      (entry) => !isArchived(entry.project) && entry.stats.overdue > 0,
-    ).length,
+    withOverdue: summaries.filter((entry) => !isArchived(entry.project) && entry.stats.overdue > 0)
+      .length,
   }
 }
 

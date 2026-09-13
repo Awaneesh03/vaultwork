@@ -190,7 +190,10 @@ async function listReply(view: TaskViewId, chatId: string): Promise<string> {
       label: group.label,
       tasks: group.tasks.filter((task) => task.status !== 'done'),
     }))
-    rememberList(chatId, groups.flatMap((group) => group.tasks))
+    rememberList(
+      chatId,
+      groups.flatMap((group) => group.tasks),
+    )
     return groupedTaskList(label, groups, data.today, 'Nothing scheduled.')
   }
 
@@ -262,9 +265,7 @@ function clearPending(session: ChatSession): void {
 }
 
 /** What the executor did, said plainly. Never claims more than it can. */
-function describeExecution(
-  outcome: Awaited<ReturnType<typeof confirmAiAction>>,
-): string {
+function describeExecution(outcome: Awaited<ReturnType<typeof confirmAiAction>>): string {
   if (outcome.status === 'refused') {
     return outcome.reason === 'expired' ? AI_EXPIRED : outcome.message
   }
@@ -380,7 +381,10 @@ function askNextChoice(pending: PendingChoices): string {
     (candidate) => candidate.status === 'ambiguous' && !pending.chosen.has(candidate.id),
   ).length
 
-  const question = aiChoices(step.query, step.choices.map((choice) => choice.label))
+  const question = aiChoices(
+    step.query,
+    step.choices.map((choice) => choice.label),
+  )
   return remaining > 1 ? `${question}\n\n(${remaining} to settle)` : question
 }
 
@@ -624,7 +628,11 @@ async function respond(message: IncomingTelegramMessage): Promise<string | null>
       const preview = await previewTask(ref)
       if (preview === null) return NO_SUCH_TASK
       if (preview.kind === 'ambiguous') {
-        session.pendingChoice = { intent, choices: preview.choices, expiresAt: now + PENDING_TTL_MS }
+        session.pendingChoice = {
+          intent,
+          choices: preview.choices,
+          expiresAt: now + PENDING_TTL_MS,
+        }
         return ambiguity(preview.choices.map((choice) => ({ title: choice.label })))
       }
 

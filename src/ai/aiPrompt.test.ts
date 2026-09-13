@@ -95,11 +95,7 @@ describe('the request', () => {
     // would undo M15.1's whole argument.
     // An exact key set, so a field added to the request has to be added here
     // too rather than slipping in beside the ones being checked for.
-    expect(Object.keys(buildAiRequest('hello')).sort()).toEqual([
-      'json',
-      'messages',
-      'temperature',
-    ])
+    expect(Object.keys(buildAiRequest('hello')).sort()).toEqual(['json', 'messages', 'temperature'])
   })
 })
 
@@ -140,11 +136,7 @@ describe('a request carrying context', () => {
   it('adds context as a separate system message, after the rules', () => {
     const request = buildAiRequest(TEXT, sampleContext())
 
-    expect(request.messages.map((message) => message.role)).toEqual([
-      'system',
-      'system',
-      'user',
-    ])
+    expect(request.messages.map((message) => message.role)).toEqual(['system', 'system', 'user'])
     expect(request.messages[0]?.content).toBe(systemPrompt())
     expect(request.messages[1]?.content).toContain('"purpose":"planning"')
   })
@@ -222,7 +214,10 @@ async function ask(port: AiPort, text: string) {
 describe('the pipeline, end to end', () => {
   it('turns a question into an answer', async () => {
     const port = fakeProvider(
-      JSON.stringify({ kind: 'answer', message: 'Start with Submit OS lab record — it is overdue.' }),
+      JSON.stringify({
+        kind: 'answer',
+        message: 'Start with Submit OS lab record — it is overdue.',
+      }),
     )
 
     const result = await ask(port, 'Tell me what I should work on.')

@@ -52,8 +52,7 @@ export function useTelegramSettings() {
       // explanation of why it stopped changing.
       setStatus((previous) => ({
         ...previous,
-        lastError:
-          error instanceof Error ? error.message : 'Could not read the Telegram status.',
+        lastError: error instanceof Error ? error.message : 'Could not read the Telegram status.',
       }))
     }
   }, [])

@@ -71,8 +71,7 @@ export const useToastStore = create<ToastState>((set, get) => ({
   dismiss: (id) => set((s) => ({ toasts: s.toasts.filter((toast) => toast.id !== id) })),
   clear: () => set({ toasts: [] }),
 
-  pushUndo: (intent) =>
-    set((s) => ({ undoStack: [intent, ...s.undoStack].slice(0, UNDO_LIMIT) })),
+  pushUndo: (intent) => set((s) => ({ undoStack: [intent, ...s.undoStack].slice(0, UNDO_LIMIT) })),
 
   popUndo: () => {
     const [next, ...rest] = get().undoStack

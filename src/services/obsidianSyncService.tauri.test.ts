@@ -10,7 +10,13 @@ import { createTauriVault } from '@/platform/tauri/tauriVault'
 import { noteRepo, vaultLinkRepo } from '@/repositories'
 import { freezeClock, resetDatabase } from '../../tests/helpers'
 import { createNote, updateNote } from './noteService'
-import { connectVault, disconnectVault, exportNote, getVaultStatus, setVaultPort } from './obsidianService'
+import {
+  connectVault,
+  disconnectVault,
+  exportNote,
+  getVaultStatus,
+  setVaultPort,
+} from './obsidianService'
 import { applySync, scanVaultPlan } from './obsidianSyncService'
 
 /**

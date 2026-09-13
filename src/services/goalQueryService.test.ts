@@ -71,10 +71,7 @@ describe('goals view', () => {
 
     const [item] = (await getGoalsView()).goals
     expect(item?.progress).toMatchObject({ done: 1, total: 2, percent: 50 })
-    expect(item?.milestoneViews.map((view) => view.milestone.title)).toEqual([
-      'Arrays',
-      'Trees',
-    ])
+    expect(item?.milestoneViews.map((view) => view.milestone.title)).toEqual(['Arrays', 'Trees'])
   })
 
   it('falls back to task progress when a goal has no milestones', async () => {

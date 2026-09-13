@@ -463,9 +463,7 @@ describe('filters', () => {
     expect(screen.getByRole('button', { name: /Study Java.*completed/ })).toBeTruthy()
 
     fireEvent.change(screen.getByDisplayValue('All'), { target: { value: 'todo' } })
-    await waitFor(() =>
-      expect(screen.queryByRole('button', { name: /^Study Java,/ })).toBeNull(),
-    )
+    await waitFor(() => expect(screen.queryByRole('button', { name: /^Study Java,/ })).toBeNull())
     expect(screen.getByRole('button', { name: /^Read a chapter,/ })).toBeTruthy()
 
     fireEvent.change(screen.getByDisplayValue('To do'), { target: { value: 'done' } })

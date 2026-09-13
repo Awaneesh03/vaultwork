@@ -42,7 +42,13 @@ export const NAV_GROUPS: NavGroup[] = [
     label: 'Daily',
     items: [
       { path: '/', label: 'Dashboard', icon: Gauge, shortcut: 'G D', description: 'What now?' },
-      { path: '/inbox', label: 'Inbox', icon: Inbox, shortcut: 'G I', description: 'Uncategorised capture' },
+      {
+        path: '/inbox',
+        label: 'Inbox',
+        icon: Inbox,
+        shortcut: 'G I',
+        description: 'Uncategorised capture',
+      },
       { path: '/today', label: 'Today', icon: Sun, shortcut: 'T', description: "Today's plan" },
       {
         path: '/upcoming',
@@ -81,8 +87,20 @@ export const NAV_GROUPS: NavGroup[] = [
         shortcut: 'P',
         description: 'Work with a lifecycle',
       },
-      { path: '/goals', label: 'Goals', icon: Target, shortcut: 'G G', description: 'Long-horizon intent' },
-      { path: '/habits', label: 'Habits', icon: Repeat, shortcut: 'H', description: 'Streaks and routines' },
+      {
+        path: '/goals',
+        label: 'Goals',
+        icon: Target,
+        shortcut: 'G G',
+        description: 'Long-horizon intent',
+      },
+      {
+        path: '/habits',
+        label: 'Habits',
+        icon: Repeat,
+        shortcut: 'H',
+        description: 'Streaks and routines',
+      },
       {
         path: '/calendar',
         label: 'Calendar',
@@ -102,7 +120,13 @@ export const NAV_GROUPS: NavGroup[] = [
         shortcut: 'G A',
         description: 'Ask, then confirm',
       },
-      { path: '/focus', label: 'Focus', icon: Timer, shortcut: 'F', description: 'Pomodoro sessions' },
+      {
+        path: '/focus',
+        label: 'Focus',
+        icon: Timer,
+        shortcut: 'F',
+        description: 'Pomodoro sessions',
+      },
       {
         path: '/analytics',
         label: 'Analytics',
@@ -110,7 +134,13 @@ export const NAV_GROUPS: NavGroup[] = [
         shortcut: 'A',
         description: 'What the event log knows',
       },
-      { path: '/notes', label: 'Notes', icon: FileText, shortcut: 'G N', description: 'Markdown, attached' },
+      {
+        path: '/notes',
+        label: 'Notes',
+        icon: FileText,
+        shortcut: 'G N',
+        description: 'Markdown, attached',
+      },
       {
         /*
          * No chord. Every mnemonic letter is taken — `G D` is the Dashboard,

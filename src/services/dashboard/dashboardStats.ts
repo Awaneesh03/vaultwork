@@ -139,9 +139,7 @@ export function compareForNextAction(a: Task, b: Task, today: DateStr): number {
 export function selectNextAction(tasks: Task[], today: DateStr): Task | null {
   const open = tasks.filter((task) => task.status === 'todo')
   if (open.length === 0) return null
-  return open.reduce((best, task) =>
-    compareForNextAction(task, best, today) < 0 ? task : best,
-  )
+  return open.reduce((best, task) => (compareForNextAction(task, best, today) < 0 ? task : best))
 }
 
 /** The open tasks in the order the Next Action rule ranks them. */

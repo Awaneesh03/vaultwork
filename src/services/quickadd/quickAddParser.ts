@@ -27,13 +27,7 @@ import type { Priority } from '@/types/enums'
  */
 
 export type QuickAddTokenKind =
-  | 'date'
-  | 'time'
-  | 'tag'
-  | 'project'
-  | 'priority'
-  | 'estimate'
-  | 'description'
+  'date' | 'time' | 'tag' | 'project' | 'priority' | 'estimate' | 'description'
 
 export interface QuickAddToken {
   kind: QuickAddTokenKind
@@ -88,28 +82,51 @@ export function emptyDraft(): TaskDraft {
 // ---------------------------------------------------------------- vocabulary
 
 const WEEKDAYS: Record<string, number> = {
-  sun: 0, sunday: 0,
-  mon: 1, monday: 1,
-  tue: 2, tues: 2, tuesday: 2,
-  wed: 3, weds: 3, wednesday: 3,
-  thu: 4, thur: 4, thurs: 4, thursday: 4,
-  fri: 5, friday: 5,
-  sat: 6, saturday: 6,
+  sun: 0,
+  sunday: 0,
+  mon: 1,
+  monday: 1,
+  tue: 2,
+  tues: 2,
+  tuesday: 2,
+  wed: 3,
+  weds: 3,
+  wednesday: 3,
+  thu: 4,
+  thur: 4,
+  thurs: 4,
+  thursday: 4,
+  fri: 5,
+  friday: 5,
+  sat: 6,
+  saturday: 6,
 }
 
 const MONTHS: Record<string, number> = {
-  jan: 1, january: 1,
-  feb: 2, february: 2,
-  mar: 3, march: 3,
-  apr: 4, april: 4,
+  jan: 1,
+  january: 1,
+  feb: 2,
+  february: 2,
+  mar: 3,
+  march: 3,
+  apr: 4,
+  april: 4,
   may: 5,
-  jun: 6, june: 6,
-  jul: 7, july: 7,
-  aug: 8, august: 8,
-  sep: 9, sept: 9, september: 9,
-  oct: 10, october: 10,
-  nov: 11, november: 11,
-  dec: 12, december: 12,
+  jun: 6,
+  june: 6,
+  jul: 7,
+  july: 7,
+  aug: 8,
+  august: 8,
+  sep: 9,
+  sept: 9,
+  september: 9,
+  oct: 10,
+  october: 10,
+  nov: 11,
+  november: 11,
+  dec: 12,
+  december: 12,
 }
 
 const PRIORITIES_BY_WORD: Record<string, Priority> = {
@@ -253,7 +270,8 @@ function matchDate(words: Word[], i: number, today: DateStr): Match | null {
     const unit = words[i + 2]
     const count = amount && /^\d+$/.test(amount.lower) ? Number(amount.lower) : NaN
     if (unit && Number.isFinite(count)) {
-      if (/^days?$/.test(unit.lower)) return { length: 3, kind: 'date', value: addDays(today, count) }
+      if (/^days?$/.test(unit.lower))
+        return { length: 3, kind: 'date', value: addDays(today, count) }
       if (/^weeks?$/.test(unit.lower)) {
         return { length: 3, kind: 'date', value: addDays(today, count * 7) }
       }
@@ -447,7 +465,7 @@ export function parseQuickAdd(input: string, options: QuickAddOptions = {}): Qui
   const words = scanWords(head)
   const kept: Word[] = []
 
-  for (let i = 0; i < words.length; ) {
+  for (let i = 0; i < words.length;) {
     const word = words[i] as Word
     const match = matchSigil(words, i) ?? matchDate(words, i, today) ?? matchTime(words, i)
 

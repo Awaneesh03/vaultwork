@@ -495,9 +495,17 @@ describe('unknown frontmatter survives a round trip', () => {
     await vault.createDirectory('notes')
     vault.seed(
       'notes/theirs.md',
-      ['---', 'aliases:', '  - Other', 'cssclasses: wide', 'publish: true', '---', '', 'body', ''].join(
-        '\n',
-      ),
+      [
+        '---',
+        'aliases:',
+        '  - Other',
+        'cssclasses: wide',
+        'publish: true',
+        '---',
+        '',
+        'body',
+        '',
+      ].join('\n'),
     )
 
     const imported = await importNote('notes/theirs.md')
@@ -525,7 +533,17 @@ describe('the comparison projection', () => {
 
     vault.seed(
       'notes/a-note.md',
-      ['---', `id: "${note.id}"`, 'title: A note', 'aliases:', '  - Added in Obsidian', '---', '', 'edited', ''].join('\n'),
+      [
+        '---',
+        `id: "${note.id}"`,
+        'title: A note',
+        'aliases:',
+        '  - Added in Obsidian',
+        '---',
+        '',
+        'edited',
+        '',
+      ].join('\n'),
     )
 
     expect((await getNoteSyncReport(note.id)).status).toBe('external-change')
@@ -652,9 +670,7 @@ describe('rename', () => {
     await exportNote(note.id)
     await renameVaultFile(note.id, 'notes/after.md')
 
-    const event = (await db.events.toArray()).find(
-      (row) => row.type === 'note.vaultPathRenamed',
-    )
+    const event = (await db.events.toArray()).find((row) => row.type === 'note.vaultPathRenamed')
     expect(event?.payload).toMatchObject({ from: 'notes/before.md', to: 'notes/after.md' })
   })
 })

@@ -8,12 +8,7 @@ import {
   type AiProbe,
   type AiStatus,
 } from '../ports'
-import type {
-  BridgeAiCompletion,
-  BridgeAiProbe,
-  BridgeAiStatus,
-  TauriBridge,
-} from './bridge'
+import type { BridgeAiCompletion, BridgeAiProbe, BridgeAiStatus, TauriBridge } from './bridge'
 
 /**
  * The desktop AI adapter.
@@ -49,12 +44,7 @@ const NATIVE_KINDS: ReadonlySet<string> = new Set<AiErrorKind>([
   'api',
 ])
 
-const FINISH: ReadonlySet<string> = new Set<AiFinishReason>([
-  'stop',
-  'length',
-  'filter',
-  'other',
-])
+const FINISH: ReadonlySet<string> = new Set<AiFinishReason>(['stop', 'length', 'filter', 'other'])
 
 function toAiError(error: unknown, fallback: AiErrorKind): AiError {
   if (error instanceof AiError) return error
@@ -62,7 +52,9 @@ function toAiError(error: unknown, fallback: AiErrorKind): AiError {
   if (typeof error === 'object' && error !== null && 'kind' in error) {
     const raw = error as { kind: unknown; message?: unknown }
     const kind =
-      typeof raw.kind === 'string' && NATIVE_KINDS.has(raw.kind) ? (raw.kind as AiErrorKind) : fallback
+      typeof raw.kind === 'string' && NATIVE_KINDS.has(raw.kind)
+        ? (raw.kind as AiErrorKind)
+        : fallback
     const message =
       typeof raw.message === 'string' && raw.message.length > 0
         ? raw.message
@@ -135,8 +127,7 @@ export function createTauriAi(bridge: TauriBridge): AiPort {
     configure: (apiKey) =>
       guard(async () => toStatus(await bridge.aiConfigure(apiKey)), 'invalid-key'),
     disconnect: () => guard(async () => toStatus(await bridge.aiDisconnect()), 'keychain'),
-    setEnabled: (enabled) =>
-      guard(async () => toStatus(await bridge.aiSetEnabled(enabled)), 'api'),
+    setEnabled: (enabled) => guard(async () => toStatus(await bridge.aiSetEnabled(enabled)), 'api'),
     setModel: (model) => guard(async () => toStatus(await bridge.aiSetModel(model)), 'protocol'),
     test: () => guard(async () => toProbe(await bridge.aiTest()), 'network'),
 

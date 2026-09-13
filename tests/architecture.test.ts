@@ -32,7 +32,8 @@ function walk(dir: string): string[] {
   })
 }
 
-const IMPORT_RE = /^\s*import\s+(type\s+)?[^'"]*from\s+['"]([^'"]+)['"]|^\s*import\s+['"]([^'"]+)['"]/gm
+const IMPORT_RE =
+  /^\s*import\s+(type\s+)?[^'"]*from\s+['"]([^'"]+)['"]|^\s*import\s+['"]([^'"]+)['"]/gm
 
 function collectImports(): ImportRef[] {
   const refs: ImportRef[] = []
@@ -133,7 +134,15 @@ describe('layer boundaries', () => {
       (ref) =>
         REACT_PACKAGES.includes(ref.spec) ||
         PERSISTENCE_PACKAGES.includes(ref.spec) ||
-        targets(ref, 'src/components', 'src/features', 'src/app', 'src/hooks', 'src/store', 'src/db'),
+        targets(
+          ref,
+          'src/components',
+          'src/features',
+          'src/app',
+          'src/hooks',
+          'src/store',
+          'src/db',
+        ),
     )
     expect(found).toEqual([])
   })
@@ -172,8 +181,7 @@ describe('layer boundaries', () => {
     // adapter would make the channel a prerequisite for the application.
     const found = violations(
       (file) =>
-        inLayer(file, 'src/services/', 'src/repositories/', 'src/db/') &&
-        file !== TELEGRAM_ADAPTER,
+        inLayer(file, 'src/services/', 'src/repositories/', 'src/db/') && file !== TELEGRAM_ADAPTER,
       (ref) => ref.resolved === 'src/services/telegramService',
     )
     expect(found).toEqual([])
@@ -318,7 +326,9 @@ describe('the vault adapter boundary', () => {
     // place to add a sibling rather than a scattering to find.
     const users = walk(SRC)
       .map((file) => posix.normalize(relative(ROOT, file).split('\\').join('/')))
-      .filter((rel) => PICKERS.some((api) => stripComments(readFileSync(join(ROOT, rel), 'utf8')).includes(api)))
+      .filter((rel) =>
+        PICKERS.some((api) => stripComments(readFileSync(join(ROOT, rel), 'utf8')).includes(api)),
+      )
 
     expect(users).toEqual(['src/platform/browser/browserVault.ts'])
   })
@@ -715,7 +725,12 @@ describe('the Telegram boundary', () => {
   it('has no shell or process bridge', () => {
     for (const name of readdirSync(RUST).filter((file) => file.endsWith('.rs'))) {
       const source = readFileSync(join(RUST, name), 'utf8')
-      for (const banned of ['std::process', 'Command::new', 'tauri_plugin_shell', 'shell_execute']) {
+      for (const banned of [
+        'std::process',
+        'Command::new',
+        'tauri_plugin_shell',
+        'shell_execute',
+      ]) {
         expect(source, `${name} must not run programs`).not.toContain(banned)
       }
     }
@@ -758,10 +773,7 @@ describe('the Telegram boundary', () => {
 
   it('starts no polling loop in the browser', () => {
     // The browser adapter refuses every operation; only the Tauri one can run.
-    const browser = readFileSync(
-      join(SRC, 'platform', 'browser', 'unsupportedTelegram.ts'),
-      'utf8',
-    )
+    const browser = readFileSync(join(SRC, 'platform', 'browser', 'unsupportedTelegram.ts'), 'utf8')
     expect(browser).toContain('isSupported: false')
     expect(browser).not.toContain('setInterval')
     expect(browser).not.toContain('getUpdates')
@@ -787,9 +799,10 @@ describe('the Telegram boundary', () => {
       'src/services/projectService',
       'src/services/goalService',
     ]) {
-      expect(resolved, `Telegram must go through the command layer, not ${forbidden}`).not.toContain(
-        forbidden,
-      )
+      expect(
+        resolved,
+        `Telegram must go through the command layer, not ${forbidden}`,
+      ).not.toContain(forbidden)
     }
   })
 
@@ -900,9 +913,7 @@ describe('the AI boundary', () => {
     // importing a value from there is one refactor away from calling it.
     const runtime = IMPORTS.filter(
       (ref) =>
-        ref.file.startsWith('src/ai/') &&
-        ref.resolved.startsWith('src/services/') &&
-        !ref.typeOnly,
+        ref.file.startsWith('src/ai/') && ref.resolved.startsWith('src/services/') && !ref.typeOnly,
     ).map((ref) => `${ref.file} imports ${ref.spec}`)
 
     expect(runtime).toEqual([])
@@ -918,7 +929,8 @@ describe('the AI boundary', () => {
      * confirmation flow — not in here. If this test ever needs relaxing, that
      * is the moment to ask whether the layer has stopped being a parser.
      */
-    const forbidden = /commandExecutor|taskService|projectService|goalService|habitService|noteService|entityResolver/
+    const forbidden =
+      /commandExecutor|taskService|projectService|goalService|habitService|noteService|entityResolver/
 
     const offenders = IMPORTS.filter(
       (ref) => ref.file.startsWith('src/ai/') && forbidden.test(ref.spec),
@@ -1010,7 +1022,9 @@ describe('the AI boundary', () => {
 
     expect(named.length).toBeGreaterThan(0)
     for (const [, name, params] of named) {
-      expect(params ?? '', `${name} must not take a URL`).not.toMatch(/url|endpoint|host|base|header/i)
+      expect(params ?? '', `${name} must not take a URL`).not.toMatch(
+        /url|endpoint|host|base|header/i,
+      )
     }
   })
 
@@ -1261,7 +1275,10 @@ describe('the AI boundary', () => {
       ).toBe(false)
     }
     for (const service of ['taskService', 'projectService', 'goalService', 'noteService']) {
-      expect(gate.some((target) => target.includes(service)), service).toBe(false)
+      expect(
+        gate.some((target) => target.includes(service)),
+        service,
+      ).toBe(false)
     }
   })
 
@@ -1325,7 +1342,14 @@ describe('the AI boundary', () => {
   it('never lets the screen name a provider or a credential', () => {
     for (const file of walk(join(SRC, 'features', 'ai'))) {
       const code = codeOf(file)
-      for (const banned of ['groq', 'api.groq.com', 'apiKey', 'Authorization', 'Bearer', 'fetch(']) {
+      for (const banned of [
+        'groq',
+        'api.groq.com',
+        'apiKey',
+        'Authorization',
+        'Bearer',
+        'fetch(',
+      ]) {
         expect(code, `${file} must not name ${banned}`).not.toContain(banned)
       }
     }
@@ -1352,9 +1376,9 @@ describe('the AI boundary', () => {
      * assembly here would be a second set of rules about what a model may see
      * and do — for a transport that anyone with the bot's number can reach.
      */
-    const telegram = IMPORTS.filter(
-      (ref) => ref.file === 'src/services/telegramService.ts',
-    ).map((ref) => ref.resolved)
+    const telegram = IMPORTS.filter((ref) => ref.file === 'src/services/telegramService.ts').map(
+      (ref) => ref.resolved,
+    )
 
     expect(telegram).toContain('src/services/ai/aiAssistantService')
     expect(telegram).toContain('src/services/ai/aiConfirmationService')
@@ -1391,7 +1415,10 @@ describe('the AI boundary', () => {
 
     // The AI helpers hand ids to the gate; none of them executes.
     const aiSection = code.slice(code.indexOf('async function aiReply'))
-    const helpers = aiSection.slice(0, aiSection.indexOf('export async function processTelegramMessage'))
+    const helpers = aiSection.slice(
+      0,
+      aiSection.indexOf('export async function processTelegramMessage'),
+    )
     for (const banned of ['execute(', 'executeText(', 'resolveChoice(']) {
       expect(helpers, `the assistant helpers must not call ${banned}`).not.toContain(banned)
     }

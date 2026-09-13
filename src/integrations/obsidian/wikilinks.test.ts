@@ -75,9 +75,9 @@ describe('parsing', () => {
   it('reports the span so a caller can replace it exactly', () => {
     const [link] = parseWikilinks('x [[A|b]] y')
     expect(link?.raw).toBe('[[A|b]]')
-    expect('x [[A|b]] y'.slice(link?.index ?? 0, (link?.index ?? 0) + (link?.raw.length ?? 0))).toBe(
-      '[[A|b]]',
-    )
+    expect(
+      'x [[A|b]] y'.slice(link?.index ?? 0, (link?.index ?? 0) + (link?.raw.length ?? 0)),
+    ).toBe('[[A|b]]')
   })
 })
 
@@ -97,9 +97,7 @@ describe('writing', () => {
   })
 
   it('writes an alias when given one', () => {
-    expect(formatWikilink('Binary Search', 'the algorithm')).toBe(
-      '[[Binary Search|the algorithm]]',
-    )
+    expect(formatWikilink('Binary Search', 'the algorithm')).toBe('[[Binary Search|the algorithm]]')
   })
 
   it('strips characters that would break the link syntax', () => {

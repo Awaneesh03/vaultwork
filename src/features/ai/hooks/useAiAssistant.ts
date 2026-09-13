@@ -123,9 +123,7 @@ export function useAiAssistant(): AiAssistant {
 
     try {
       const result = await askAi(request)
-      setTurns((previous) =>
-        previous.map((turn) => (turn.id === id ? { ...turn, result } : turn)),
-      )
+      setTurns((previous) => previous.map((turn) => (turn.id === id ? { ...turn, result } : turn)))
 
       if (result.kind === 'unavailable') setUnavailable(result.reason)
       if (result.kind === 'proposal') {

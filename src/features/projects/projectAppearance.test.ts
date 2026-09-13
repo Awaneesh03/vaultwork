@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { DEFAULT_PROJECT_COLOR as SERVICE_COLOR, DEFAULT_PROJECT_ICON as SERVICE_ICON } from '@/services'
+import {
+  DEFAULT_PROJECT_COLOR as SERVICE_COLOR,
+  DEFAULT_PROJECT_ICON as SERVICE_ICON,
+} from '@/services'
 import { PROJECT_STATUSES } from '@/types/enums'
 import {
   DEFAULT_PROJECT_COLOR,

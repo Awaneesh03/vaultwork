@@ -266,8 +266,7 @@ export const tauriBridge: TauriBridge = {
   telegramTest: () => invoke<BridgeBotIdentity>('telegram_test'),
   telegramStart: () => invoke<BridgeTelegramStatus>('telegram_start'),
   telegramStop: () => invoke<BridgeTelegramStatus>('telegram_stop'),
-  telegramAuthorize: (chatId) =>
-    invoke<BridgeTelegramStatus>('telegram_authorize', { chatId }),
+  telegramAuthorize: (chatId) => invoke<BridgeTelegramStatus>('telegram_authorize', { chatId }),
   telegramDisconnect: () => invoke<BridgeTelegramStatus>('telegram_disconnect'),
   telegramSetAutoStart: (enabled) =>
     invoke<BridgeTelegramStatus>('telegram_set_auto_start', { enabled }),

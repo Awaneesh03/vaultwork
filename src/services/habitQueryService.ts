@@ -133,9 +133,7 @@ function toItem(
   }
 }
 
-export async function getHabitsView(
-  options: HabitsViewOptions = {},
-): Promise<HabitsViewData> {
+export async function getHabitsView(options: HabitsViewOptions = {}): Promise<HabitsViewData> {
   const today = platform.clock.today()
   const settings = await settingsRepo.get()
   const weekStartsOn = settings.weekStartsOn

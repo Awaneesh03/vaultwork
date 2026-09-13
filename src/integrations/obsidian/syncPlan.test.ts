@@ -270,11 +270,7 @@ describe('local deletion', () => {
 
   it('offers deletion and keeping, with deletion marked destructive', () => {
     const options = optionsFor('deleted-local')
-    expect(options.map((row) => row.decision)).toEqual([
-      'delete-from-vault',
-      'forget-link',
-      'skip',
-    ])
+    expect(options.map((row) => row.decision)).toEqual(['delete-from-vault', 'forget-link', 'skip'])
     expect(options[0]?.destructive).toBe(true)
   })
 })
@@ -343,14 +339,8 @@ describe('counts and ordering', () => {
 
   it('puts what needs a decision first and clean last', () => {
     const result = plan({
-      notes: [
-        note({ id: 'n1' }),
-        note({ id: 'n2', vaultPath: 'notes/b.md', hash: H('B') }),
-      ],
-      files: [
-        file({ id: 'n1' }),
-        file({ id: 'n2', path: 'notes/b.md', hash: H('C') }),
-      ],
+      notes: [note({ id: 'n1' }), note({ id: 'n2', vaultPath: 'notes/b.md', hash: H('B') })],
+      files: [file({ id: 'n1' }), file({ id: 'n2', path: 'notes/b.md', hash: H('C') })],
       baselines: [baseline(), baseline({ noteId: 'n2', path: 'notes/b.md' })],
     })
 

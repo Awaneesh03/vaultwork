@@ -115,7 +115,9 @@ describe('a plan that acts on what it is creating', () => {
   it('does not fire when the reference comes first', () => {
     // Completing an existing task and then adding one of the same name is
     // strange but possible — the first refers to a row that exists now.
-    expect(checkPlanCoherence(plan(complete('Review recursion'), add('Review recursion')))).toBeNull()
+    expect(
+      checkPlanCoherence(plan(complete('Review recursion'), add('Review recursion'))),
+    ).toBeNull()
   })
 })
 
@@ -178,9 +180,7 @@ describe('determinism', () => {
   })
 
   it('reports the earliest problem when a plan has several', () => {
-    const problem = checkPlanCoherence(
-      plan(add('A'), complete('A'), complete('B'), complete('B')),
-    )
+    const problem = checkPlanCoherence(plan(add('A'), complete('A'), complete('B'), complete('B')))
     expect(problem?.stepId).toBe('step-2')
   })
 

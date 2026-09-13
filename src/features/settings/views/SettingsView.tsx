@@ -202,9 +202,7 @@ export function SettingsView() {
           />
         </div>
 
-        {data.state.message ? (
-          <p className="text-[12.5px] text-ok">{data.state.message}</p>
-        ) : null}
+        {data.state.message ? <p className="text-[12.5px] text-ok">{data.state.message}</p> : null}
         {data.state.error ? <p className="text-[12.5px] text-danger">{data.state.error}</p> : null}
 
         {data.snapshots && data.snapshots.length > 0 ? (
@@ -223,7 +221,11 @@ export function SettingsView() {
           </ul>
         ) : (
           <p className="text-[12.5px] text-ink-3">
-            No snapshots yet. Snapshots are stored in {platform.snapshots.id === 'opfs' ? 'the Origin Private File System' : 'memory only (this browser has no OPFS)'}.
+            No snapshots yet. Snapshots are stored in{' '}
+            {platform.snapshots.id === 'opfs'
+              ? 'the Origin Private File System'
+              : 'memory only (this browser has no OPFS)'}
+            .
           </p>
         )}
       </Section>
@@ -280,11 +282,12 @@ export function SettingsView() {
       >
         <dl className="grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-2">
           {Object.entries(capabilities).map(([name, enabled]) => (
-            <div key={name} className="flex items-center justify-between gap-3 border-b border-line py-1.5">
+            <div
+              key={name}
+              className="flex items-center justify-between gap-3 border-b border-line py-1.5"
+            >
               <dt className="font-mono text-[12px] text-ink-2">{name}</dt>
-              <dd
-                className={`font-mono text-[11px] ${enabled ? 'text-ok' : 'text-ink-3'}`}
-              >
+              <dd className={`font-mono text-[11px] ${enabled ? 'text-ok' : 'text-ink-3'}`}>
                 {enabled ? 'yes' : 'no'}
               </dd>
             </div>
@@ -293,8 +296,8 @@ export function SettingsView() {
         <p className="text-[12.5px] text-ink-3">
           Vault access needs either the File System Access API, which only Chromium-based browsers
           have, or the desktop build, which needs no permission at all. Notifications and a native
-          menu are desktop-only. Inbound messages need a running process, which a browser tab is
-          not — Telegram is M14.
+          menu are desktop-only. Inbound messages need a running process, which a browser tab is not
+          — Telegram is M14.
         </p>
       </Section>
 
@@ -357,7 +360,11 @@ export function SettingsView() {
                 </div>
                 <div className="flex justify-between gap-3">
                   <dt>storage persisted</dt>
-                  <dd className={diagnostics.report.storage.persistence.persisted ? 'text-ok' : 'text-ink-3'}>
+                  <dd
+                    className={
+                      diagnostics.report.storage.persistence.persisted ? 'text-ok' : 'text-ink-3'
+                    }
+                  >
                     {diagnostics.report.storage.persistence.persisted ? 'yes' : 'no'}
                   </dd>
                 </div>

@@ -222,9 +222,9 @@ describe('the today preview', () => {
 
     // Together the two cards are exactly what /today renders.
     const todayView = await getTaskView('today')
-    expect([...data.overdue, ...data.todayGroups.flatMap((g) => g.tasks)].map((t) => t.title)).toEqual(
-      todayView.tasks.map((task) => task.title),
-    )
+    expect(
+      [...data.overdue, ...data.todayGroups.flatMap((g) => g.tasks)].map((t) => t.title),
+    ).toEqual(todayView.tasks.map((task) => task.title))
   })
 
   it('previews a limited number but reports the true total', async () => {

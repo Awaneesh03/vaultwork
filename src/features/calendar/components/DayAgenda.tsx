@@ -44,10 +44,7 @@ export function DayAgenda({
         className="flex w-full items-center gap-2 border-b border-line px-3 py-1.5 text-left"
       >
         <span
-          className={cn(
-            'text-[12.5px]',
-            day.isToday ? 'font-semibold text-accent' : 'text-ink',
-          )}
+          className={cn('text-[12.5px]', day.isToday ? 'font-semibold text-accent' : 'text-ink')}
         >
           {formatFullDate(day.date)}
         </span>

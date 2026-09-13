@@ -57,8 +57,7 @@ function textQuery(ref: unknown): { query: string } | { reason: string } {
 
   if (candidate.by === 'id') {
     return {
-      reason:
-        'A reference must name a task by text. Only Vaultwork may turn a name into an id.',
+      reason: 'A reference must name a task by text. Only Vaultwork may turn a name into an id.',
     }
   }
   if (candidate.by !== 'text' || typeof candidate.query !== 'string') {
@@ -143,7 +142,12 @@ function toRefIntent(
 async function resolveStep(step: AiStep, lookup: AiEntityLookup): Promise<AiStepOutcome> {
   const { id, description } = step
   const proposed = step.intent
-  const invalid = (reason: string): AiStepOutcome => ({ status: 'invalid', id, description, reason })
+  const invalid = (reason: string): AiStepOutcome => ({
+    status: 'invalid',
+    id,
+    description,
+    reason,
+  })
 
   if (proposed.kind === 'task.add') {
     return { status: 'resolved', id, description, intent: toAddIntent(proposed) }
@@ -158,10 +162,7 @@ async function resolveStep(step: AiStep, lookup: AiEntityLookup): Promise<AiStep
   const read = textQuery(proposed.ref)
   if ('reason' in read) return invalid(read.reason)
 
-  const resolution: AiRefResolution = await lookup.resolveTask(
-    read.query,
-    SCOPE[proposed.kind],
-  )
+  const resolution: AiRefResolution = await lookup.resolveTask(read.query, SCOPE[proposed.kind])
 
   if (resolution.status === 'resolved') {
     return {
@@ -245,9 +246,7 @@ export async function resolveAiPlan(
 
   return {
     status: 'resolved',
-    intents: outcomes.flatMap((outcome) =>
-      outcome.status === 'resolved' ? [outcome.intent] : [],
-    ),
+    intents: outcomes.flatMap((outcome) => (outcome.status === 'resolved' ? [outcome.intent] : [])),
     steps: outcomes,
   }
 }

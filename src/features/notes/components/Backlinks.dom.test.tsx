@@ -92,9 +92,7 @@ describe('on a task', () => {
     await waitFor(() => expect(screen.getByRole('link', { name: /Doomed/ })).toBeTruthy())
 
     await deleteNote(note.id)
-    await waitFor(() =>
-      expect(screen.getByText('No notes reference this yet.')).toBeTruthy(),
-    )
+    await waitFor(() => expect(screen.getByText('No notes reference this yet.')).toBeTruthy())
   })
 })
 

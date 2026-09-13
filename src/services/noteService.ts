@@ -210,10 +210,7 @@ export async function updateNote(
  * means a file being moved forty times while somebody types a heading. The
  * reserved path is stable until the user asks for it to be re-derived.
  */
-export async function renameVaultPath(
-  id: Id,
-  options: NoteWriteOptions = {},
-): Promise<Note> {
+export async function renameVaultPath(id: Id, options: NoteWriteOptions = {}): Promise<Note> {
   const source: EventSource = options.source ?? 'ui'
   const current = await noteRepo.getOrThrow(id)
   const next = await reservePath(noteTitle(current), current.tagIds, id)
@@ -247,10 +244,7 @@ export interface NoteDeletion {
  * the note, so bringing it back brings its references with it. Removing them
  * would be an irreversible mutation hidden inside a reversible one.
  */
-export async function deleteNote(
-  id: Id,
-  options: NoteWriteOptions = {},
-): Promise<NoteDeletion> {
+export async function deleteNote(id: Id, options: NoteWriteOptions = {}): Promise<NoteDeletion> {
   const source: EventSource = options.source ?? 'ui'
   const note = await noteRepo.getOrThrow(id)
   const links = await noteLinkRepo.forNote(id)
@@ -325,10 +319,7 @@ export async function attachLink(
   const existing = await noteLinkRepo.find(noteId, refType, refId)
   if (existing) return existing
 
-  const link = await noteLinkRepo.create(
-    { noteId, refType, refId },
-    { source, emit: false },
-  )
+  const link = await noteLinkRepo.create({ noteId, refType, refId }, { source, emit: false })
 
   if (options.emit !== false) {
     await eventBus.emit({

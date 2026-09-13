@@ -193,9 +193,6 @@ describe('the event log', () => {
     const added = (await db.events.toArray()).filter((event) => !before.has(event.id))
     expect(added.length).toBeGreaterThan(0)
     expect(added.every((event) => event.entityType === 'note')).toBe(true)
-    expect(added.map((event) => event.type).sort()).toEqual([
-      'note.deleted',
-      'note.restored',
-    ])
+    expect(added.map((event) => event.type).sort()).toEqual(['note.deleted', 'note.restored'])
   })
 })

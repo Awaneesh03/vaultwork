@@ -24,15 +24,11 @@ export const EMPTY_GOAL_FILTER: GoalUiFilter = {
 }
 
 export type GoalComposerState =
-  | { mode: 'closed' }
-  | { mode: 'create' }
-  | { mode: 'edit'; goalId: Id }
+  { mode: 'closed' } | { mode: 'create' } | { mode: 'edit'; goalId: Id }
 
 /** The milestone composer belongs to whichever goal is open. */
 export type MilestoneComposerState =
-  | { mode: 'closed' }
-  | { mode: 'create'; goalId: Id }
-  | { mode: 'edit'; milestoneId: Id }
+  { mode: 'closed' } | { mode: 'create'; goalId: Id } | { mode: 'edit'; milestoneId: Id }
 
 interface GoalUiState {
   filter: GoalUiFilter

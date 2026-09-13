@@ -56,7 +56,10 @@ const rescheduleStep = (query: string, dueDate = '2026-09-07', dueTime = '19:00'
 })
 const addStep = (title: string) => ({ kind: 'task.add', title, dueDate: '2026-09-07' })
 
-const planReply = (steps: { description: string; intent: unknown }[], message = 'Here is a plan.') => ({
+const planReply = (
+  steps: { description: string; intent: unknown }[],
+  message = 'Here is a plan.',
+) => ({
   kind: 'plan',
   message,
   steps,

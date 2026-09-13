@@ -126,8 +126,19 @@ export function GoalToolbar({
         ) : null}
       </div>
 
-      <Segment label="Goal state" options={STATES} value={filter.state} counts={counts} onChange={onState} />
-      <Segment label="Deadline health" options={HEALTHS} value={filter.health} onChange={onHealth} />
+      <Segment
+        label="Goal state"
+        options={STATES}
+        value={filter.state}
+        counts={counts}
+        onChange={onState}
+      />
+      <Segment
+        label="Deadline health"
+        options={HEALTHS}
+        value={filter.health}
+        onChange={onHealth}
+      />
 
       <label className="flex shrink-0 items-center gap-1.5 text-[11.5px] text-ink-3">
         <span className="sr-only sm:not-sr-only">Sort</span>

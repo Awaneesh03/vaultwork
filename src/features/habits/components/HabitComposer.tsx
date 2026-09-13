@@ -11,12 +11,7 @@ import {
 import type { HabitFrequency } from '@/services'
 import type { Habit } from '@/types/entities'
 import { WEEKDAY_INITIALS, WEEKDAY_NAMES } from '../habitAppearance'
-import {
-  emptyHabitForm,
-  habitForm,
-  habitFormError,
-  type HabitFormValue,
-} from '../habitFormValue'
+import { emptyHabitForm, habitForm, habitFormError, type HabitFormValue } from '../habitFormValue'
 
 /**
  * Create and edit a habit — one component, two modes.
@@ -44,10 +39,7 @@ const FIELD =
 
 function Label({ htmlFor, children }: { htmlFor?: string; children: string }) {
   return (
-    <label
-      htmlFor={htmlFor}
-      className="t-eyebrow text-ink-3"
-    >
+    <label htmlFor={htmlFor} className="t-eyebrow text-ink-3">
       {children}
     </label>
   )
@@ -176,9 +168,7 @@ export function HabitComposer({
           </div>
 
           <fieldset className="flex flex-col gap-1.5">
-            <legend className="t-eyebrow text-ink-3">
-              Frequency
-            </legend>
+            <legend className="t-eyebrow text-ink-3">Frequency</legend>
             <div className="grid grid-cols-2 gap-1.5">
               {FREQUENCIES.map((frequency) => (
                 <button
@@ -202,9 +192,7 @@ export function HabitComposer({
 
           {value.frequency === 'custom' ? (
             <fieldset className="flex flex-col gap-1.5">
-              <legend className="t-eyebrow text-ink-3">
-                Days
-              </legend>
+              <legend className="t-eyebrow text-ink-3">Days</legend>
               <div className="flex flex-wrap gap-1.5">
                 {WEEKDAY_INITIALS.map((initial, day) => {
                   const on = value.daysOfWeek.includes(day)
@@ -246,9 +234,7 @@ export function HabitComposer({
           ) : null}
 
           <fieldset className="flex flex-col gap-1.5">
-            <legend className="t-eyebrow text-ink-3">
-              Accent
-            </legend>
+            <legend className="t-eyebrow text-ink-3">Accent</legend>
             <div className="flex flex-wrap gap-1.5">
               {PROJECT_COLORS.map((color) => (
                 <button

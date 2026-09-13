@@ -58,7 +58,11 @@ export function HabitRow({
   const accent = projectColorVar(habit.color)
   const archived = habit.archivedAt !== null
 
-  const state = !scheduledToday ? 'not scheduled today' : completedToday ? 'done today' : 'due today'
+  const state = !scheduledToday
+    ? 'not scheduled today'
+    : completedToday
+      ? 'done today'
+      : 'due today'
 
   return (
     <div
@@ -140,9 +144,7 @@ export function HabitRow({
         <div className="mt-1.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px]">
           <span className="tabular inline-flex items-center gap-1 whitespace-nowrap text-ink-3">
             <Flame size={11} aria-hidden />
-            <span aria-label={`Current streak ${item.currentStreak}`}>
-              {item.currentStreak}
-            </span>
+            <span aria-label={`Current streak ${item.currentStreak}`}>{item.currentStreak}</span>
             <span className="text-ink-3">streak</span>
           </span>
 
@@ -150,8 +152,8 @@ export function HabitRow({
             className="tabular whitespace-nowrap text-ink-3"
             aria-label={`${item.rate.completed} of ${item.rate.scheduled} scheduled days completed, ${item.rate.percent} percent`}
           >
-            <span className="text-ink-2">{item.rate.percent}%</span> of{' '}
-            {item.rate.scheduled} {item.rate.scheduled === 1 ? 'day' : 'days'}
+            <span className="text-ink-2">{item.rate.percent}%</span> of {item.rate.scheduled}{' '}
+            {item.rate.scheduled === 1 ? 'day' : 'days'}
           </span>
 
           <HabitHistoryStrip

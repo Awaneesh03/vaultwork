@@ -187,7 +187,13 @@ export function TaskViewScreen({ view }: { view: TaskViewId }) {
   const prioritise = useCallback(
     (task: Task, priority: Priority) =>
       void dispatch(
-        { kind: 'task.prioritize', source: 'ui', raw: '', ref: { by: 'id', id: task.id }, priority },
+        {
+          kind: 'task.prioritize',
+          source: 'ui',
+          raw: '',
+          ref: { by: 'id', id: task.id },
+          priority,
+        },
         { notify: 'errors' },
       ),
     [dispatch],

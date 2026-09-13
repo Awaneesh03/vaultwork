@@ -63,7 +63,12 @@ export function NotesView() {
   const requestedFilter = searchParams.get('filter')
   const requestedTag = searchParams.get('tag')
   useEffect(() => {
-    if (requestedFilter === 'orphans' || requestedFilter === 'linked' || requestedFilter === 'unlinked' || requestedFilter === 'deleted') {
+    if (
+      requestedFilter === 'orphans' ||
+      requestedFilter === 'linked' ||
+      requestedFilter === 'unlinked' ||
+      requestedFilter === 'deleted'
+    ) {
       setFilter(requestedFilter)
     }
     setTagId(requestedTag)

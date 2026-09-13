@@ -59,10 +59,7 @@ interface FsFileHandle extends FsHandle {
 interface FsDirectoryHandle extends FsHandle {
   kind: 'directory'
   getFileHandle: (name: string, options?: { create?: boolean }) => Promise<FsFileHandle>
-  getDirectoryHandle: (
-    name: string,
-    options?: { create?: boolean },
-  ) => Promise<FsDirectoryHandle>
+  getDirectoryHandle: (name: string, options?: { create?: boolean }) => Promise<FsDirectoryHandle>
   removeEntry: (name: string, options?: { recursive?: boolean }) => Promise<void>
   values: () => AsyncIterableIterator<FsFileHandle | FsDirectoryHandle>
 }
@@ -194,7 +191,10 @@ export function createBrowserVault(): VaultPort {
     path: string,
     options: { create: boolean; extension?: 'document' },
   ): Promise<FsFileHandle> => {
-    const safe = assertSafeVaultPath(path, options.extension ? { extension: options.extension } : {})
+    const safe = assertSafeVaultPath(
+      path,
+      options.extension ? { extension: options.extension } : {},
+    )
     const segments = safe.split('/')
     const name = segments.pop() as string
     const directory = await directoryFor(segments.join('/'), { create: options.create })
@@ -258,10 +258,7 @@ export function createBrowserVault(): VaultPort {
         if (kind === 'aborted') {
           throw new VaultError('aborted', 'No folder was chosen.')
         }
-        throw new VaultError(
-          'permission-denied',
-          'The browser refused access to that folder.',
-        )
+        throw new VaultError('permission-denied', 'The browser refused access to that folder.')
       }
     },
 
@@ -318,7 +315,11 @@ export function createBrowserVault(): VaultPort {
       } catch (error) {
         const { kind } = describe(error)
         if (kind === 'permission-denied') {
-          throw new VaultError('permission-denied', 'Permission to read the vault was denied.', path)
+          throw new VaultError(
+            'permission-denied',
+            'Permission to read the vault was denied.',
+            path,
+          )
         }
         throw new VaultError('read-failed', `Could not read “${path}”.`, path)
       }

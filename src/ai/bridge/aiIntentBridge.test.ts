@@ -314,11 +314,7 @@ describe('a multi-step plan', () => {
     )
 
     expect(result.steps).toHaveLength(3)
-    expect(result.steps.map((outcome) => outcome.description)).toEqual([
-      'first',
-      'second',
-      'third',
-    ])
+    expect(result.steps.map((outcome) => outcome.description)).toEqual(['first', 'second', 'third'])
   })
 
   it('resolves an empty plan to nothing, harmlessly', async () => {
@@ -368,7 +364,15 @@ describe('the model may not supply an id', () => {
   })
 
   it('rejects a reference that is malformed or empty', async () => {
-    for (const ref of [null, 'Study Java', 42, {}, { by: 'index', index: 1 }, { by: 'text' }, { by: 'text', query: '   ' }]) {
+    for (const ref of [
+      null,
+      'Study Java',
+      42,
+      {},
+      { by: 'index', index: 1 },
+      { by: 'text' },
+      { by: 'text', query: '   ' },
+    ]) {
       const smuggled = {
         kind: 'task.complete',
         source: 'ai',
@@ -410,8 +414,19 @@ describe('attribution and the allowlist', () => {
   })
 
   it('rejects a kind outside the M15.2 allowlist', async () => {
-    for (const kind of ['task.delete', 'project.delete', 'note.delete', 'task.update', 'invented']) {
-      const outside = { kind, source: 'ai', raw: RAW, ref: { by: 'text', query: 'x' } } as unknown as ProposedIntent
+    for (const kind of [
+      'task.delete',
+      'project.delete',
+      'note.delete',
+      'task.update',
+      'invented',
+    ]) {
+      const outside = {
+        kind,
+        source: 'ai',
+        raw: RAW,
+        ref: { by: 'text', query: 'x' },
+      } as unknown as ProposedIntent
 
       const { lookup, asked } = fakeLookup({ x: resolvesTo('task-1') })
       const result = await resolveAiPlan([step(outside)], lookup)
@@ -426,7 +441,11 @@ describe('attribution and the allowlist', () => {
     const { lookup } = fakeLookup({ Java: resolvesTo('task-1'), OOP: resolvesTo('task-2') })
 
     const result = await resolveAiPlan(
-      [step(complete('Java'), 'step-1'), step(reschedule('OOP'), 'step-2'), step(add('New'), 'step-3')],
+      [
+        step(complete('Java'), 'step-1'),
+        step(reschedule('OOP'), 'step-2'),
+        step(add('New'), 'step-3'),
+      ],
       lookup,
     )
 
@@ -487,7 +506,11 @@ describe('nothing runs', () => {
 
     const { lookup } = fakeLookup({ Java: resolvesTo('task-1'), OOP: resolvesTo('task-2') })
     await resolveAiPlan(
-      [step(complete('Java'), 'step-1'), step(reschedule('OOP'), 'step-2'), step(add('New'), 'step-3')],
+      [
+        step(complete('Java'), 'step-1'),
+        step(reschedule('OOP'), 'step-2'),
+        step(add('New'), 'step-3'),
+      ],
       lookup,
     )
 

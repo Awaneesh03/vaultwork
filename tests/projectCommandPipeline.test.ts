@@ -491,10 +491,26 @@ describe('assigning a task to a project', () => {
 describe('one operation, one event', () => {
   it('records exactly the events the operations claim to', async () => {
     const project = await createProject('College')
-    await execute({ kind: 'project.update', source: 'ui', raw: '', projectId: project.id, patch: { color: 'rose' } })
-    await execute({ kind: 'project.archive', source: 'ui', raw: '', ref: { by: 'id', id: project.id } })
+    await execute({
+      kind: 'project.update',
+      source: 'ui',
+      raw: '',
+      projectId: project.id,
+      patch: { color: 'rose' },
+    })
+    await execute({
+      kind: 'project.archive',
+      source: 'ui',
+      raw: '',
+      ref: { by: 'id', id: project.id },
+    })
     await execute({ kind: 'project.unarchive', source: 'ui', raw: '', projectId: project.id })
-    await execute({ kind: 'project.delete', source: 'ui', raw: '', ref: { by: 'id', id: project.id } })
+    await execute({
+      kind: 'project.delete',
+      source: 'ui',
+      raw: '',
+      ref: { by: 'id', id: project.id },
+    })
     await execute({ kind: 'project.restore', source: 'ui', raw: '', projectId: project.id })
 
     expect(await eventTypes()).toEqual([

@@ -65,7 +65,11 @@ export async function renameTag(id: Id, name: string, source: EventSource = 'ui'
   return tagRepo.update(id, { name: clean }, { source })
 }
 
-export function setTagColor(id: Id, color: string | null, source: EventSource = 'ui'): Promise<Tag> {
+export function setTagColor(
+  id: Id,
+  color: string | null,
+  source: EventSource = 'ui',
+): Promise<Tag> {
   return tagRepo.update(id, { color }, { source })
 }
 

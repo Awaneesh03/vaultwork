@@ -51,8 +51,7 @@ const SNIPPET_RADIUS = 90
 /** The most hits one search returns. A list nobody scrolls is not a result. */
 const DEFAULT_LIMIT = 30
 
-const terms = (query: string): string[] =>
-  query.trim().toLowerCase().split(/\s+/).filter(Boolean)
+const terms = (query: string): string[] => query.trim().toLowerCase().split(/\s+/).filter(Boolean)
 
 /**
  * A readable window around the first match.
@@ -170,9 +169,7 @@ export async function searchKnowledge(
     })
   }
 
-  return hits
-    .sort((a, b) => b.matches - a.matches || b.updatedAt - a.updatedAt)
-    .slice(0, limit)
+  return hits.sort((a, b) => b.matches - a.matches || b.updatedAt - a.updatedAt).slice(0, limit)
 }
 
 function noteHit(item: NoteListItem, query: string): KnowledgeHit {
@@ -188,7 +185,6 @@ function noteHit(item: NoteListItem, query: string): KnowledgeHit {
   }
 }
 
-
 // ------------------------------------------------------------- AI retrieval
 
 /**
@@ -200,11 +196,58 @@ function noteHit(item: NoteListItem, query: string): KnowledgeHit {
  * "summarize".
  */
 const STOPWORDS = new Set([
-  'a', 'an', 'and', 'about', 'are', 'as', 'at', 'be', 'by', 'can', 'do', 'does',
-  'document', 'documents', 'for', 'from', 'give', 'have', 'how', 'in', 'is', 'it',
-  'me', 'my', 'of', 'on', 'or', 'paper', 'pdf', 'pdfs', 'please', 'say', 'says',
-  'show', 'summarise', 'summarize', 'summary', 'tell', 'that', 'the', 'their',
-  'them', 'these', 'this', 'to', 'what', 'when', 'where', 'which', 'with', 'you', 'your',
+  'a',
+  'an',
+  'and',
+  'about',
+  'are',
+  'as',
+  'at',
+  'be',
+  'by',
+  'can',
+  'do',
+  'does',
+  'document',
+  'documents',
+  'for',
+  'from',
+  'give',
+  'have',
+  'how',
+  'in',
+  'is',
+  'it',
+  'me',
+  'my',
+  'of',
+  'on',
+  'or',
+  'paper',
+  'pdf',
+  'pdfs',
+  'please',
+  'say',
+  'says',
+  'show',
+  'summarise',
+  'summarize',
+  'summary',
+  'tell',
+  'that',
+  'the',
+  'their',
+  'them',
+  'these',
+  'this',
+  'to',
+  'what',
+  'when',
+  'where',
+  'which',
+  'with',
+  'you',
+  'your',
 ])
 
 /**

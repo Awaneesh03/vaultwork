@@ -13,14 +13,7 @@ import { cn } from '@/lib/cn'
  * this readable for a colour-blind reader and in a screenshot printed in grey.
  */
 
-export type BadgeTone =
-  | 'neutral'
-  | 'accent'
-  | 'confirm'
-  | 'ok'
-  | 'warn'
-  | 'danger'
-  | 'info'
+export type BadgeTone = 'neutral' | 'accent' | 'confirm' | 'ok' | 'warn' | 'danger' | 'info'
 
 const TONES: Record<BadgeTone, string> = {
   neutral: 'bg-sunken text-ink-2 border-line',
@@ -64,7 +57,11 @@ export function Badge({
         className,
       )}
     >
-      {icon ? <span className="shrink-0" aria-hidden>{icon}</span> : null}
+      {icon ? (
+        <span className="shrink-0" aria-hidden>
+          {icon}
+        </span>
+      ) : null}
       {children}
     </span>
   )

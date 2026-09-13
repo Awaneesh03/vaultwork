@@ -3,12 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { beforeEach, describe, expect, it } from 'vitest'
 import { db } from '@/db'
 import { milestoneRepo, projectRepo, taskRepo } from '@/repositories'
-import {
-  completeMilestone,
-  createGoal,
-  createMilestone,
-  getGoalsView,
-} from '@/services'
+import { completeMilestone, createGoal, createMilestone, getGoalsView } from '@/services'
 import { useGoalUiStore } from '@/store/goalUiStore'
 import { useToastStore } from '@/store/toastStore'
 import { projectInput, taskInput } from '../../../../tests/factories'
@@ -92,7 +87,9 @@ describe('the list', () => {
     mount()
     await waitFor(() => expect(screen.getByRole('button', { name: 'Ship it' })).toBeTruthy())
     expect(row('Ship it')?.textContent).toContain('2 tasks')
-    expect(screen.getByRole('progressbar', { name: 'Ship it progress' }).getAttribute('aria-valuenow')).toBe('50')
+    expect(
+      screen.getByRole('progressbar', { name: 'Ship it progress' }).getAttribute('aria-valuenow'),
+    ).toBe('50')
   })
 
   it('gives the progress bar a real name, not just a value', async () => {
@@ -297,9 +294,7 @@ describe('milestones in the detail panel', () => {
     const panel = await openDetail('DSA')
     fireEvent.keyDown(panel, { key: 'Escape' })
 
-    await waitFor(() =>
-      expect(screen.queryByRole('dialog', { name: 'DSA details' })).toBeNull(),
-    )
+    await waitFor(() => expect(screen.queryByRole('dialog', { name: 'DSA details' })).toBeNull())
   })
 })
 

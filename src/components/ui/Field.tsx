@@ -18,18 +18,11 @@ const BASE = cn(
   'disabled:cursor-not-allowed disabled:opacity-55',
 )
 
-export function TextInput({
-  className,
-  ...rest
-}: InputHTMLAttributes<HTMLInputElement>) {
+export function TextInput({ className, ...rest }: InputHTMLAttributes<HTMLInputElement>) {
   return <input className={cn(BASE, 'h-9', className)} {...rest} />
 }
 
-export function Select({
-  className,
-  children,
-  ...rest
-}: SelectHTMLAttributes<HTMLSelectElement>) {
+export function Select({ className, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select className={cn(BASE, 'h-9 pr-7', className)} {...rest}>
       {children}

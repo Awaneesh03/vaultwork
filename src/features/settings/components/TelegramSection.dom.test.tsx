@@ -26,7 +26,10 @@ const IDLE: TelegramStatus = {
 
 const real = platform.telegram
 
-function install(overrides: Partial<TelegramPort>, initial: TelegramStatus = IDLE): {
+function install(
+  overrides: Partial<TelegramPort>,
+  initial: TelegramStatus = IDLE,
+): {
   port: TelegramPort
   push: (status: TelegramStatus) => void
 } {

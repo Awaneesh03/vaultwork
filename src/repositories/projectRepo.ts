@@ -75,9 +75,10 @@ export const projectRepo = {
    * would make a soft-deleted project squat on its name forever. Duplicates are
    * therefore refused by the service, which can explain itself.
    */
-  async findByName(name: string, options: { includeDeleted?: boolean } = {}): Promise<
-    Project | undefined
-  > {
+  async findByName(
+    name: string,
+    options: { includeDeleted?: boolean } = {},
+  ): Promise<Project | undefined> {
     const wanted = normalise(name)
     if (wanted.length === 0) return undefined
     try {

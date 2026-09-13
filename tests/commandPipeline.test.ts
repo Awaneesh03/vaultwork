@@ -172,10 +172,7 @@ describe('the full worked example through the command layer', () => {
       await execute({ ...intent, draft: { ...intent.draft, subtasks: ['Tokenise', 'Grammar'] } }),
     )
 
-    expect((await subtaskRepo.byTask(task.id)).map((s) => s.title)).toEqual([
-      'Tokenise',
-      'Grammar',
-    ])
+    expect((await subtaskRepo.byTask(task.id)).map((s) => s.title)).toEqual(['Tokenise', 'Grammar'])
   })
 
   it('refuses to store a task with no title', async () => {

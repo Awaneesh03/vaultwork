@@ -264,9 +264,7 @@ describe('the intent allowlist', () => {
 
   it('accepts only the three kinds M15.2 exposes', () => {
     expectOk(json(withIntent({ kind: 'task.add', title: 'Revise OOP' })))
-    expectOk(
-      json(withIntent({ kind: 'task.complete', ref: { by: 'text', query: 'Revise OOP' } })),
-    )
+    expectOk(json(withIntent({ kind: 'task.complete', ref: { by: 'text', query: 'Revise OOP' } })))
     expectOk(
       json(
         withIntent({
@@ -352,7 +350,14 @@ describe('the application owns attribution', () => {
 
   it('threads the caller’s request text, not anything from the reply', () => {
     const response = expectOk(
-      json({ kind: 'plan', message: 'ok', steps: [{ description: 'one', intent: { kind: 'task.add', title: 'T' } }] }, 'the real request'),
+      json(
+        {
+          kind: 'plan',
+          message: 'ok',
+          steps: [{ description: 'one', intent: { kind: 'task.add', title: 'T' } }],
+        },
+        'the real request',
+      ),
     )
     if (response.kind !== 'plan') throw new Error('expected a plan')
     expect(response.steps[0]?.intent.raw).toBe('the real request')
@@ -519,12 +524,19 @@ describe('robustness against arbitrary junk', () => {
     // A small fuzz sweep over the shapes a broken model actually emits. The
     // property is total: every input produces a decision, never an exception.
     const fragments = [
-      '{}', '[]', 'null', '0', '"s"', '{"kind":', '{"kind":"plan"}',
+      '{}',
+      '[]',
+      'null',
+      '0',
+      '"s"',
+      '{"kind":',
+      '{"kind":"plan"}',
       '{"kind":"plan","message":"m","steps":[{}]}',
       '{"kind":"answer","message":null}',
       '{"kind":"clarification","message":"m","options":[null]}',
       '{"kind":"plan","message":"m","steps":[{"description":"d","intent":{"kind":"task.complete","ref":{"by":"id","id":"1"}}}]}',
-      ' ', '{"__proto__":{"admin":true},"kind":"answer","message":"m"}',
+      ' ',
+      '{"__proto__":{"admin":true},"kind":"answer","message":"m"}',
       '{"kind":"answer","message":"m","extra":{"deep":{"deeper":[1,2,3]}}}',
     ]
 

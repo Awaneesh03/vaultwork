@@ -88,10 +88,7 @@ export function HabitsView() {
 
   const toggle = useCallback(
     (habitId: Id) =>
-      void dispatch(
-        { kind: 'habit.toggle', source: 'ui', raw: '', habitId },
-        { notify: 'errors' },
-      ),
+      void dispatch({ kind: 'habit.toggle', source: 'ui', raw: '', habitId }, { notify: 'errors' }),
     [dispatch],
   )
 
@@ -112,7 +109,12 @@ export function HabitsView() {
     (habitId: Id) =>
       // No confirmation: the delete is soft, the history is kept, and the toast
       // holds an undo.
-      void dispatch({ kind: 'habit.delete', source: 'ui', raw: '', ref: { by: 'id', id: habitId } }),
+      void dispatch({
+        kind: 'habit.delete',
+        source: 'ui',
+        raw: '',
+        ref: { by: 'id', id: habitId },
+      }),
     [dispatch],
   )
 
@@ -212,8 +214,8 @@ export function HabitsView() {
           </Button>
         </div>
         <p className="max-w-prose text-[13px] text-ink-2">
-          A habit is what you intend to repeat; its history is what actually happened. Days a
-          habit is not scheduled never count against it.
+          A habit is what you intend to repeat; its history is what actually happened. Days a habit
+          is not scheduled never count against it.
         </p>
       </header>
 
@@ -222,9 +224,7 @@ export function HabitsView() {
           className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-surface px-3 py-2"
           aria-label="Today's habits"
         >
-          <span className="t-eyebrow text-ink-3">
-            Today
-          </span>
+          <span className="t-eyebrow text-ink-3">Today</span>
           <span
             className="tabular text-[15px] font-semibold text-ink"
             aria-label={`${data.summary.completed} of ${data.summary.scheduled} habits complete today`}
@@ -308,9 +308,7 @@ export function HabitsView() {
             {value.active.length > 0 ? (
               <section className="flex flex-col gap-1">
                 <div className="flex items-baseline gap-2 px-2">
-                  <h3 className="t-eyebrow text-ink-3">
-                    Active
-                  </h3>
+                  <h3 className="t-eyebrow text-ink-3">Active</h3>
                   <span className="tabular text-[11px] text-ink-3">{value.active.length}</span>
                 </div>
                 <HabitList

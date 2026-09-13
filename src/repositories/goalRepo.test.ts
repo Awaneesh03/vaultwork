@@ -85,11 +85,7 @@ describe('goal CRUD', () => {
     await goalRepo.create(goalInput({ title: 'first', sortOrder: 1000 }))
     await goalRepo.create(goalInput({ title: 'second', sortOrder: 2000 }))
 
-    expect((await goalRepo.listLive()).map((g) => g.title)).toEqual([
-      'first',
-      'second',
-      'third',
-    ])
+    expect((await goalRepo.listLive()).map((g) => g.title)).toEqual(['first', 'second', 'third'])
     expect(await goalRepo.lastOrder()).toBe(3000)
   })
 

@@ -59,7 +59,8 @@ export function isDateStr(value: unknown): value is DateStr {
 }
 
 export function assertDateStr(value: unknown): asserts value is DateStr {
-  if (!isDateStr(value)) throw new TypeError(`Expected a YYYY-MM-DD date, received ${String(value)}`)
+  if (!isDateStr(value))
+    throw new TypeError(`Expected a YYYY-MM-DD date, received ${String(value)}`)
 }
 
 export function isTimeStr(value: unknown): value is TimeStr {

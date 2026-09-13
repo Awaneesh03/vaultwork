@@ -142,20 +142,16 @@ describe('completion', () => {
   it('cannot create two rows for one habit on one day, even racing', async () => {
     const habit = await createHabit('Read')
     // The unique [habitId+date] index is what makes this safe, not the UI.
-    await Promise.all([
-      completeHabit(habit.id),
-      completeHabit(habit.id),
-      completeHabit(habit.id),
-    ])
+    await Promise.all([completeHabit(habit.id), completeHabit(habit.id), completeHabit(habit.id)])
     expect(await db.habitEntries.count()).toBe(1)
   })
 
   it('refuses a day the habit is not scheduled on', async () => {
     const weekdays = await createHabit('Exercise', { daysOfWeek: WEEKDAYS })
     // 5 September 2026 is a Saturday.
-    await expect(
-      completeHabit(weekdays.id, { date: '2026-09-05' }),
-    ).rejects.toThrow(HabitNotScheduledError)
+    await expect(completeHabit(weekdays.id, { date: '2026-09-05' })).rejects.toThrow(
+      HabitNotScheduledError,
+    )
   })
 
   it('logs a quantity habit at its target by default', async () => {
@@ -211,11 +207,7 @@ describe('uncompleting', () => {
     await completeHabit(habit.id)
     await uncompleteHabit(habit.id)
 
-    expect(await eventTypes()).toEqual([
-      'habit.created',
-      'habit.completed',
-      'habit.uncompleted',
-    ])
+    expect(await eventTypes()).toEqual(['habit.created', 'habit.completed', 'habit.uncompleted'])
   })
 
   it('toggles both ways', async () => {
@@ -323,11 +315,7 @@ describe('archive', () => {
 
     const [event] = await eventRepo.list({ type: 'habit.archived' })
     expect(event?.payload).toMatchObject({ name: 'Read', entryCount: 1 })
-    expect(await eventTypes()).toEqual([
-      'habit.created',
-      'habit.completed',
-      'habit.archived',
-    ])
+    expect(await eventTypes()).toEqual(['habit.created', 'habit.completed', 'habit.archived'])
   })
 
   it('is idempotent', async () => {
@@ -378,11 +366,7 @@ describe('delete', () => {
     await deleteHabit(habit.id)
     await restoreHabit(habit.id)
 
-    expect(await eventTypes()).toEqual([
-      'habit.created',
-      'habit.deleted',
-      'habit.restored',
-    ])
+    expect(await eventTypes()).toEqual(['habit.created', 'habit.deleted', 'habit.restored'])
   })
 })
 

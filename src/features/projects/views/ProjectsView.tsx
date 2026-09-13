@@ -216,8 +216,8 @@ export function ProjectsView() {
           </Button>
         </div>
         <p className="max-w-prose text-[13px] text-ink-2">
-          Work with a lifecycle. Progress is computed from completed tasks every time it is read,
-          so it cannot drift and cannot be faked.
+          Work with a lifecycle. Progress is computed from completed tasks every time it is read, so
+          it cannot drift and cannot be faked.
         </p>
       </header>
 
@@ -229,9 +229,7 @@ export function ProjectsView() {
             label="Overdue"
             value={String(data.totals.overdue)}
             tone={data.totals.overdue > 0 ? 'warn' : 'plain'}
-            {...(data.totals.overdue > 0
-              ? { icon: <TriangleAlert size={9} aria-hidden /> }
-              : {})}
+            {...(data.totals.overdue > 0 ? { icon: <TriangleAlert size={9} aria-hidden /> } : {})}
           />
           <Metric
             label="Inbox"
@@ -311,9 +309,7 @@ export function ProjectsView() {
             {value.active.length > 0 ? (
               <section className="flex flex-col gap-1">
                 <div className="flex items-baseline gap-2 px-2">
-                  <h3 className="t-eyebrow text-ink-3">
-                    Active
-                  </h3>
+                  <h3 className="t-eyebrow text-ink-3">Active</h3>
                   <span className="tabular text-[11px] text-ink-3">{value.active.length}</span>
                 </div>
                 <ProjectList

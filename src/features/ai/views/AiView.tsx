@@ -95,8 +95,8 @@ export function AiView() {
             Assistant
           </h2>
           <p className="t-meta max-w-prose text-ink-3">
-            Asks about your tasks and proposes changes. It never changes anything on its own —
-            every action is shown to you first.
+            Asks about your tasks and proposes changes. It never changes anything on its own — every
+            action is shown to you first.
           </p>
         </div>
         {ai.turns.length > 0 ? (

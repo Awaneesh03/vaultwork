@@ -53,9 +53,7 @@ export function NoteLinkPicker({
   return (
     <section className="flex flex-col gap-2">
       <div className="flex items-center gap-2">
-        <h3 className="flex-1 t-eyebrow text-ink-3">
-          Linked to
-        </h3>
+        <h3 className="flex-1 t-eyebrow text-ink-3">Linked to</h3>
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}

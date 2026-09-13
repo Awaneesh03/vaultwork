@@ -52,13 +52,17 @@ export const maintenanceRepo = {
   async exportAll(appVersion: string): Promise<BackupFile> {
     try {
       const data = {} as BackupData
-      await db.transaction('r', STORE_NAMES.map((n) => db.table(n)), async () => {
-        for (const name of STORE_NAMES) {
-          // Cast is unavoidable: the union of fourteen row types cannot be
-          // narrowed by a runtime string, and BackupData keys them correctly.
-          ;(data as Record<string, unknown[]>)[name] = await db.table(name).toArray()
-        }
-      })
+      await db.transaction(
+        'r',
+        STORE_NAMES.map((n) => db.table(n)),
+        async () => {
+          for (const name of STORE_NAMES) {
+            // Cast is unavoidable: the union of fourteen row types cannot be
+            // narrowed by a runtime string, and BackupData keys them correctly.
+            ;(data as Record<string, unknown[]>)[name] = await db.table(name).toArray()
+          }
+        },
+      )
 
       const counts = Object.fromEntries(
         STORE_NAMES.map((name) => [name, (data as Record<string, unknown[]>)[name]?.length ?? 0]),
@@ -86,13 +90,17 @@ export const maintenanceRepo = {
   async replaceAll(data: BackupData): Promise<void> {
     try {
       await withEventLogUnlocked(db, async () => {
-        await db.transaction('rw', STORE_NAMES.map((n) => db.table(n)), async () => {
-          for (const name of STORE_NAMES) {
-            await db.table(name).clear()
-            const rows = (data as Record<string, unknown[]>)[name] ?? []
-            if (rows.length > 0) await db.table(name).bulkAdd(rows)
-          }
-        })
+        await db.transaction(
+          'rw',
+          STORE_NAMES.map((n) => db.table(n)),
+          async () => {
+            for (const name of STORE_NAMES) {
+              await db.table(name).clear()
+              const rows = (data as Record<string, unknown[]>)[name] ?? []
+              if (rows.length > 0) await db.table(name).bulkAdd(rows)
+            }
+          },
+        )
       })
     } catch (error) {
       throw toRepositoryError('*', error, 'replaceAll')
@@ -102,9 +110,13 @@ export const maintenanceRepo = {
   async clearAll(): Promise<void> {
     try {
       await withEventLogUnlocked(db, async () => {
-        await db.transaction('rw', STORE_NAMES.map((n) => db.table(n)), async () => {
-          for (const name of STORE_NAMES) await db.table(name).clear()
-        })
+        await db.transaction(
+          'rw',
+          STORE_NAMES.map((n) => db.table(n)),
+          async () => {
+            for (const name of STORE_NAMES) await db.table(name).clear()
+          },
+        )
       })
     } catch (error) {
       throw toRepositoryError('*', error, 'clearAll')
@@ -116,16 +128,20 @@ export const maintenanceRepo = {
     const purgeable = STORE_NAMES.filter((n) => n !== 'events' && n !== 'settings')
     let removed = 0
     try {
-      await db.transaction('rw', purgeable.map((n) => db.table(n)), async () => {
-        for (const name of purgeable) {
-          const rows = (await db.table(name).where('deletedAt').below(cutoff).toArray()) as {
-            id: string
-          }[]
-          if (rows.length === 0) continue
-          await db.table(name).bulkDelete(rows.map((r) => r.id))
-          removed += rows.length
-        }
-      })
+      await db.transaction(
+        'rw',
+        purgeable.map((n) => db.table(n)),
+        async () => {
+          for (const name of purgeable) {
+            const rows = (await db.table(name).where('deletedAt').below(cutoff).toArray()) as {
+              id: string
+            }[]
+            if (rows.length === 0) continue
+            await db.table(name).bulkDelete(rows.map((r) => r.id))
+            removed += rows.length
+          }
+        },
+      )
       return removed
     } catch (error) {
       throw toRepositoryError('*', error, 'purgeDeletedBefore')

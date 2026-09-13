@@ -1,5 +1,10 @@
 import { useLiveQuery } from 'dexie-react-hooks'
-import { getHabitDetail, getHabitsView, type HabitDetailData, type HabitsViewData } from '@/services'
+import {
+  getHabitDetail,
+  getHabitsView,
+  type HabitDetailData,
+  type HabitsViewData,
+} from '@/services'
 import { useHabitUiStore } from '@/store/habitUiStore'
 import type { Id } from '@/types/entities'
 

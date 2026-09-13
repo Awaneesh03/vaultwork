@@ -260,21 +260,21 @@ export function createTauriVault(bridge: TauriBridge): VaultPort {
       const safe = path.length === 0 ? '' : assertSafeVaultDirectory(path)
       try {
         const entries = await bridge.vaultList(safe.length === 0 ? undefined : safe)
-        return entries
-          .map(
-            (entry): VaultEntry => ({
+        return (
+          entries
+            .map((entry): VaultEntry => ({
               name: entry.name,
               path: entry.path,
               kind: entry.kind === 'directory' ? 'directory' : 'file',
-            }),
-          )
-          // Sorted here, not in Rust, so both runtimes agree. Rust's `str::cmp`
-          // is byte order — which puts `README.md` before `notes` — while the
-          // browser adapter uses `localeCompare`, which does not. M11 walks
-          // this list to build a sync plan, and two runtimes disagreeing about
-          // the order of a vault scan is exactly the kind of difference that
-          // shows up much later as an unexplained diff.
-          .sort((a, b) => a.name.localeCompare(b.name))
+            }))
+            // Sorted here, not in Rust, so both runtimes agree. Rust's `str::cmp`
+            // is byte order — which puts `README.md` before `notes` — while the
+            // browser adapter uses `localeCompare`, which does not. M11 walks
+            // this list to build a sync plan, and two runtimes disagreeing about
+            // the order of a vault scan is exactly the kind of difference that
+            // shows up much later as an unexplained diff.
+            .sort((a, b) => a.name.localeCompare(b.name))
+        )
       } catch (error) {
         throw toVaultError(error, 'read-failed', safe.length === 0 ? null : safe)
       }

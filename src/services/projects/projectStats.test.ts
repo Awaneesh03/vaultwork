@@ -241,9 +241,7 @@ describe('filtering', () => {
       'Old',
     ])
     expect(names(filterProjects(build(), { ...base, progress: 'complete' }))).toEqual(['Finished'])
-    expect(names(filterProjects(build(), { ...base, progress: 'empty' }))).toEqual([
-      'Active empty',
-    ])
+    expect(names(filterProjects(build(), { ...base, progress: 'empty' }))).toEqual(['Active empty'])
   })
 
   it('filters by status', () => {

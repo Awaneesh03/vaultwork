@@ -16,11 +16,7 @@ import { formatEventTime } from '@/lib/date'
 // Pure decision helpers, imported from the integrations leaf rather than
 // through the service barrel: a component may not value-import a service, and
 // these do no I/O — they are the same kind of thing as `lib/`.
-import {
-  safeDecisions,
-  summarizeDecisions,
-  type SyncItem,
-} from '@/integrations/obsidian/syncPlan'
+import { safeDecisions, summarizeDecisions, type SyncItem } from '@/integrations/obsidian/syncPlan'
 import type { SyncStatus } from '@/services'
 import { ConflictDiff } from '../components/ConflictDiff'
 import { SyncItemRow } from '../components/SyncItemRow'
@@ -90,7 +86,9 @@ function Section({
           <span className="tabular text-[12px] text-ink-2">{items.length}</span>
         </button>
       </h3>
-      {open ? <ul className="flex flex-col divide-y divide-line border-t border-line">{children}</ul> : null}
+      {open ? (
+        <ul className="flex flex-col divide-y divide-line border-t border-line">{children}</ul>
+      ) : null}
     </section>
   )
 }
@@ -100,7 +98,11 @@ export function SyncCenterView() {
   const sync = useVaultSync()
   const [openSections, setOpenSections] = useState<Record<string, boolean>>({})
   const [confirming, setConfirming] = useState(false)
-  const [comparing, setComparing] = useState<{ item: SyncItem; local: string; external: string } | null>(null)
+  const [comparing, setComparing] = useState<{
+    item: SyncItem
+    local: string
+    external: string
+  } | null>(null)
 
   const connected = connection.status?.state === 'connected'
   const plan = sync.plan
@@ -151,8 +153,8 @@ export function SyncCenterView() {
           ) : null}
         </div>
         <p className="max-w-prose text-[13px] text-ink-2">
-          Scan to see what differs, choose what to do with each item, then apply. Nothing is
-          written until you confirm, and nothing is ever merged for you.
+          Scan to see what differs, choose what to do with each item, then apply. Nothing is written
+          until you confirm, and nothing is ever merged for you.
         </p>
       </header>
 
@@ -219,9 +221,8 @@ export function SyncCenterView() {
                 Three categories, not one total. "12 files" answers nothing when
                 four are notes, three are PDFs and five were passed over.
               */}
-              Scanned {formatEventTime(plan.scannedAt, plan.scannedAt, '')} ·{' '}
-              {plan.seen.markdown} Markdown · {plan.seen.pdf} PDF · {plan.skipped.nonMarkdown}{' '}
-              skipped
+              Scanned {formatEventTime(plan.scannedAt, plan.scannedAt, '')} · {plan.seen.markdown}{' '}
+              Markdown · {plan.seen.pdf} PDF · {plan.skipped.nonMarkdown} skipped
             </p>
           ) : null}
 
@@ -266,9 +267,7 @@ export function SyncCenterView() {
                 description={`${plan.skipped.nonMarkdown} file${
                   plan.skipped.nonMarkdown === 1 ? '' : 's'
                 } here, and none of them are Markdown notes or PDFs${
-                  plan.skipped.examples.length > 0
-                    ? ` — ${plan.skipped.examples.join(', ')}`
-                    : ''
+                  plan.skipped.examples.length > 0 ? ` — ${plan.skipped.examples.join(', ')}` : ''
                 }. Vaultwork reads .md and .pdf, so there is nothing to import. Check that the folder you connected is your Obsidian vault.`}
                 action={
                   <Link
@@ -297,9 +296,7 @@ export function SyncCenterView() {
                     status={status}
                     items={items}
                     open={open}
-                    onToggle={() =>
-                      setOpenSections((current) => ({ ...current, [status]: !open }))
-                    }
+                    onToggle={() => setOpenSections((current) => ({ ...current, [status]: !open }))}
                   >
                     {items.map((item) => (
                       <SyncItemRow

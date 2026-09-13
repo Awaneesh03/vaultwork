@@ -139,10 +139,12 @@ describe('the notes upgrade (v1 -> v2)', () => {
 
   it('converts a note reference into a link row and keeps the note', async () => {
     const v1 = await open(V1_ONLY)
-    await v1.table('notes').bulkAdd([
-      legacyNote({ id: 'n1', refType: 'task', refId: 't1' }),
-      legacyNote({ id: 'n2', title: 'Loose', refType: 'none', refId: null }),
-    ])
+    await v1
+      .table('notes')
+      .bulkAdd([
+        legacyNote({ id: 'n1', refType: 'task', refId: 't1' }),
+        legacyNote({ id: 'n2', title: 'Loose', refType: 'none', refId: null }),
+      ])
     v1.close()
 
     // Opened with every migration, so this is the *current* schema replaying a
@@ -207,7 +209,11 @@ describe('the notes upgrade (v1 -> v2)', () => {
     v1.close()
 
     const v2 = await open(MIGRATIONS)
-    const found = await v2.table('noteLinks').where('[refType+refId]').equals(['task', 't1']).toArray()
+    const found = await v2
+      .table('noteLinks')
+      .where('[refType+refId]')
+      .equals(['task', 't1'])
+      .toArray()
     expect(found).toHaveLength(1)
     v2.close()
   })

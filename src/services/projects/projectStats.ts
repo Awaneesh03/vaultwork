@@ -145,9 +145,7 @@ export const DEFAULT_PROJECT_FILTER: ProjectFilter = {
 }
 
 export function isProjectFilterActive(filter: ProjectFilter): boolean {
-  return (
-    filter.progress !== 'any' || filter.status !== 'any' || filter.search.trim().length > 0
-  )
+  return filter.progress !== 'any' || filter.status !== 'any' || filter.search.trim().length > 0
 }
 
 /**
@@ -228,9 +226,7 @@ export function sortProjects(summaries: ProjectSummary[], sort: ProjectSort): Pr
     case 'manual':
       return rows.sort(byManual)
     case 'name':
-      return rows.sort(
-        (a, b) => a.project.name.localeCompare(b.project.name) || byManual(a, b),
-      )
+      return rows.sort((a, b) => a.project.name.localeCompare(b.project.name) || byManual(a, b))
     case 'progress':
       return rows.sort((a, b) => b.stats.progress - a.stats.progress || byManual(a, b))
     case 'remaining':

@@ -1,11 +1,6 @@
 import { useState } from 'react'
 import { useLiveQuery } from 'dexie-react-hooks'
-import {
-  listDocuments,
-  searchKnowledge,
-  type DocumentSummary,
-  type KnowledgeHit,
-} from '@/services'
+import { listDocuments, searchKnowledge, type DocumentSummary, type KnowledgeHit } from '@/services'
 
 /**
  * Imported PDF documents, and search across everything Vaultwork has read.

@@ -95,9 +95,7 @@ describe("today's habits on the dashboard", () => {
     mount()
 
     const region = await card()
-    await waitFor(() =>
-      expect(within(region).getByText('No habits scheduled today.')).toBeTruthy(),
-    )
+    await waitFor(() => expect(within(region).getByText('No habits scheduled today.')).toBeTruthy())
   })
 
   it('keeps the task Next Action task-only', async () => {

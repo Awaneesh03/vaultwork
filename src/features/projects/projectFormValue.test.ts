@@ -1,12 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import type { Project } from '@/types/entities'
 import { projectInput } from '../../../tests/factories'
-import {
-  emptyProjectForm,
-  projectForm,
-  projectFormError,
-  toProjectPatch,
-} from './projectFormValue'
+import { emptyProjectForm, projectForm, projectFormError, toProjectPatch } from './projectFormValue'
 
 /**
  * The boundary between the form's strings and the model's nullable types.
@@ -30,9 +25,7 @@ function project(overrides: Partial<Project> = {}): Project {
 describe('validation', () => {
   it('rejects an empty and a whitespace-only name', () => {
     expect(projectFormError(emptyProjectForm())).toBe('A project needs a name')
-    expect(projectFormError({ ...emptyProjectForm(), name: '   ' })).toBe(
-      'A project needs a name',
-    )
+    expect(projectFormError({ ...emptyProjectForm(), name: '   ' })).toBe('A project needs a name')
   })
 
   it('accepts anything with a character in it', () => {

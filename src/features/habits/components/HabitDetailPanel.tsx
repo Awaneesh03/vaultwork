@@ -25,9 +25,7 @@ import { HabitHistoryStrip } from './HabitHistoryStrip'
 function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <div className="flex min-w-0 flex-col gap-0.5 rounded-md border border-line bg-surface px-2.5 py-1.5">
-      <span className="t-eyebrow text-ink-3">
-        {label}
-      </span>
+      <span className="t-eyebrow text-ink-3">{label}</span>
       <span className="tabular text-[15px] font-semibold leading-tight text-ink">{value}</span>
       {hint ? <span className="text-[10.5px] text-ink-3">{hint}</span> : null}
     </div>
@@ -149,9 +147,7 @@ export function HabitDetailPanel({
           </div>
 
           <section className="flex flex-col gap-2">
-            <h3 className="t-eyebrow text-ink-3">
-              Last {detail.history.length} days
-            </h3>
+            <h3 className="t-eyebrow text-ink-3">Last {detail.history.length} days</h3>
             <HabitHistoryStrip name={habit.name} days={detail.history} />
 
             {/* A legend, because the squares alone are not self-describing. */}
@@ -172,9 +168,7 @@ export function HabitDetailPanel({
           </section>
 
           <section className="flex flex-col gap-1.5">
-            <h3 className="t-eyebrow text-ink-3">
-              Recent completions
-            </h3>
+            <h3 className="t-eyebrow text-ink-3">Recent completions</h3>
             {detail.entries.length === 0 ? (
               <p className="text-[12.5px] text-ink-3">Nothing recorded yet.</p>
             ) : (
@@ -201,8 +195,7 @@ export function HabitDetailPanel({
               </ul>
             )}
             <p className="text-[10.5px] text-ink-3">
-              {detail.totalEntries} recorded {detail.totalEntries === 1 ? 'day' : 'days'} in
-              total.
+              {detail.totalEntries} recorded {detail.totalEntries === 1 ? 'day' : 'days'} in total.
             </p>
           </section>
 
@@ -235,7 +228,11 @@ export function HabitDetailPanel({
             size="sm"
             onClick={onArchive}
             icon={
-              archived ? <ArchiveRestore size={12} aria-hidden /> : <Archive size={12} aria-hidden />
+              archived ? (
+                <ArchiveRestore size={12} aria-hidden />
+              ) : (
+                <Archive size={12} aria-hidden />
+              )
             }
           >
             {archived ? 'Restore' : 'Archive'}

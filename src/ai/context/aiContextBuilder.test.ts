@@ -56,7 +56,13 @@ function source(overrides: Partial<AiSourceData> = {}): AiSourceData {
     now: NOW,
     rankedOpenTasks: tasks,
     projects: [
-      { name: 'DSA Mastery', status: 'active', deadline: '2026-12-01', openTasks: 3, totalTasks: 9 },
+      {
+        name: 'DSA Mastery',
+        status: 'active',
+        deadline: '2026-12-01',
+        openTasks: 3,
+        totalTasks: 9,
+      },
     ],
     goals: [
       { title: 'Become strong in DSA', targetDate: '2026-12-31', percent: 20, health: 'on-track' },
@@ -300,17 +306,25 @@ describe('bounds', () => {
 
   it('keeps the front of the ranked list, never a sample', () => {
     const context = buildAiContext(
-      source({ rankedOpenTasks: manyTasks(100), totals: { tasks: 100, projects: 1, goals: 1, habits: 1, notes: 1, documents: 0 } }),
+      source({
+        rankedOpenTasks: manyTasks(100),
+        totals: { tasks: 100, projects: 1, goals: 1, habits: 1, notes: 1, documents: 0 },
+      }),
       'tasks',
     )
 
     expect(context.tasks[0]?.title).toBe('Task 000')
-    expect(context.tasks.at(-1)?.title).toBe(`Task ${String(AI_CONTEXT_LIMITS.tasks - 1).padStart(3, '0')}`)
+    expect(context.tasks.at(-1)?.title).toBe(
+      `Task ${String(AI_CONTEXT_LIMITS.tasks - 1).padStart(3, '0')}`,
+    )
   })
 
   it('says out loud when a section was cut', () => {
     const context = buildAiContext(
-      source({ rankedOpenTasks: manyTasks(100), totals: { tasks: 100, projects: 1, goals: 1, habits: 1, notes: 1, documents: 0 } }),
+      source({
+        rankedOpenTasks: manyTasks(100),
+        totals: { tasks: 100, projects: 1, goals: 1, habits: 1, notes: 1, documents: 0 },
+      }),
       'tasks',
     )
 

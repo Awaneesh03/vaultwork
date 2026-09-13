@@ -11,12 +11,7 @@ import { cn } from '@/lib/cn'
  * noticed. It is disabled outright under `prefers-reduced-motion`.
  */
 export function Skeleton({ className }: { className?: string }) {
-  return (
-    <div
-      className={cn('skeleton rounded-md bg-sunken', className)}
-      aria-hidden
-    />
-  )
+  return <div className={cn('skeleton rounded-md bg-sunken', className)} aria-hidden />
 }
 
 function SkeletonRow({ delayMs }: { delayMs: number }) {

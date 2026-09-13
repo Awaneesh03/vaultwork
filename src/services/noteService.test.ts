@@ -162,11 +162,7 @@ describe('updating and autosave', () => {
     await updateNote(note.id, { body: 'xy' })
     await updateNote(note.id, { body: 'xy' })
 
-    expect(await eventTypes(note.id)).toEqual([
-      'note.created',
-      'note.updated',
-      'note.updated',
-    ])
+    expect(await eventTypes(note.id)).toEqual(['note.created', 'note.updated', 'note.updated'])
   })
 
   it('detects a tag list changing', async () => {
@@ -260,11 +256,7 @@ describe('deleting and restoring', () => {
     await deleteNote(note.id)
     await restoreNote(note.id)
 
-    expect(await eventTypes(note.id)).toEqual([
-      'note.created',
-      'note.deleted',
-      'note.restored',
-    ])
+    expect(await eventTypes(note.id)).toEqual(['note.created', 'note.deleted', 'note.restored'])
   })
 })
 
@@ -280,12 +272,7 @@ describe('linking', () => {
     await attachLink(note.id, 'habit', 'h1')
 
     const links = await listNoteLinks(note.id)
-    expect(links.map((link) => link.refType).sort()).toEqual([
-      'goal',
-      'habit',
-      'project',
-      'task',
-    ])
+    expect(links.map((link) => link.refType).sort()).toEqual(['goal', 'habit', 'project', 'task'])
   })
 
   it('is idempotent — a double click cannot make two links', async () => {
@@ -360,11 +347,7 @@ describe('linking', () => {
     await detachLink(note.id, 'task', task.id)
 
     // The second attach was a no-op and must not appear.
-    expect(await eventTypes(note.id)).toEqual([
-      'note.created',
-      'note.linked',
-      'note.unlinked',
-    ])
+    expect(await eventTypes(note.id)).toEqual(['note.created', 'note.linked', 'note.unlinked'])
   })
 })
 

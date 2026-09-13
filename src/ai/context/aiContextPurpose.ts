@@ -107,7 +107,10 @@ const TASKS = [
 
 /** Whole words only, so "add" does not match "address" or "ladder". */
 function mentions(words: readonly string[], text: string): boolean {
-  const haystack = ` ${text.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim()} `
+  const haystack = ` ${text
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .trim()} `
   return words.some((word) => haystack.includes(` ${word} `))
 }
 

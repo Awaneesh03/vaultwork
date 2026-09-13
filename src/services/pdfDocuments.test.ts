@@ -199,9 +199,10 @@ describe('importing a PDF', () => {
   it('imports only what was chosen', async () => {
     const plan = await scanVaultPlan()
     const pdf = itemFor(plan, 'System Design/System Design Basics.pdf')
-    const decisions = Object.fromEntries(
-      plan.items.map((item) => [item.key, 'skip']),
-    ) as Record<string, SyncDecision>
+    const decisions = Object.fromEntries(plan.items.map((item) => [item.key, 'skip'])) as Record<
+      string,
+      SyncDecision
+    >
     decisions[pdf!.key] = 'import'
 
     await applySync(plan, decisions)
@@ -242,9 +243,7 @@ describe('a PDF is not a Note', () => {
     ])
     // Not by title, and not by path either.
     expect(view.notes.some((note) => note.title.includes('System Design'))).toBe(false)
-    expect((await noteRepo.listLive()).some((note) => note.vaultPath?.endsWith('.pdf'))).toBe(
-      false,
-    )
+    expect((await noteRepo.listLive()).some((note) => note.vaultPath?.endsWith('.pdf'))).toBe(false)
   })
 
   it('lives in exactly one store, not two', async () => {
@@ -461,9 +460,7 @@ describe('safety', () => {
 
   it('refuses a PDF path that leaves the vault', async () => {
     await expect(vault.readPdfText('../outside.pdf')).rejects.toBeInstanceOf(UnsafeVaultPathError)
-    await expect(vault.readPdfText('/etc/secret.pdf')).rejects.toBeInstanceOf(
-      UnsafeVaultPathError,
-    )
+    await expect(vault.readPdfText('/etc/secret.pdf')).rejects.toBeInstanceOf(UnsafeVaultPathError)
     await expect(vault.readPdfText('a/../../outside.pdf')).rejects.toBeInstanceOf(
       UnsafeVaultPathError,
     )

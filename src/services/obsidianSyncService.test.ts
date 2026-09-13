@@ -211,10 +211,7 @@ describe('applying decisions', () => {
     await seed('notes/deep/theirs.md', '---\ntitle: Theirs\n---\n\nhand written\n')
 
     const plan = await scanVaultPlan()
-    const result = await applySync(
-      plan,
-      decide(plan, { 'file:notes/deep/theirs.md': 'import' }),
-    )
+    const result = await applySync(plan, decide(plan, { 'file:notes/deep/theirs.md': 'import' }))
 
     expect(result.imported).toBe(1)
     const [created] = await noteRepo.listLive()
@@ -298,10 +295,7 @@ describe('applying decisions', () => {
     // Nothing happened just because the note was deleted.
     expect(vault.files.has('notes/doomed.md')).toBe(true)
 
-    const result = await applySync(
-      plan,
-      decide(plan, { [`note:${note.id}`]: 'delete-from-vault' }),
-    )
+    const result = await applySync(plan, decide(plan, { [`note:${note.id}`]: 'delete-from-vault' }))
     expect(result.deleted).toBe(1)
     expect(vault.files.has('notes/doomed.md')).toBe(false)
   })
@@ -345,10 +339,7 @@ describe('stale plans', () => {
     const plan = await scanVaultPlan()
     vault.seed('notes/doomed.md', 'edited after the scan\n')
 
-    const result = await applySync(
-      plan,
-      decide(plan, { [`note:${note.id}`]: 'delete-from-vault' }),
-    )
+    const result = await applySync(plan, decide(plan, { [`note:${note.id}`]: 'delete-from-vault' }))
 
     expect(result.stale).toBe(1)
     expect(vault.files.get('notes/doomed.md')).toBe('edited after the scan\n')

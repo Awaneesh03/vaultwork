@@ -109,10 +109,7 @@ export function MilestoneComposer({
         </div>
 
         <div className="flex flex-col gap-1">
-          <label
-            htmlFor={`${ids}-title`}
-            className="t-eyebrow text-ink-3"
-          >
+          <label htmlFor={`${ids}-title`} className="t-eyebrow text-ink-3">
             Checkpoint
           </label>
           <input
@@ -126,10 +123,7 @@ export function MilestoneComposer({
         </div>
 
         <div className="flex flex-col gap-1">
-          <label
-            htmlFor={`${ids}-date`}
-            className="t-eyebrow text-ink-3"
-          >
+          <label htmlFor={`${ids}-date`} className="t-eyebrow text-ink-3">
             Target date
           </label>
           <input

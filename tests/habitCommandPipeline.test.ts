@@ -155,11 +155,7 @@ describe('completion through the pipeline', () => {
     await execute({ kind: 'habit.toggle', source: 'ui', raw: '', habitId: habit.id })
     expect(await db.habitEntries.count()).toBe(0)
 
-    expect(await eventTypes()).toEqual([
-      'habit.created',
-      'habit.completed',
-      'habit.uncompleted',
-    ])
+    expect(await eventTypes()).toEqual(['habit.created', 'habit.completed', 'habit.uncompleted'])
   })
 
   it('produces no second event when completed twice', async () => {

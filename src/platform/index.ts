@@ -73,9 +73,7 @@ export function resolvePlatform(): Platform {
     ? createTauriNotifications(tauriBridge)
     : webNotifications
   const menu: MenuPort = desktop ? createTauriMenu(tauriBridge) : noMenu
-  const telegram: TelegramPort = desktop
-    ? createTauriTelegram(tauriBridge)
-    : unsupportedTelegram
+  const telegram: TelegramPort = desktop ? createTauriTelegram(tauriBridge) : unsupportedTelegram
 
   // The provider key lives in the OS keychain and is spent in the native
   // process. A browser bundle cannot hold a secret, so it keeps the inert

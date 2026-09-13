@@ -54,8 +54,7 @@ const plantFocus = (endedAt: Date, actualMin: number, kind: FocusKind = 'work') 
     { emit: false },
   )
 
-const dayOf = (data: AnalyticsData, date: string) =>
-  data.days.find((day) => day.date === date)
+const dayOf = (data: AnalyticsData, date: string) => data.days.find((day) => day.date === date)
 
 describe('an empty history', () => {
   it('says so rather than drawing a confident flat line', async () => {

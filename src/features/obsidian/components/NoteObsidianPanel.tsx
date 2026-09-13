@@ -81,9 +81,7 @@ export function NoteObsidianPanel({
         </button>
       </div>
 
-      <p className="text-[11.5px] leading-relaxed text-ink-3">
-        {SYNC_STATUS_DESCRIPTIONS[status]}
-      </p>
+      <p className="text-[11.5px] leading-relaxed text-ink-3">{SYNC_STATUS_DESCRIPTIONS[status]}</p>
 
       {report?.vaultPath ? (
         <p className="flex items-center gap-1.5 text-[11px] text-ink-3">

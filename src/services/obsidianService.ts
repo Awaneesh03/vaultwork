@@ -74,11 +74,7 @@ export function getVaultPort(): VaultPort {
 // ------------------------------------------------------------------ connection
 
 export type ConnectionState =
-  | 'unsupported'
-  | 'not-connected'
-  | 'permission-required'
-  | 'permission-denied'
-  | 'connected'
+  'unsupported' | 'not-connected' | 'permission-required' | 'permission-denied' | 'connected'
 
 export interface VaultStatus {
   state: ConnectionState
@@ -162,9 +158,7 @@ export async function connectVault(options: ObsidianWriteOptions = {}): Promise<
  * *different* folder would compare today's files against hashes recorded from
  * somebody else's vault, and report confident nonsense.
  */
-export async function disconnectVault(
-  options: ObsidianWriteOptions = {},
-): Promise<VaultStatus> {
+export async function disconnectVault(options: ObsidianWriteOptions = {}): Promise<VaultStatus> {
   const source: EventSource = options.source ?? 'ui'
   const previous = vault.current()
 
@@ -375,10 +369,7 @@ export interface ExportOptions extends ObsidianWriteOptions {
   overwriteExternalChanges?: boolean
 }
 
-export async function exportNote(
-  noteId: Id,
-  options: ExportOptions = {},
-): Promise<ExportResult> {
+export async function exportNote(noteId: Id, options: ExportOptions = {}): Promise<ExportResult> {
   const source: EventSource = options.source ?? 'ui'
   await requireConnected()
 
@@ -532,8 +523,7 @@ export async function previewImport(path: string): Promise<ImportPreview> {
   const raw = await vault.readFile(safe)
   const parsed = parseNoteFile(raw)
 
-  const existing =
-    parsed.id === null ? undefined : ((await noteRepo.get(parsed.id)) ?? undefined)
+  const existing = parsed.id === null ? undefined : ((await noteRepo.get(parsed.id)) ?? undefined)
 
   let status: SyncStatus = 'untracked'
   let wouldOverwrite = false
@@ -577,10 +567,7 @@ export interface ImportOptions extends ObsidianWriteOptions {
  * a new one with a fresh uuid. The id in the frontmatter is the identity —
  * never the title, never the path, both of which the user is free to change.
  */
-export async function importNote(
-  path: string,
-  options: ImportOptions = {},
-): Promise<ImportResult> {
+export async function importNote(path: string, options: ImportOptions = {}): Promise<ImportResult> {
   const source: EventSource = options.source ?? 'ui'
   await requireConnected()
   const safe = assertSafeVaultPath(path)
@@ -603,19 +590,12 @@ export async function importNote(
   if (preview.existingNoteId !== null) {
     noteId = preview.existingNoteId
     created = false
-    await updateNote(
-      noteId,
-      { title: preview.title, body: preview.body },
-      { source },
-    )
+    await updateNote(noteId, { title: preview.title, body: preview.body }, { source })
   } else {
     // A new note keeps the file's path rather than deriving one, so a round
     // trip does not move the user's file.
     const taken = (await noteRepo.takenVaultPaths()).filter((existing) => existing !== safe)
-    const note = await createNote(
-      { title: preview.title, body: preview.body },
-      { source },
-    )
+    const note = await createNote({ title: preview.title, body: preview.body }, { source })
     noteId = note.id
     created = true
     await noteRepo.update(note.id, { vaultPath: uniqueVaultPath(safe, taken) }, { emit: false })

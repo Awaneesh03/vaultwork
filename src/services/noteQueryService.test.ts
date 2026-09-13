@@ -2,12 +2,7 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { goalRepo, habitRepo, projectRepo, tagRepo, taskRepo } from '@/repositories'
 import { projectInput, tagInput, taskInput } from '../../tests/factories'
 import { freezeClock, resetDatabase } from '../../tests/helpers'
-import {
-  attachLink,
-  createNote,
-  deleteNote,
-  updateNote,
-} from './noteService'
+import { attachLink, createNote, deleteNote, updateNote } from './noteService'
 import {
   getBacklinks,
   getNoteDetail,

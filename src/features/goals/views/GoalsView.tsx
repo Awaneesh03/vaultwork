@@ -279,9 +279,8 @@ export function GoalsView() {
 
   const editingMilestone =
     milestoneComposer.mode === 'edit'
-      ? (detail?.milestoneViews.find(
-          (view) => view.milestone.id === milestoneComposer.milestoneId,
-        )?.milestone ?? null)
+      ? (detail?.milestoneViews.find((view) => view.milestone.id === milestoneComposer.milestoneId)
+          ?.milestone ?? null)
       : null
 
   return (
@@ -311,9 +310,9 @@ export function GoalsView() {
           </Button>
         </div>
         <p className="max-w-prose text-[13px] text-ink-2">
-          A goal is an outcome, a milestone is a checkpoint, and a task is an action. Progress
-          comes from milestones when a goal has them, and from its related tasks when it does
-          not — completing a goal never completes its tasks.
+          A goal is an outcome, a milestone is a checkpoint, and a task is an action. Progress comes
+          from milestones when a goal has them, and from its related tasks when it does not —
+          completing a goal never completes its tasks.
         </p>
       </header>
 
@@ -335,9 +334,7 @@ export function GoalsView() {
         empty={
           <EmptyState
             icon={<Target size={20} aria-hidden />}
-            title={
-              data?.empty ? 'No goals yet' : 'Nothing matches those filters'
-            }
+            title={data?.empty ? 'No goals yet' : 'Nothing matches those filters'}
             description={
               data?.empty
                 ? 'A goal is an outcome you want. Press N, or use /add goal Become strong in DSA.'

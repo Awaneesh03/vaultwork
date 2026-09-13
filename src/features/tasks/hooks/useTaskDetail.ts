@@ -10,7 +10,5 @@ export function useTaskDetail(id: Id | null): TaskDetailData | undefined | null 
 
 /** Tags and projects for the composer's pickers. */
 export function useTaskMetadata(): { tags: Tag[]; projects: Project[] } {
-  return (
-    useLiveQuery(() => getTaskMetadata(), []) ?? { tags: [], projects: [] }
-  )
+  return useLiveQuery(() => getTaskMetadata(), []) ?? { tags: [], projects: [] }
 }

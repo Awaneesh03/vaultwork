@@ -134,10 +134,7 @@ describe('active and archived', () => {
   })
 
   it('treats every non-archived status as active', async () => {
-    expect((await projectRepo.listActive()).map((row) => row.name)).toEqual([
-      'Active',
-      'Planning',
-    ])
+    expect((await projectRepo.listActive()).map((row) => row.name)).toEqual(['Active', 'Planning'])
   })
 
   it('lists the archive on its own', async () => {
@@ -163,9 +160,7 @@ describe('name lookup', () => {
     await projectRepo.softDelete(project.id)
 
     expect(await projectRepo.findByName('College')).toBeUndefined()
-    expect((await projectRepo.findByName('College', { includeDeleted: true }))?.id).toBe(
-      project.id,
-    )
+    expect((await projectRepo.findByName('College', { includeDeleted: true }))?.id).toBe(project.id)
   })
 
   it('finds an archived project, which still owns its name', async () => {
@@ -186,9 +181,7 @@ describe('task counts', () => {
     await taskRepo.create(taskInput({ title: 'done', projectId: project.id, status: 'done' }))
     const deleted = await taskRepo.create(taskInput({ title: 'gone', projectId: project.id }))
     await taskRepo.softDelete(deleted.id)
-    await taskRepo.create(
-      taskInput({ title: 'template', projectId: project.id, isTemplate: true }),
-    )
+    await taskRepo.create(taskInput({ title: 'template', projectId: project.id, isTemplate: true }))
     await taskRepo.create(taskInput({ title: 'elsewhere' }))
 
     expect(await projectRepo.taskCounts(project.id)).toEqual({ total: 2, open: 1, done: 1 })

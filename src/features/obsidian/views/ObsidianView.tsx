@@ -69,9 +69,9 @@ export function ObsidianView() {
           <h2 className="t-page text-ink">Obsidian</h2>
         </div>
         <p className="t-body max-w-prose text-ink-2">
-          Vaultwork reads Markdown notes and PDF documents from your vault. Notes sync both
-          ways; PDFs are read only. Vaultwork never merges and never overwrites a file you
-          changed — when both sides move, it stops and asks.
+          Vaultwork reads Markdown notes and PDF documents from your vault. Notes sync both ways;
+          PDFs are read only. Vaultwork never merges and never overwrites a file you changed — when
+          both sides move, it stops and asks.
         </p>
       </header>
 
@@ -218,8 +218,8 @@ export function ObsidianView() {
                   <span className="inline-flex items-start gap-1.5">
                     <FileQuestion size={12} className="mt-[2px] shrink-0" aria-hidden />
                     Nothing here Vaultwork can read — {scan.skipped.nonMarkdown} file
-                    {scan.skipped.nonMarkdown === 1 ? '' : 's'}, and none of them are Markdown
-                    notes or PDFs.
+                    {scan.skipped.nonMarkdown === 1 ? '' : 's'}, and none of them are Markdown notes
+                    or PDFs.
                   </span>
                   {scan.skipped.examples.length > 0 ? (
                     <span className="pl-5 break-words font-mono text-[11px] text-ink-3">
@@ -227,8 +227,8 @@ export function ObsidianView() {
                     </span>
                   ) : null}
                   <span className="pl-5 text-ink-3">
-                    Vaultwork reads <code>.md</code> and <code>.pdf</code>. Check that the
-                    folder you connected is your Obsidian vault.
+                    Vaultwork reads <code>.md</code> and <code>.pdf</code>. Check that the folder
+                    you connected is your Obsidian vault.
                   </span>
                 </p>
               ) : null}
@@ -239,9 +239,8 @@ export function ObsidianView() {
                   className="inline-flex items-start gap-1.5 rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger"
                 >
                   <AlertCircle size={12} className="mt-[2px] shrink-0" aria-hidden />
-                  {scan.counts.conflict} note{scan.counts.conflict === 1 ? '' : 's'} changed on
-                  both sides. Open each one to choose which version to keep — nothing was
-                  written.
+                  {scan.counts.conflict} note{scan.counts.conflict === 1 ? '' : 's'} changed on both
+                  sides. Open each one to choose which version to keep — nothing was written.
                 </p>
               ) : null}
 
@@ -303,7 +302,10 @@ export function ObsidianView() {
           )}
 
           {vaultScan.error ? (
-            <p role="alert" className="rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger">
+            <p
+              role="alert"
+              className="rounded-md bg-danger-soft px-2.5 py-1.5 text-[12px] text-danger"
+            >
               {vaultScan.error}
             </p>
           ) : null}
@@ -360,9 +362,7 @@ function ImportConfirmation({
         }}
         className="flex w-full max-w-md flex-col gap-3 rounded-lg border border-line bg-elevated p-4 shadow-xl [animation:panel-in_var(--duration-base)_var(--ease-out)]"
       >
-        <h2 className="text-[14px] font-semibold tracking-tight text-ink">
-          Import from Obsidian
-        </h2>
+        <h2 className="text-[14px] font-semibold tracking-tight text-ink">Import from Obsidian</h2>
 
         <dl className="flex flex-col gap-1.5 text-[12.5px]">
           <div className="flex gap-2">

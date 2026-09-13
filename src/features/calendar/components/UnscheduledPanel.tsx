@@ -36,9 +36,7 @@ export function UnscheduledPanel({
     >
       <header className="flex items-center gap-2 border-b border-line px-3 py-2">
         <Inbox size={12} className="text-ink-3" aria-hidden />
-        <h3 className="t-eyebrow text-ink-3">
-          Unscheduled
-        </h3>
+        <h3 className="t-eyebrow text-ink-3">Unscheduled</h3>
         {total > 0 ? (
           <span className="tabular rounded-sm bg-sunken px-1.5 text-[10px] text-ink-2">
             {total}

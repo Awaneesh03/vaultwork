@@ -37,9 +37,7 @@ export function PageHeader({
             ) : null}
             <h2 className="t-page min-w-0 text-ink">{title}</h2>
           </div>
-          {description ? (
-            <p className="t-meta max-w-prose text-ink-3">{description}</p>
-          ) : null}
+          {description ? <p className="t-meta max-w-prose text-ink-3">{description}</p> : null}
         </div>
         {actions ? (
           <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>

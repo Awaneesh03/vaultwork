@@ -42,8 +42,7 @@ export function SyncItemRow({
   // Vaultwork never writes a PDF.
   const options = isDocument ? documentOptionsFor(item.status) : optionsFor(item.status)
   // Comparing needs two editable versions. A PDF has one, and it is not ours.
-  const comparable =
-    !isDocument && (item.status === 'conflict' || item.status === 'moved-change')
+  const comparable = !isDocument && (item.status === 'conflict' || item.status === 'moved-change')
 
   return (
     <li className="flex flex-col gap-1.5 px-2.5 py-2">

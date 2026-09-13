@@ -279,9 +279,7 @@ describe('managing which tasks belong here', () => {
       expect(rows.find((task) => task.title === 'Buy milk')?.projectId).toBe(college.id)
     })
 
-    fireEvent.click(
-      within(picker).getByRole('button', { name: 'Remove Study Java from College' }),
-    )
+    fireEvent.click(within(picker).getByRole('button', { name: 'Remove Study Java from College' }))
     await waitFor(async () => {
       const rows = await db.tasks.toArray()
       expect(rows.find((task) => task.title === 'Study Java')?.projectId).toBeNull()
@@ -318,7 +316,9 @@ describe('archive, restore and delete', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Archive College' }))
 
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Restore College' })).toBeTruthy())
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Restore College' })).toBeTruthy(),
+    )
     expect(screen.getByText(/Every task below is still here/)).toBeTruthy()
     expect(screen.getByText('Study Java')).toBeTruthy()
 
@@ -332,7 +332,9 @@ describe('archive, restore and delete', () => {
     await archiveProject(college.id)
 
     mount(college.id)
-    await waitFor(() => expect(screen.getByRole('button', { name: 'Restore College' })).toBeTruthy())
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Restore College' })).toBeTruthy(),
+    )
 
     fireEvent.click(screen.getByRole('button', { name: 'Restore College' }))
 

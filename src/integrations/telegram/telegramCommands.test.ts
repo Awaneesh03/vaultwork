@@ -50,7 +50,10 @@ describe('list commands map onto views the UI already has', () => {
 
 describe('references', () => {
   it('reads a bare number as a position in the last list', () => {
-    expect(parseTelegramText('/done 2')).toEqual({ kind: 'complete', ref: { by: 'index', index: 2 } })
+    expect(parseTelegramText('/done 2')).toEqual({
+      kind: 'complete',
+      ref: { by: 'index', index: 2 },
+    })
   })
 
   it('reads text as something to resolve by name', () => {
@@ -73,7 +76,10 @@ describe('references', () => {
   })
 
   it('treats delete the same way, so both share one reference rule', () => {
-    expect(parseTelegramText('/delete 3')).toEqual({ kind: 'delete', ref: { by: 'index', index: 3 } })
+    expect(parseTelegramText('/delete 3')).toEqual({
+      kind: 'delete',
+      ref: { by: 'index', index: 3 },
+    })
     expect(parseTelegramText('/rm dentist')).toEqual({
       kind: 'delete',
       ref: { by: 'text', query: 'dentist' },
@@ -125,12 +131,9 @@ describe('notes', () => {
 })
 
 describe('unknown input is refused, never guessed', () => {
-  it.each(['/frobnicate', '/deleteeverything', '/dropdatabase', '/'])(
-    'refuses %s',
-    (text) => {
-      expect(parseTelegramText(text).kind).toBe('unknown')
-    },
-  )
+  it.each(['/frobnicate', '/deleteeverything', '/dropdatabase', '/'])('refuses %s', (text) => {
+    expect(parseTelegramText(text).kind).toBe('unknown')
+  })
 
   it('refuses an empty message', () => {
     expect(parseTelegramText('   ').kind).toBe('unknown')
@@ -180,13 +183,34 @@ describe('the known-verb list and the parser agree', () => {
    * send a syntax error to a provider or refuse a real command.
    */
   const HANDLED = [
-    'start', 'help', 'h', 'status', 'cancel', 'confirm', 'yes',
-    'habits', 'projects', 'goals',
-    'done', 'complete', 'check',
-    'delete', 'del', 'rm',
-    'ask', 'note',
-    'add', 'a', 'new', 'search',
-    'today', 'inbox', 'upcoming', 'overdue', 'completed', 'tasks',
+    'start',
+    'help',
+    'h',
+    'status',
+    'cancel',
+    'confirm',
+    'yes',
+    'habits',
+    'projects',
+    'goals',
+    'done',
+    'complete',
+    'check',
+    'delete',
+    'del',
+    'rm',
+    'ask',
+    'note',
+    'add',
+    'a',
+    'new',
+    'search',
+    'today',
+    'inbox',
+    'upcoming',
+    'overdue',
+    'completed',
+    'tasks',
   ]
 
   it('recognises every verb the parser answers', () => {

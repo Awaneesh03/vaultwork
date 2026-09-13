@@ -138,9 +138,7 @@ describe('validation', () => {
 
   it('refuses to blank an existing name', async () => {
     const project = await createProject('College')
-    await expect(updateProject(project.id, { name: '  ' })).rejects.toThrow(
-      EmptyProjectNameError,
-    )
+    await expect(updateProject(project.id, { name: '  ' })).rejects.toThrow(EmptyProjectNameError)
   })
 })
 
@@ -253,11 +251,7 @@ describe('unarchive', () => {
     await archiveProject(project.id)
     await unarchiveProject(project.id)
 
-    expect(await eventTypes()).toEqual([
-      'project.created',
-      'project.archived',
-      'project.restored',
-    ])
+    expect(await eventTypes()).toEqual(['project.created', 'project.archived', 'project.restored'])
     const [event] = await eventRepo.list({ type: 'project.restored' })
     expect(event?.payload).toMatchObject({ from: 'archived', to: 'planning' })
   })
@@ -362,11 +356,7 @@ describe('delete', () => {
     await deleteProject(project.id)
     await restoreProject(project.id)
 
-    expect(await eventTypes()).toEqual([
-      'project.created',
-      'project.deleted',
-      'project.restored',
-    ])
+    expect(await eventTypes()).toEqual(['project.created', 'project.deleted', 'project.restored'])
   })
 
   it('keeps a deleted project out of every live list but in listDeleted', async () => {

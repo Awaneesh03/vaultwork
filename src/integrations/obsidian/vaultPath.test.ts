@@ -80,9 +80,7 @@ describe('buildVaultPath', () => {
   })
 
   it('uses the first tag as the folder', () => {
-    expect(buildVaultPath({ title: 'Trees', tags: ['dsa', 'college'] })).toBe(
-      'notes/dsa/trees.md',
-    )
+    expect(buildVaultPath({ title: 'Trees', tags: ['dsa', 'college'] })).toBe('notes/dsa/trees.md')
   })
 
   it('slugifies the folder as well as the file', () => {
@@ -92,9 +90,7 @@ describe('buildVaultPath', () => {
   })
 
   it('skips a tag that slugifies to nothing', () => {
-    expect(buildVaultPath({ title: 'Thing', tags: ['!!!', 'real'] })).toBe(
-      'notes/real/thing.md',
-    )
+    expect(buildVaultPath({ title: 'Thing', tags: ['!!!', 'real'] })).toBe('notes/real/thing.md')
   })
 
   it('always lands inside the notes folder with a .md extension', () => {
@@ -119,9 +115,9 @@ describe('uniqueVaultPath', () => {
   })
 
   it('keeps counting past an existing suffix', () => {
-    expect(
-      uniqueVaultPath('notes/ideas.md', ['notes/ideas.md', 'notes/ideas-2.md']),
-    ).toBe('notes/ideas-3.md')
+    expect(uniqueVaultPath('notes/ideas.md', ['notes/ideas.md', 'notes/ideas-2.md'])).toBe(
+      'notes/ideas-3.md',
+    )
   })
 
   it('compares case-insensitively, because vaults live on such filesystems', () => {
@@ -130,9 +126,7 @@ describe('uniqueVaultPath', () => {
   })
 
   it('respects folders — the same name in two folders is not a clash', () => {
-    expect(uniqueVaultPath('notes/dsa/trees.md', ['notes/bio/trees.md'])).toBe(
-      'notes/dsa/trees.md',
-    )
+    expect(uniqueVaultPath('notes/dsa/trees.md', ['notes/bio/trees.md'])).toBe('notes/dsa/trees.md')
   })
 })
 

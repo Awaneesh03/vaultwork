@@ -66,11 +66,7 @@ export function DashboardCard({
           tone === 'warn' ? 'border-danger/25 bg-danger-soft/30' : 'border-line',
         )}
       >
-        <Icon
-          size={13}
-          className={tone === 'warn' ? 'text-danger' : 'text-ink-3'}
-          aria-hidden
-        />
+        <Icon size={13} className={tone === 'warn' ? 'text-danger' : 'text-ink-3'} aria-hidden />
         {/*
           A real title rather than an eyebrow. These name the sections a person
           navigates by, and letter-spaced small caps are harder to scan than the

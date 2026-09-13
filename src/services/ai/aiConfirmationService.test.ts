@@ -475,9 +475,7 @@ describe('a multi-step plan', () => {
 
     // Step one applied; step three was never attempted.
     expect((await taskRepo.get(java.id))?.status).toBe('done')
-    expect(
-      (await taskRepo.listLive()).some((task) => task.title === 'Third thing'),
-    ).toBe(false)
+    expect((await taskRepo.listLive()).some((task) => task.title === 'Third thing')).toBe(false)
 
     // And what did run is undoable, through the executor's own undo.
     expect(outcome.undo).toHaveLength(1)

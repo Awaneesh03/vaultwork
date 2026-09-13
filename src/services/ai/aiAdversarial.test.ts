@@ -7,7 +7,11 @@ import { createNote } from '../noteService'
 import { createTask } from '../taskService'
 import { resetDatabase, freezeClock } from '../../../tests/helpers'
 import { askAi } from './aiAssistantService'
-import { cancelAiConfirmation, confirmAiAction, resetAiConfirmations } from './aiConfirmationService'
+import {
+  cancelAiConfirmation,
+  confirmAiAction,
+  resetAiConfirmations,
+} from './aiConfirmationService'
 
 /**
  * M15.9 — the assistant, attacked.
@@ -85,7 +89,10 @@ describe('a model that supplies a real database id', () => {
       kind: 'plan',
       message: 'Done.',
       steps: [
-        { description: 'Complete it', intent: { kind: 'task.complete', ref: { by: 'id', id: task.id } } },
+        {
+          description: 'Complete it',
+          intent: { kind: 'task.complete', ref: { by: 'id', id: task.id } },
+        },
       ],
     })
     const execute = vi.spyOn(executor, 'execute')
@@ -136,7 +143,13 @@ describe('a model that proposes something outside the allowlist', () => {
     const task = await createTask({ title: 'Study Java' })
     const execute = vi.spyOn(executor, 'execute')
 
-    for (const kind of ['task.delete', 'project.delete', 'note.delete', 'goal.delete', 'task.update']) {
+    for (const kind of [
+      'task.delete',
+      'project.delete',
+      'note.delete',
+      'goal.delete',
+      'task.update',
+    ]) {
       provider({
         kind: 'plan',
         message: 'Tidying.',
@@ -179,7 +192,10 @@ describe('prompt injection through the user’s own data', () => {
       kind: 'plan',
       message: 'Applying the instructions found in your tasks.',
       steps: [
-        { description: 'As instructed', intent: { kind: 'task.delete', ref: { by: 'text', query: 'Study Java' } } },
+        {
+          description: 'As instructed',
+          intent: { kind: 'task.delete', ref: { by: 'text', query: 'Study Java' } },
+        },
       ],
     })
     const execute = vi.spyOn(executor, 'execute')
@@ -442,7 +458,7 @@ describe('input and output bounds', () => {
     // The context the application attaches is bounded regardless of the prompt.
     for (const call of complete.mock.calls) {
       const context = call[0].messages.find((message) => message.content.includes('"purpose"'))
-      expect((context?.content.length ?? 0)).toBeLessThan(20_000)
+      expect(context?.content.length ?? 0).toBeLessThan(20_000)
     }
   })
 

@@ -141,10 +141,7 @@ describe('scanning before writing', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Scan vault' }))
     await waitFor(() =>
-      expect(screen.getByRole('button', { name: 'Export all' })).toHaveProperty(
-        'disabled',
-        false,
-      ),
+      expect(screen.getByRole('button', { name: 'Export all' })).toHaveProperty('disabled', false),
     )
 
     fireEvent.click(screen.getByRole('button', { name: 'Export all' }))
@@ -306,9 +303,7 @@ describe('a vault with nothing Vaultwork can read', () => {
 
     fireEvent.click(screen.getByRole('button', { name: 'Scan vault' }))
 
-    await waitFor(() =>
-      expect(screen.getByText(/Nothing here Vaultwork can read/)).toBeTruthy(),
-    )
+    await waitFor(() => expect(screen.getByText(/Nothing here Vaultwork can read/)).toBeTruthy())
     expect(screen.getByText(/photo\.png/)).toBeTruthy()
     expect(screen.getByText(/\.pdf/)).toBeTruthy()
   })

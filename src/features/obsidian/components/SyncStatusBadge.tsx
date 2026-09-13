@@ -16,13 +16,7 @@ import {
  * make it if they cannot tell it apart from "changed".
  */
 
-export function SyncStatusBadge({
-  status,
-  className,
-}: {
-  status: SyncStatus
-  className?: string
-}) {
+export function SyncStatusBadge({ status, className }: { status: SyncStatus; className?: string }) {
   const Icon = SYNC_STATUS_ICONS[status]
   return (
     <Badge

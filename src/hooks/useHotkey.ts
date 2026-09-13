@@ -23,8 +23,7 @@ export interface HotkeyOptions {
  * drag state has to be lifted out of a view and threaded into the keyboard
  * layer.
  */
-const DRAG_ACTIVATOR =
-  '[aria-roledescription="sortable"], [aria-roledescription="draggable"]'
+const DRAG_ACTIVATOR = '[aria-roledescription="sortable"], [aria-roledescription="draggable"]'
 
 export function isDragHandleTarget(target: EventTarget | null): boolean {
   // `Element`, not `HTMLElement`: the grip contains an <svg> icon, and an

@@ -61,10 +61,7 @@ export function Sidebar() {
             the only decorative element in the chrome — an identity needs one
             fixed point, and this is cheaper than a logo file.
           */}
-          <span
-            className="relative h-[18px] w-[18px] shrink-0 rounded-[5px] bg-accent"
-            aria-hidden
-          >
+          <span className="relative h-[18px] w-[18px] shrink-0 rounded-[5px] bg-accent" aria-hidden>
             <span className="absolute right-[3px] bottom-[3px] h-[6px] w-[6px] rounded-[2px] bg-accent-2" />
           </span>
           <span className="text-[14px] font-semibold tracking-tight text-ink">Vaultwork</span>
@@ -144,13 +141,7 @@ export function Sidebar() {
  * Overdue is the only one that gets a warning tone, because it is the only one
  * where the number is a problem rather than a fact.
  */
-function NavCount({
-  path,
-  counts,
-}: {
-  path: string
-  counts: ReturnType<typeof useTaskCounts>
-}) {
+function NavCount({ path, counts }: { path: string; counts: ReturnType<typeof useTaskCounts> }) {
   const key = COUNTED[path]
   if (!key || !counts) return null
 

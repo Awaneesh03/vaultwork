@@ -376,9 +376,7 @@ export interface RecentNote {
  * "Recent" means recently *edited*, not recently created — the note you were
  * last working in is the one you are most likely to want again.
  */
-export async function getRecentNotes(
-  limit: number = DASHBOARD_NOTE_LIMIT,
-): Promise<RecentNote[]> {
+export async function getRecentNotes(limit: number = DASHBOARD_NOTE_LIMIT): Promise<RecentNote[]> {
   const [notes, links] = await Promise.all([noteRepo.recent(limit), noteLinkRepo.listLive()])
 
   return notes.map((note) => ({

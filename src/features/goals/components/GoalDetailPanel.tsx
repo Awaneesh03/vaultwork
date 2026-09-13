@@ -45,9 +45,7 @@ import { MilestoneList } from './MilestoneList'
 function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <div className="flex min-w-0 flex-col gap-0.5 rounded-md border border-line bg-surface px-2.5 py-1.5">
-      <span className="t-eyebrow text-ink-3">
-        {label}
-      </span>
+      <span className="t-eyebrow text-ink-3">{label}</span>
       <span className="tabular text-[15px] font-semibold leading-tight text-ink">{value}</span>
       {hint ? <span className="text-[10.5px] text-ink-3">{hint}</span> : null}
     </div>
@@ -186,9 +184,7 @@ export function GoalDetailPanel({
 
           <section className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              <h3 className="flex-1 t-eyebrow text-ink-3">
-                Milestones
-              </h3>
+              <h3 className="flex-1 t-eyebrow text-ink-3">Milestones</h3>
               <Button
                 variant="secondary"
                 size="sm"
@@ -201,8 +197,8 @@ export function GoalDetailPanel({
 
             {milestoneViews.length === 0 ? (
               <p className="rounded-md border border-dashed border-line px-3 py-3 text-[12.5px] text-ink-3">
-                No checkpoints yet. Until there are, this goal&rsquo;s progress is measured from
-                its related tasks.
+                No checkpoints yet. Until there are, this goal&rsquo;s progress is measured from its
+                related tasks.
               </p>
             ) : (
               <MilestoneList
@@ -218,9 +214,7 @@ export function GoalDetailPanel({
 
           {detail.projects.length > 0 ? (
             <section className="flex flex-col gap-1.5">
-              <h3 className="t-eyebrow text-ink-3">
-                Projects
-              </h3>
+              <h3 className="t-eyebrow text-ink-3">Projects</h3>
               <ul className="flex flex-col divide-y divide-line rounded-md border border-line">
                 {detail.projects.map((project) => (
                   <li
@@ -240,15 +234,10 @@ export function GoalDetailPanel({
 
           {detail.unassignedTasks.length > 0 ? (
             <section className="flex flex-col gap-1.5">
-              <h3 className="t-eyebrow text-ink-3">
-                Work with no checkpoint
-              </h3>
+              <h3 className="t-eyebrow text-ink-3">Work with no checkpoint</h3>
               <ul className="flex flex-col divide-y divide-line rounded-md border border-line">
                 {detail.unassignedTasks.slice(0, 8).map((task) => (
-                  <li
-                    key={task.id}
-                    className="flex items-center gap-2 px-2.5 py-1.5 text-[12.5px]"
-                  >
+                  <li key={task.id} className="flex items-center gap-2 px-2.5 py-1.5 text-[12.5px]">
                     <Check
                       size={12}
                       className={cn(
@@ -311,7 +300,11 @@ export function GoalDetailPanel({
             size="sm"
             onClick={onArchive}
             icon={
-              archived ? <ArchiveRestore size={12} aria-hidden /> : <Archive size={12} aria-hidden />
+              archived ? (
+                <ArchiveRestore size={12} aria-hidden />
+              ) : (
+                <Archive size={12} aria-hidden />
+              )
             }
           >
             {archived ? 'Restore' : 'Archive'}

@@ -209,9 +209,7 @@ export function TaskToolbar({
       {open ? (
         <div className="flex flex-col gap-2.5 rounded-lg border border-line bg-surface p-3">
           <div className="flex flex-wrap items-center gap-1.5">
-            <span className="mr-1 t-eyebrow text-ink-3">
-              Priority
-            </span>
+            <span className="mr-1 t-eyebrow text-ink-3">Priority</span>
             {PRIORITIES.filter((priority) => priority !== 'none').map((priority) => (
               <Pill
                 key={priority}
@@ -226,9 +224,7 @@ export function TaskToolbar({
           <div className="flex flex-wrap items-center gap-2">
             {showDue ? (
               <label className="flex items-center gap-1.5">
-                <span className="t-eyebrow text-ink-3">
-                  Due
-                </span>
+                <span className="t-eyebrow text-ink-3">Due</span>
                 <select
                   value={filter.due}
                   onChange={(event) => onDue(event.target.value as DueFilter)}
@@ -245,9 +241,7 @@ export function TaskToolbar({
 
             {view !== 'inbox' && !hideProject ? (
               <label className="flex items-center gap-1.5">
-                <span className="t-eyebrow text-ink-3">
-                  Project
-                </span>
+                <span className="t-eyebrow text-ink-3">Project</span>
                 <select
                   value={filter.projectId === 'any' ? 'any' : (filter.projectId ?? 'none')}
                   onChange={(event) => {
@@ -268,9 +262,7 @@ export function TaskToolbar({
             ) : null}
 
             <label className="flex items-center gap-1.5">
-              <span className="t-eyebrow text-ink-3">
-                Estimate
-              </span>
+              <span className="t-eyebrow text-ink-3">Estimate</span>
               <select
                 value={filter.hasEstimate}
                 onChange={(event) => onEstimate(event.target.value as EstimateFilter)}
@@ -287,9 +279,7 @@ export function TaskToolbar({
 
           {tags.length > 0 ? (
             <div className="flex flex-wrap items-center gap-1.5">
-              <span className="mr-1 t-eyebrow text-ink-3">
-                Tags
-              </span>
+              <span className="mr-1 t-eyebrow text-ink-3">Tags</span>
               {tags.map((tag) => (
                 <Pill
                   key={tag.id}

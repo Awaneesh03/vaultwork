@@ -4,12 +4,7 @@ import { Button } from '@/components/ui/Button'
 import { Kbd } from '@/components/ui/Kbd'
 import type { Goal } from '@/types/entities'
 import type { GoalHorizon } from '@/types/enums'
-import {
-  emptyGoalForm,
-  goalForm,
-  goalFormError,
-  type GoalFormValue,
-} from '../goalFormValue'
+import { emptyGoalForm, goalForm, goalFormError, type GoalFormValue } from '../goalFormValue'
 
 /**
  * Create and edit a goal — one component, two modes.
@@ -29,10 +24,7 @@ const FIELD =
 
 function Label({ htmlFor, children }: { htmlFor?: string; children: string }) {
   return (
-    <label
-      htmlFor={htmlFor}
-      className="t-eyebrow text-ink-3"
-    >
+    <label htmlFor={htmlFor} className="t-eyebrow text-ink-3">
       {children}
     </label>
   )
@@ -56,9 +48,7 @@ export function GoalComposer({
   const ids = useId()
   const titleRef = useRef<HTMLInputElement>(null)
 
-  const [value, setValue] = useState<GoalFormValue>(() =>
-    goal ? goalForm(goal) : emptyGoalForm(),
-  )
+  const [value, setValue] = useState<GoalFormValue>(() => (goal ? goalForm(goal) : emptyGoalForm()))
   const [touched, setTouched] = useState(false)
 
   useEffect(() => {

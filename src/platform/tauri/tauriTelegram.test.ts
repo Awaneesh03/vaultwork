@@ -36,9 +36,7 @@ describe('configuration', () => {
     // port, this fails and somebody has to justify it.
     expect(Object.keys(telegram)).not.toContain('getToken')
     expect(Object.keys(telegram)).not.toContain('token')
-    expect(Object.keys(bridge).filter((key) => /token/i.test(key))).toEqual([
-      'telegramStoredToken',
-    ])
+    expect(Object.keys(bridge).filter((key) => /token/i.test(key))).toEqual(['telegramStoredToken'])
   })
 
   it('reports an invalid token as invalid, and keeps nothing', async () => {

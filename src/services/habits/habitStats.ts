@@ -1,11 +1,6 @@
 import { addDays, datesBetween, type WeekStart } from '@/lib/date'
 import type { DateStr, Habit, HabitEntry } from '@/types/entities'
-import {
-  isHabitScheduledOn,
-  scheduledDatesBetween,
-  weekKey,
-  weeklyTarget,
-} from './habitSchedule'
+import { isHabitScheduledOn, scheduledDatesBetween, weekKey, weeklyTarget } from './habitSchedule'
 
 /**
  * Streaks and completion rates, as pure functions.
@@ -181,11 +176,7 @@ export function calculateLongestStreak(
     let best = 0
     let run = 0
 
-    for (
-      let week = weekKey(from, weekStartsOn);
-      week <= to;
-      week = addDays(week, 7)
-    ) {
+    for (let week = weekKey(from, weekStartsOn); week <= to; week = addDays(week, 7)) {
       const done = datesBetween(week, addDays(week, 6)).filter((date) =>
         isCompletedOn(habit, byDate, date),
       ).length

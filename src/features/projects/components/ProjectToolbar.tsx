@@ -2,11 +2,7 @@ import { useEffect, useRef } from 'react'
 import { ArrowDownUp, Search, X } from 'lucide-react'
 import { Kbd } from '@/components/ui/Kbd'
 import { cn } from '@/lib/cn'
-import type {
-  ProjectProgressFilter,
-  ProjectSort,
-  ProjectStateFilter,
-} from '@/services'
+import type { ProjectProgressFilter, ProjectSort, ProjectStateFilter } from '@/services'
 import type { ProjectStatus } from '@/types/enums'
 import type { ProjectToolbarFilter } from '@/store/projectUiStore'
 import { EDITABLE_PROJECT_STATUSES, PROJECT_STATUS_LABELS } from '../projectAppearance'

@@ -87,10 +87,7 @@ export function DashboardSummary({ summary }: { summary: Summary }) {
               <tile.icon size={12} aria-hidden />
               <span className="t-eyebrow truncate">{tile.label}</span>
             </span>
-            <span
-              aria-hidden
-              className={cn('t-stat', alarming ? 'text-danger' : 'text-ink')}
-            >
+            <span aria-hidden className={cn('t-stat', alarming ? 'text-danger' : 'text-ink')}>
               {value}
             </span>
             {/*

@@ -1,9 +1,5 @@
 import { hashContent } from '@/integrations/obsidian/content'
-import {
-  comparableFromFile,
-  parseNoteFile,
-  titleFromPath,
-} from '@/integrations/obsidian/noteFile'
+import { comparableFromFile, parseNoteFile, titleFromPath } from '@/integrations/obsidian/noteFile'
 import { markdownExcerpt } from '@/lib/markdown'
 import {
   buildSyncPlan,
@@ -115,11 +111,7 @@ function noteSkipped(into: ScanCollector, name: string): void {
  * A file that cannot be read is recorded as an error and the walk continues.
  * One unreadable file must not cost the user the other ninety-nine.
  */
-async function walkVault(
-  directory: string,
-  depth: number,
-  into: ScanCollector,
-): Promise<void> {
+async function walkVault(directory: string, depth: number, into: ScanCollector): Promise<void> {
   if (depth > MAX_DEPTH) return
 
   let entries
@@ -381,9 +373,7 @@ async function isStale(item: SyncItem): Promise<boolean> {
   }
 
   const hash =
-    current === null
-      ? null
-      : hashContent(comparableFromFile(current, titleFromPath(item.path)))
+    current === null ? null : hashContent(comparableFromFile(current, titleFromPath(item.path)))
 
   return hash !== item.fileHash
 }
@@ -398,11 +388,7 @@ async function tagNamesFor(noteId: Id): Promise<string[]> {
 }
 
 /** Writes a note to a path and records the baseline. Shared by four decisions. */
-async function writeNoteTo(
-  noteId: Id,
-  path: string,
-  source: EventSource,
-): Promise<void> {
+async function writeNoteTo(noteId: Id, path: string, source: EventSource): Promise<void> {
   const safe = assertSafeVaultPath(path)
   const note = await noteRepo.getOrThrow(noteId)
 
@@ -696,7 +682,8 @@ export async function applySync(
           }
           // `keep-local` on a moved file writes to where the file *is*, so a
           // move plus an edit does not leave two copies behind.
-          const path = decision === 'keep-local' ? (item.path ?? target.vaultPath) : target.vaultPath
+          const path =
+            decision === 'keep-local' ? (item.path ?? target.vaultPath) : target.vaultPath
           await writeNoteTo(target.id, path, source)
           if (path !== target.vaultPath) {
             await noteRepo.update(target.id, { vaultPath: path }, { emit: false })

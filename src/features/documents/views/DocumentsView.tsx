@@ -36,7 +36,9 @@ function extractionNote(document: DocumentSummary): string | null {
 }
 
 const readableSize = (bytes: number): string =>
-  bytes >= 1_048_576 ? `${(bytes / 1_048_576).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`
+  bytes >= 1_048_576
+    ? `${(bytes / 1_048_576).toFixed(1)} MB`
+    : `${Math.max(1, Math.round(bytes / 1024))} KB`
 
 function HitRow({ hit }: { hit: KnowledgeHit }) {
   const isNote = hit.sourceType === 'note'
@@ -158,7 +160,10 @@ export function DocumentsView() {
                           {readableSize(document.bytes)}
                         </span>
                       </div>
-                      <p className="truncate font-mono text-[11px] text-ink-3" title={document.vaultPath}>
+                      <p
+                        className="truncate font-mono text-[11px] text-ink-3"
+                        title={document.vaultPath}
+                      >
                         {document.vaultPath}
                       </p>
                       {note ? (

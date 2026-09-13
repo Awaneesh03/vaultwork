@@ -100,9 +100,7 @@ function Row({
           type="button"
           role="checkbox"
           aria-checked={milestone.done}
-          aria-label={
-            milestone.done ? `Reopen ${milestone.title}` : `Complete ${milestone.title}`
-          }
+          aria-label={milestone.done ? `Reopen ${milestone.title}` : `Complete ${milestone.title}`}
           onClick={onToggle}
           className={cn(
             'mt-[2px] grid h-[17px] w-[17px] shrink-0 place-items-center rounded-[4px] border',

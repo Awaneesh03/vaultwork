@@ -95,8 +95,8 @@ export function KnowledgeGraphView({
         style={{ height }}
       >
         <p className="px-4 text-center text-[12.5px] text-ink-3">
-          Nothing to draw. Link notes with <code className="font-mono">[[wikilinks]]</code> and
-          they will appear here.
+          Nothing to draw. Link notes with <code className="font-mono">[[wikilinks]]</code> and they
+          will appear here.
         </p>
       </div>
     )

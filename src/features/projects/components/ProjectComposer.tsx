@@ -53,10 +53,7 @@ const FIELD =
 
 function Label({ htmlFor, children }: { htmlFor: string; children: string }) {
   return (
-    <label
-      htmlFor={htmlFor}
-      className="t-eyebrow text-ink-3"
-    >
+    <label htmlFor={htmlFor} className="t-eyebrow text-ink-3">
       {children}
     </label>
   )
@@ -218,9 +215,7 @@ export function ProjectComposer({
           </div>
 
           <fieldset className="flex flex-col gap-1.5">
-            <legend className="t-eyebrow text-ink-3">
-              Accent
-            </legend>
+            <legend className="t-eyebrow text-ink-3">Accent</legend>
             <div className="flex flex-wrap gap-1.5">
               {PROJECT_COLORS.map((color) => (
                 <button
@@ -243,9 +238,7 @@ export function ProjectComposer({
           </fieldset>
 
           <fieldset className="flex flex-col gap-1.5">
-            <legend className="t-eyebrow text-ink-3">
-              Icon
-            </legend>
+            <legend className="t-eyebrow text-ink-3">Icon</legend>
             <div className="flex flex-wrap gap-1.5">
               {PROJECT_ICONS.map((name) => {
                 const Icon = projectIcon(name)

@@ -63,10 +63,7 @@ const EMPTY = {
  * profile. Data that is never fetched cannot leak, so the cheapest privacy
  * control available is not asking for it.
  */
-export async function readAiSource(
-  purpose: AiContextPurpose,
-  query = '',
-): Promise<AiSourceData> {
+export async function readAiSource(purpose: AiContextPurpose, query = ''): Promise<AiSourceData> {
   const wide = purpose === 'planning'
   const wantsDocuments = purpose === 'documents'
 

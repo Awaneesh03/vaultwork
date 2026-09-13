@@ -135,9 +135,7 @@ export function CalendarTimeGrid({
               day.date === selectedDate && 'bg-accent-soft',
             )}
           >
-            <span className="t-eyebrow text-ink-3">
-              {weekdayName(day.date).slice(0, 3)}
-            </span>
+            <span className="t-eyebrow text-ink-3">{weekdayName(day.date).slice(0, 3)}</span>
             <span
               className={cn(
                 'tabular grid h-[20px] min-w-[20px] place-items-center rounded-full px-1 text-[12px]',
@@ -165,10 +163,7 @@ export function CalendarTimeGrid({
             All day
           </div>
           {days.map((day) => (
-            <div
-              key={day.date}
-              className="flex min-w-0 flex-col gap-0.5 border-l border-line p-1"
-            >
+            <div key={day.date} className="flex min-w-0 flex-col gap-0.5 border-l border-line p-1">
               {day.allDay.map((task) => (
                 <CalendarTaskChip
                   key={task.id}

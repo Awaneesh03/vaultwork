@@ -29,9 +29,7 @@ export const EMPTY_HABIT_FILTER: HabitFilter = {
 }
 
 export type HabitComposerState =
-  | { mode: 'closed' }
-  | { mode: 'create' }
-  | { mode: 'edit'; habitId: Id }
+  { mode: 'closed' } | { mode: 'create' } | { mode: 'edit'; habitId: Id }
 
 interface HabitUiState {
   filter: HabitFilter

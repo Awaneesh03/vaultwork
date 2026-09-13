@@ -245,8 +245,7 @@ export async function getGoalDashboard(): Promise<GoalDashboardSummary> {
       progress: item.progress,
       health: item.health,
       targetDate: item.goal.targetDate,
-      basis:
-        item.milestones.total > 0 ? 'milestones' : item.tasks.total > 0 ? 'tasks' : 'none',
+      basis: item.milestones.total > 0 ? 'milestones' : item.tasks.total > 0 ? 'tasks' : 'none',
     })),
     activeCount: view.totals.active,
     completedCount: view.totals.completed,

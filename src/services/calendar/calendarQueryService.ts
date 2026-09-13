@@ -10,13 +10,7 @@ import {
   type TaskFilter,
   type TaskStatusFilter,
 } from '../tasks/taskFilters'
-import {
-  monthGrid,
-  periodTitle,
-  visibleRange,
-  weekDates,
-  type CalendarMode,
-} from '@/lib/calendar'
+import { monthGrid, periodTitle, visibleRange, weekDates, type CalendarMode } from '@/lib/calendar'
 
 /**
  * The Calendar's view model.

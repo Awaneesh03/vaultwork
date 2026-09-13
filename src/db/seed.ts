@@ -133,11 +133,7 @@ export function buildSeed(now: Date = new Date()) {
     }),
   }
 
-  const task = (
-    title: string,
-    order: number,
-    extra: Partial<Task> = {},
-  ): Task => ({
+  const task = (title: string, order: number, extra: Partial<Task> = {}): Task => ({
     id: newId(),
     ...base(at),
     title,

@@ -1,6 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
-import { ArchiveRestore, ArrowLeft, FileText, FolderTree, Tag as TagIcon, Trash2 } from 'lucide-react'
+import {
+  ArchiveRestore,
+  ArrowLeft,
+  FileText,
+  FolderTree,
+  Tag as TagIcon,
+  Trash2,
+} from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { Skeleton } from '@/components/feedback/Skeleton'

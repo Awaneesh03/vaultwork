@@ -46,12 +46,7 @@ function DueDate({ task, today }: { task: Task; today: DateStr }) {
   const isToday = task.dueDate === today
 
   return (
-    <span
-      className={cn(
-        'tabular',
-        overdue ? 'text-danger' : isToday ? 'text-warn' : 'text-ink-3',
-      )}
-    >
+    <span className={cn('tabular', overdue ? 'text-danger' : isToday ? 'text-warn' : 'text-ink-3')}>
       {formatDayLabel(task.dueDate, today)}
     </span>
   )
@@ -148,9 +143,7 @@ export function TaskRow({
             className={cn(
               'min-w-0 truncate text-left text-[13.5px] leading-snug',
               'transition-colors duration-[var(--duration-base)]',
-              done
-                ? 'text-ink-3 line-through decoration-ink-3/40'
-                : 'text-ink hover:text-accent',
+              done ? 'text-ink-3 line-through decoration-ink-3/40' : 'text-ink hover:text-accent',
             )}
             title={task.title}
           >

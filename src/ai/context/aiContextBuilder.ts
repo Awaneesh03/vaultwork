@@ -74,12 +74,7 @@ function take<T>(items: readonly T[], limit: number): T[] {
   return items.slice(0, limit)
 }
 
-function noteTruncation(
-  section: string,
-  kept: number,
-  total: number,
-  into: AiTruncation[],
-): void {
+function noteTruncation(section: string, kept: number, total: number, into: AiTruncation[]): void {
   if (total > kept) into.push({ section, kept, total })
 }
 
@@ -186,9 +181,7 @@ export function buildAiContext(source: AiSourceData, purpose: AiContextPurpose):
     noteTruncation('projects', projects.length, source.totals.projects, truncated)
   }
 
-  const goals = sections.has('goals')
-    ? take(source.goals, AI_CONTEXT_LIMITS.goals).map(toGoal)
-    : []
+  const goals = sections.has('goals') ? take(source.goals, AI_CONTEXT_LIMITS.goals).map(toGoal) : []
   if (sections.has('goals')) noteTruncation('goals', goals.length, source.totals.goals, truncated)
 
   const habits = sections.has('habits')
@@ -198,9 +191,7 @@ export function buildAiContext(source: AiSourceData, purpose: AiContextPurpose):
     noteTruncation('habits', habits.length, source.totals.habits, truncated)
   }
 
-  const notes = sections.has('notes')
-    ? take(source.notes, AI_CONTEXT_LIMITS.notes).map(toNote)
-    : []
+  const notes = sections.has('notes') ? take(source.notes, AI_CONTEXT_LIMITS.notes).map(toNote) : []
   if (sections.has('notes')) noteTruncation('notes', notes.length, source.totals.notes, truncated)
 
   const documents = sections.has('documents')
@@ -283,8 +274,8 @@ function enforceBudget(context: AiContext): AiContext {
 
   // Still over. Give up the least urgent tasks, one at a time, keeping at least
   // one so the context never claims the user has nothing to do.
-  const total = trimmed.truncated.find((entry) => entry.section === 'tasks')?.total ??
-    trimmed.tasks.length
+  const total =
+    trimmed.truncated.find((entry) => entry.section === 'tasks')?.total ?? trimmed.tasks.length
   while (trimmed.tasks.length > 1 && !fits(trimmed)) {
     trimmed.tasks = trimmed.tasks.slice(0, -1)
     recordCut('tasks', trimmed.tasks.length, total)

@@ -87,10 +87,7 @@ const toMessage = (raw: BridgeIncomingMessage): IncomingTelegramMessage => ({
 })
 
 export function createTauriTelegram(bridge: TauriBridge): TelegramPort {
-  const guard = async <T>(
-    run: () => Promise<T>,
-    fallback: TelegramErrorKind,
-  ): Promise<T> => {
+  const guard = async <T>(run: () => Promise<T>, fallback: TelegramErrorKind): Promise<T> => {
     try {
       return await run()
     } catch (error) {

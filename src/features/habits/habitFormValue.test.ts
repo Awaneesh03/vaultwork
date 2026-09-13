@@ -64,9 +64,7 @@ describe('loading a habit into the form', () => {
     expect(habitForm(habit()).frequency).toBe('daily')
     expect(habitForm(habit({ daysOfWeek: [1, 2, 3, 4, 5] })).frequency).toBe('weekdays')
     expect(habitForm(habit({ daysOfWeek: [1, 3] })).frequency).toBe('custom')
-    expect(
-      habitForm(habit({ cadence: 'weekly', targetPerWeek: 2 })).frequency,
-    ).toBe('weekly')
+    expect(habitForm(habit({ cadence: 'weekly', targetPerWeek: 2 })).frequency).toBe('weekly')
   })
 
   it('keeps the days a custom habit actually has', () => {
@@ -91,9 +89,11 @@ describe('turning a frequency into schedule fields', () => {
       cadence: 'daily',
       daysOfWeek: [1, 5],
     })
-    expect(
-      toHabitInput({ ...base, frequency: 'weekly', targetPerWeek: '3' }),
-    ).toMatchObject({ cadence: 'weekly', daysOfWeek: [], targetPerWeek: 3 })
+    expect(toHabitInput({ ...base, frequency: 'weekly', targetPerWeek: '3' })).toMatchObject({
+      cadence: 'weekly',
+      daysOfWeek: [],
+      targetPerWeek: 3,
+    })
   })
 
   it('clamps a nonsense weekly target into range', () => {

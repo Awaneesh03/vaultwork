@@ -1,5 +1,12 @@
 import { platform } from '@/platform'
-import { eventRepo, maintenanceRepo, projectRepo, subtaskRepo, tagRepo, taskRepo } from '@/repositories'
+import {
+  eventRepo,
+  maintenanceRepo,
+  projectRepo,
+  subtaskRepo,
+  tagRepo,
+  taskRepo,
+} from '@/repositories'
 import type { AppEvent, DateStr, Id, Project, Tag, Task, Timestamp } from '@/types/entities'
 import { projectPath } from '../commands/commandExecutor'
 import { getGoalDashboard, type GoalDashboardSummary } from '../goalQueryService'
@@ -244,7 +251,7 @@ function toActivity(events: AppEvent[], tasks: Task[], projects: Project[]): Act
     const resolved =
       id === null
         ? null
-        : (event.entityType === 'project' ? projectNames.get(id) : taskNames.get(id)) ?? null
+        : ((event.entityType === 'project' ? projectNames.get(id) : taskNames.get(id)) ?? null)
 
     return {
       id: event.id,

@@ -182,10 +182,7 @@ describe('switching subject', () => {
 
 describe('failure', () => {
   it('reports an error and keeps the text for a retry', async () => {
-    const save = vi
-      .fn()
-      .mockRejectedValueOnce(new Error('nope'))
-      .mockResolvedValue(undefined)
+    const save = vi.fn().mockRejectedValueOnce(new Error('nope')).mockResolvedValue(undefined)
 
     render(<Harness noteKey="a" save={save} />)
     await type('important')

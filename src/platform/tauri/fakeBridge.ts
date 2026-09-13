@@ -113,7 +113,8 @@ function reject(path: string): BridgeFailure | null {
   for (const segment of candidate.split('/')) {
     if (segment === '') return failure('invalid-path', 'Refused: an empty segment.', path)
     if (segment === '.') return failure('invalid-path', 'Refused: a "." segment.', path)
-    if (segment === '..') return failure('invalid-path', 'Refused: the path leaves the vault.', path)
+    if (segment === '..')
+      return failure('invalid-path', 'Refused: the path leaves the vault.', path)
   }
   return null
 }
@@ -201,7 +202,9 @@ export function createFakeTauriBridge(options: FakeBridgeOptions = {}): FakeTaur
     keychain_reads: 1,
   })
 
-  const record = (command: string): BridgeFailure | BridgeTelegramFailure | BridgeAiFailure | null => {
+  const record = (
+    command: string,
+  ): BridgeFailure | BridgeTelegramFailure | BridgeAiFailure | null => {
     calls.push(command)
     const planned = failures.get(command)
     if (planned) {

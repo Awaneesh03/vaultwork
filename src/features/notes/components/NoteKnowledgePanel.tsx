@@ -219,9 +219,7 @@ export function NoteKnowledgePanel({
                   </span>
                   {/* The score is explained rather than asserted: three facts a
                       user can check, not a number they have to trust. */}
-                  <span className="shrink-0 text-[11px] text-ink-3">
-                    {row.reasons.join(' · ')}
-                  </span>
+                  <span className="shrink-0 text-[11px] text-ink-3">{row.reasons.join(' · ')}</span>
                   <span
                     className="tabular shrink-0 text-[11px] text-ink-3"
                     aria-label={`Relatedness score ${row.score}`}
@@ -239,8 +237,8 @@ export function NoteKnowledgePanel({
         {isOrphan ? (
           <p className="inline-flex items-start gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1.5 text-[11.5px] text-ink-3">
             <CircleHelp size={11} className="mt-[2px] shrink-0" aria-hidden />
-            Nothing links here and this links nowhere — an orphan. Tags do not change that; a
-            tag is a label, a link is a relationship.
+            Nothing links here and this links nowhere — an orphan. Tags do not change that; a tag is
+            a label, a link is a relationship.
           </p>
         ) : (
           <KnowledgeGraphView

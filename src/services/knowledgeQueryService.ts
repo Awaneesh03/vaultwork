@@ -132,10 +132,7 @@ const refOf = (index: KnowledgeIndex, id: Id): NoteRef => ({
   title: index.byId.get(id)?.title ?? 'Untitled note',
 })
 
-function outgoingViews(
-  index: KnowledgeIndex,
-  links: ResolvedWikilink[],
-): OutgoingLinkView[] {
+function outgoingViews(index: KnowledgeIndex, links: ResolvedWikilink[]): OutgoingLinkView[] {
   return links.map((entry) => ({
     raw: entry.link.raw,
     label: entry.link.alias ?? entry.link.target,
@@ -155,10 +152,7 @@ const unresolvedViews = (links: UnresolvedWikilink[]): UnresolvedLinkView[] =>
     deletedNoteId: entry.deletedNoteId,
   }))
 
-const ambiguousViews = (
-  index: KnowledgeIndex,
-  links: AmbiguousWikilink[],
-): AmbiguousLinkView[] =>
+const ambiguousViews = (index: KnowledgeIndex, links: AmbiguousWikilink[]): AmbiguousLinkView[] =>
   links.map((entry) => ({
     raw: entry.link.raw,
     target: entry.link.target,

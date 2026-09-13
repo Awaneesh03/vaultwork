@@ -130,4 +130,3 @@ describe('what may proceed without asking', () => {
     expect(canImportSafely('missing')).toBe(false)
   })
 })
-

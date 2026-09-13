@@ -206,8 +206,20 @@ describe('the next action rule', () => {
 
   it('is a total order — the answer cannot depend on row order', () => {
     const rows = [
-      task({ title: 'a', dueDate: TODAY, sortOrder: 1000, createdAt: 1, id: 'id-b' } as Partial<Task>),
-      task({ title: 'b', dueDate: TODAY, sortOrder: 1000, createdAt: 1, id: 'id-a' } as Partial<Task>),
+      task({
+        title: 'a',
+        dueDate: TODAY,
+        sortOrder: 1000,
+        createdAt: 1,
+        id: 'id-b',
+      } as Partial<Task>),
+      task({
+        title: 'b',
+        dueDate: TODAY,
+        sortOrder: 1000,
+        createdAt: 1,
+        id: 'id-a',
+      } as Partial<Task>),
     ]
     expect(pick(rows)).toBe('b')
     expect(pick([...rows].reverse())).toBe('b')
@@ -331,7 +343,10 @@ describe('event descriptions', () => {
   })
 
   it('reads a name payload as well as a title payload', () => {
-    const archived = event({ type: 'project.archived', payload: { name: 'College', from: 'active' } })
+    const archived = event({
+      type: 'project.archived',
+      payload: { name: 'College', from: 'active' },
+    })
     expect(describeEvent(archived, null)).toBe('Archived project College')
   })
 })

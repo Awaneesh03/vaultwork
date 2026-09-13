@@ -97,9 +97,7 @@ describe('the habits list', () => {
     await createHabit('Exercise')
 
     expect(names((await getHabitsView({ search: 'read' })).active)).toEqual(['Read 20 pages'])
-    expect(names((await getHabitsView({ search: 'pages read' })).active)).toEqual([
-      'Read 20 pages',
-    ])
+    expect(names((await getHabitsView({ search: 'pages read' })).active)).toEqual(['Read 20 pages'])
     expect((await getHabitsView({ search: 'nothing' })).active).toEqual([])
   })
 

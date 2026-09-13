@@ -116,9 +116,7 @@ describe('the snapshot', () => {
     // `now` is excluded deliberately: the test clock advances a millisecond per
     // call, so two reads *should* differ there. Everything describing the
     // application must not — reading context changes nothing.
-    expect(serializeAiContext({ ...second, now: first.now })).toBe(
-      serializeAiContext(first),
-    )
+    expect(serializeAiContext({ ...second, now: first.now })).toBe(serializeAiContext(first))
     expect(second.now).toBeGreaterThanOrEqual(first.now)
   })
 

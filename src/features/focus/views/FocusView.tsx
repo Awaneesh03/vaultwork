@@ -53,7 +53,8 @@ function HistoryRow({ session }: { session: FocusSession }) {
       )}
       <span className="flex-1 text-[13px] text-ink">{KIND_LABEL[session.kind]}</span>
       <span className="tabular font-mono text-[12px] text-ink-3">
-        {session.actualMin}m{session.actualMin !== session.plannedMin ? ` of ${session.plannedMin}m` : ''}
+        {session.actualMin}m
+        {session.actualMin !== session.plannedMin ? ` of ${session.plannedMin}m` : ''}
       </span>
       <span className="text-[11.5px] text-ink-3">{aborted ? 'stopped' : 'finished'}</span>
     </li>

@@ -207,7 +207,10 @@ export function DraftSubtaskList({
             key={`${title}-${index}`}
             className="group/sub flex items-center gap-2 rounded-md px-1 py-1 hover:bg-sunken"
           >
-            <span className="h-[15px] w-[15px] shrink-0 rounded-sm border border-line-strong" aria-hidden />
+            <span
+              className="h-[15px] w-[15px] shrink-0 rounded-sm border border-line-strong"
+              aria-hidden
+            />
             <span className="min-w-0 flex-1 truncate text-[13px] text-ink-2">{title}</span>
             <button
               type="button"

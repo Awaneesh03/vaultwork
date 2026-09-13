@@ -247,9 +247,9 @@ describe('scanning again', () => {
     expect(statuses(plan)[`note:${note.id}`]).toBe('moved')
     // Recognised as the same note at a new path — not abandoned and re-found.
     expect(plan.items.find((item) => item.noteId === note.id)?.path).toBe('Archive/ours.md')
-    expect(plan.items.some((item) => item.path === 'Archive/ours.md' && item.status === 'untracked')).toBe(
-      false,
-    )
+    expect(
+      plan.items.some((item) => item.path === 'Archive/ours.md' && item.status === 'untracked'),
+    ).toBe(false)
   })
 
   it('leaves a file deleted in Obsidian to the existing missing state', async () => {

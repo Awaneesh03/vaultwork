@@ -12,7 +12,5 @@ import { useDebouncedValue } from '@/hooks/useDebouncedValue'
  */
 export function useProjectSearch(query: string, limit = 5): ProjectSummary[] {
   const debounced = useDebouncedValue(query, 120)
-  return (
-    useLiveQuery(() => searchProjects(debounced, limit), [debounced, limit]) ?? []
-  )
+  return useLiveQuery(() => searchProjects(debounced, limit), [debounced, limit]) ?? []
 }

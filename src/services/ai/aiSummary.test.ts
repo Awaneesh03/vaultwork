@@ -34,14 +34,16 @@ const reschedule = (id: string, dueDate: string | null, dueTime: string | null):
   dueTime,
 })
 
-const add = (overrides: Partial<{
-  title: string
-  dueDate: string | null
-  dueTime: string | null
-  priority: 'none' | 'low' | 'medium' | 'high' | 'urgent'
-  projectName: string | null
-  estimateMin: number | null
-}> = {}): CommandIntent => ({
+const add = (
+  overrides: Partial<{
+    title: string
+    dueDate: string | null
+    dueTime: string | null
+    priority: 'none' | 'low' | 'medium' | 'high' | 'urgent'
+    projectName: string | null
+    estimateMin: number | null
+  }> = {},
+): CommandIntent => ({
   kind: 'task.add',
   source: 'ai',
   raw: 'Add it',
@@ -166,10 +168,9 @@ describe('an intent it does not know how to describe', () => {
 
 describe('collecting the targets a summary needs', () => {
   it('gathers ids from ref-carrying intents only', () => {
-    expect(targetIdsOf([complete('task-1'), add(), reschedule('task-2', '2026-09-07', null)])).toEqual([
-      'task-1',
-      'task-2',
-    ])
+    expect(
+      targetIdsOf([complete('task-1'), add(), reschedule('task-2', '2026-09-07', null)]),
+    ).toEqual(['task-1', 'task-2'])
   })
 
   it('ignores a text reference, which has no id to fetch', () => {

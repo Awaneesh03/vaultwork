@@ -233,10 +233,7 @@ export interface HabitDeletion {
  * whole history with it. A cascade would turn an undoable action into a
  * permanent loss of the only record of what you did.
  */
-export async function deleteHabit(
-  id: Id,
-  options: HabitWriteOptions = {},
-): Promise<HabitDeletion> {
+export async function deleteHabit(id: Id, options: HabitWriteOptions = {}): Promise<HabitDeletion> {
   const source: EventSource = options.source ?? 'ui'
   const habit = await habitRepo.getOrThrow(id)
   const retained = await habitEntryRepo.countForHabit(id)
@@ -287,8 +284,7 @@ export async function completeHabit(
 
   // A binary habit records 1; a quantity habit records its target unless the
   // caller logged a specific amount.
-  const value =
-    options.value ?? (habit.kind === 'quantity' ? Math.max(1, habit.target ?? 1) : 1)
+  const value = options.value ?? (habit.kind === 'quantity' ? Math.max(1, habit.target ?? 1) : 1)
 
   const result = await habitEntryRepo.logOnce(
     id,
@@ -389,7 +385,11 @@ export async function moveHabit(
     const respaced = await respace(present)
     return applyOrder(
       id,
-      orderForMove(respaced.map((habit) => habit.sortOrder), fromIndex, toIndex),
+      orderForMove(
+        respaced.map((habit) => habit.sortOrder),
+        fromIndex,
+        toIndex,
+      ),
       source,
     )
   }

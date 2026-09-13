@@ -146,7 +146,9 @@ export function NoteEditor({
             }}
             spellCheck
             aria-label="Note body"
-            placeholder={'# A heading\n\nWrite in markdown. **Bold**, *italic*, `code`.\n\n- [ ] a task'}
+            placeholder={
+              '# A heading\n\nWrite in markdown. **Bold**, *italic*, `code`.\n\n- [ ] a task'
+            }
             className={cn(
               'min-h-[320px] w-full resize-none rounded-md border border-line bg-surface p-3',
               'font-mono text-[13px] leading-relaxed text-ink',
@@ -175,9 +177,7 @@ export function NoteEditor({
       <div className="flex items-center gap-2">
         <SaveIndicator state={saveState} />
         <span className="flex-1" />
-        <span className="hidden text-[11px] text-ink-3 sm:inline">
-          Saves automatically
-        </span>
+        <span className="hidden text-[11px] text-ink-3 sm:inline">Saves automatically</span>
       </div>
     </div>
   )

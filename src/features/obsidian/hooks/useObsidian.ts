@@ -124,10 +124,7 @@ export interface NoteObsidianController {
  * caller invokes rather than something that happens on mount for every note in
  * a list.
  */
-export function useNoteObsidian(
-  noteId: Id | null,
-  connected: boolean,
-): NoteObsidianController {
+export function useNoteObsidian(noteId: Id | null, connected: boolean): NoteObsidianController {
   const [report, setReport] = useState<NoteSyncReport | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)

@@ -115,17 +115,20 @@ export function DashboardView() {
   /** Habits toggle through the same command layer the Habits screen uses. */
   const toggleHabit = useCallback(
     (habitId: Id) =>
-      void dispatch(
-        { kind: 'habit.toggle', source: 'ui', raw: '', habitId },
-        { notify: 'errors' },
-      ),
+      void dispatch({ kind: 'habit.toggle', source: 'ui', raw: '', habitId }, { notify: 'errors' }),
     [dispatch],
   )
 
   const prioritise = useCallback(
     (task: Task, priority: Priority) =>
       void dispatch(
-        { kind: 'task.prioritize', source: 'ui', raw: '', ref: { by: 'id', id: task.id }, priority },
+        {
+          kind: 'task.prioritize',
+          source: 'ui',
+          raw: '',
+          ref: { by: 'id', id: task.id },
+          priority,
+        },
         { notify: 'errors' },
       ),
     [dispatch],
@@ -393,11 +396,7 @@ export function DashboardView() {
                 isEmpty={value.activity.length === 0}
                 empty="No recent activity."
               >
-                <RecentActivity
-                  activity={value.activity}
-                  now={value.now}
-                  today={value.today}
-                />
+                <RecentActivity activity={value.activity} now={value.now} today={value.today} />
               </DashboardCard>
             </div>
 

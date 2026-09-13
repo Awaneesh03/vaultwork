@@ -109,13 +109,9 @@ describe('the summary tiles', () => {
 
     // Four open (Study Java, Read a chapter, Submit lab record, Buy milk),
     // two of them due today, one late, one finished today.
-    expect(tile('View all tasks').getAttribute('aria-label')).toBe(
-      '4 open tasks. View all tasks',
-    )
+    expect(tile('View all tasks').getAttribute('aria-label')).toBe('4 open tasks. View all tasks')
     expect(tile('View today').getAttribute('aria-label')).toBe('2 tasks due today. View today')
-    expect(tile('View overdue').getAttribute('aria-label')).toBe(
-      '1 overdue task. View overdue',
-    )
+    expect(tile('View overdue').getAttribute('aria-label')).toBe('1 overdue task. View overdue')
     expect(tile('View completed').getAttribute('aria-label')).toBe(
       '1 task completed today. View completed',
     )
@@ -227,15 +223,11 @@ describe('the overdue card', () => {
     const card = await screen.findByRole('region', { name: 'Overdue' })
     await waitFor(() => expect(within(card).getByText('Submit lab record')).toBeTruthy())
 
-    fireEvent.click(
-      within(card).getByRole('checkbox', { name: 'Complete Submit lab record' }),
-    )
+    fireEvent.click(within(card).getByRole('checkbox', { name: 'Complete Submit lab record' }))
 
     await waitFor(() => expect(within(card).getByText('Nothing overdue.')).toBeTruthy())
     // And the tiles moved with it.
-    expect(tile('View overdue').getAttribute('aria-label')).toBe(
-      '0 overdue tasks. View overdue',
-    )
+    expect(tile('View overdue').getAttribute('aria-label')).toBe('0 overdue tasks. View overdue')
     expect(tile('View completed').getAttribute('aria-label')).toBe(
       '1 task completed today. View completed',
     )
@@ -303,9 +295,7 @@ describe('the today card', () => {
   it('shows its own empty state', async () => {
     mount()
     const card = await screen.findByRole('region', { name: 'Today' })
-    await waitFor(() =>
-      expect(within(card).getByText('Nothing scheduled for today.')).toBeTruthy(),
-    )
+    await waitFor(() => expect(within(card).getByText('Nothing scheduled for today.')).toBeTruthy())
   })
 })
 

@@ -64,9 +64,9 @@ describe('the M2 restore rule', () => {
     expect(liveTagsFor((await taskRepo.get(task.id))!, await listTags())).toEqual([])
 
     await restoreTag(tag.id)
-    expect(liveTagsFor((await taskRepo.get(task.id))!, await listTags()).map((t) => t.name)).toEqual(
-      ['dsa'],
-    )
+    expect(
+      liveTagsFor((await taskRepo.get(task.id))!, await listTags()).map((t) => t.name),
+    ).toEqual(['dsa'])
   })
 
   it('logs the deletion and the restore', async () => {

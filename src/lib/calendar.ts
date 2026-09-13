@@ -53,7 +53,10 @@ export const HOURS_IN_DAY = DAY_END_HOUR - DAY_START_HOUR
  * fit in four or five weeks renders four or five, instead of padding the grid
  * with a whole week of a neighbouring month that has nothing to say.
  */
-export function monthGridRange(anchor: DateStr, weekStartsOn: WeekStart): {
+export function monthGridRange(
+  anchor: DateStr,
+  weekStartsOn: WeekStart,
+): {
   from: DateStr
   to: DateStr
 } {

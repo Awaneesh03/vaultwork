@@ -392,9 +392,7 @@ describe('search and filters', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: 'Exercise' })).toBeTruthy())
 
     fireEvent.change(screen.getByDisplayValue('Any status'), { target: { value: 'todo' } })
-    await waitFor(() =>
-      expect(screen.queryByRole('button', { name: 'Read 20 pages' })).toBeNull(),
-    )
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Read 20 pages' })).toBeNull())
     expect(screen.getByRole('button', { name: 'Exercise' })).toBeTruthy()
   })
 
@@ -403,9 +401,7 @@ describe('search and filters', () => {
     await waitFor(() => expect(screen.getByRole('button', { name: 'Exercise' })).toBeTruthy())
 
     fireEvent.change(screen.getByDisplayValue('Any frequency'), { target: { value: 'weekdays' } })
-    await waitFor(() =>
-      expect(screen.queryByRole('button', { name: 'Read 20 pages' })).toBeNull(),
-    )
+    await waitFor(() => expect(screen.queryByRole('button', { name: 'Read 20 pages' })).toBeNull())
   })
 })
 

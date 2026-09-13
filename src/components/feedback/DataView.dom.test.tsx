@@ -10,9 +10,7 @@ import { DataView } from './DataView'
  */
 describe('DataView', () => {
   it('shows a skeleton while data is undefined', () => {
-    const { container } = render(
-      <DataView data={undefined}>{() => <p>content</p>}</DataView>,
-    )
+    const { container } = render(<DataView data={undefined}>{() => <p>content</p>}</DataView>)
 
     expect(screen.queryByText('content')).toBeNull()
     // The contract is the announced status, not the styling: a screen reader

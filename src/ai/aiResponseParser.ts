@@ -37,8 +37,7 @@ import {
 /** The shape of a refusal. Never carries raw provider output. */
 type Refusal = Result<never, AiError>
 
-const invalid = (message: string): Refusal =>
-  err(new AiError('invalid-response', message))
+const invalid = (message: string): Refusal => err(new AiError('invalid-response', message))
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value)
@@ -50,11 +49,7 @@ const isObject = (value: unknown): value is Record<string, unknown> =>
  * `"message": "   "` has not answered, and pretending otherwise would put an
  * empty bubble in front of the user.
  */
-function readString(
-  value: unknown,
-  field: string,
-  max: number,
-): Result<string, AiError> {
+function readString(value: unknown, field: string, max: number): Result<string, AiError> {
   if (typeof value !== 'string') return invalid(`"${field}" must be a string.`)
   const trimmed = value.trim()
   if (trimmed.length === 0) return invalid(`"${field}" is empty.`)
@@ -90,7 +85,9 @@ function rejectUnknownKeys(
   const unknown = Object.keys(value).filter((key) => !allowed.includes(key))
   if (unknown.length === 0) return null
   const sorted = [...unknown].sort()
-  return invalid(`${where} has unexpected ${sorted.length === 1 ? 'field' : 'fields'}: ${sorted.join(', ')}.`)
+  return invalid(
+    `${where} has unexpected ${sorted.length === 1 ? 'field' : 'fields'}: ${sorted.join(', ')}.`,
+  )
 }
 
 const isFiniteNumber = (value: unknown): value is number =>
@@ -159,11 +156,7 @@ const isPriority = isMember(PRIORITIES)
  * the user actually made — never from the response. A model that supplies
  * either has already been refused by the unknown-key check above.
  */
-function readIntent(
-  value: unknown,
-  raw: string,
-  where: string,
-): Result<ProposedIntent, AiError> {
+function readIntent(value: unknown, raw: string, where: string): Result<ProposedIntent, AiError> {
   if (!isObject(value)) return invalid(`${where} must be an object.`)
 
   const kind = value.kind
@@ -172,10 +165,7 @@ function readIntent(
     // A well-formed request for something outside the allowlist is a different
     // failure from a malformed one, and a later phase may want to say so.
     return err(
-      new AiError(
-        'unsupported-intent',
-        `"${kind}" is not an action the assistant may propose.`,
-      ),
+      new AiError('unsupported-intent', `"${kind}" is not an action the assistant may propose.`),
     )
   }
 
@@ -316,10 +306,7 @@ const PLAN_KEYS = ['kind', 'message', 'steps'] as const
  * intent to satisfy the `CommandIntent` contract, and it comes from the caller
  * rather than the response for the obvious reason.
  */
-export function parseAiResponse(
-  text: unknown,
-  raw: string,
-): Result<AiResponse, AiError> {
+export function parseAiResponse(text: unknown, raw: string): Result<AiResponse, AiError> {
   if (typeof text !== 'string') {
     return invalid('The assistant returned no text.')
   }

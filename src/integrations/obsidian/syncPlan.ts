@@ -402,9 +402,8 @@ export function buildSyncPlan(input: PlanInput): SyncPlan {
     const atExpected =
       note.vaultPath === null
         ? null
-        : (noteFiles.find(
-            (file) => file.path.toLowerCase() === note.vaultPath?.toLowerCase(),
-          ) ?? null)
+        : (noteFiles.find((file) => file.path.toLowerCase() === note.vaultPath?.toLowerCase()) ??
+          null)
 
     const file = byId ?? atExpected
     if (file !== null) claimedPaths.add(file.path.toLowerCase())
@@ -963,7 +962,5 @@ export function orderedForApply(
   return plan.items
     .map((item) => ({ item, decision: decisions[item.key] ?? ('skip' as SyncDecision) }))
     .filter((row) => row.decision !== 'skip')
-    .sort(
-      (a, b) => DECISION_ORDER.indexOf(a.decision) - DECISION_ORDER.indexOf(b.decision),
-    )
+    .sort((a, b) => DECISION_ORDER.indexOf(a.decision) - DECISION_ORDER.indexOf(b.decision))
 }

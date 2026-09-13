@@ -69,7 +69,11 @@ export const opfsSnapshotStore: SnapshotStore = {
     for await (const [name, handle] of dir.entries()) {
       if (handle.kind !== 'file' || !name.endsWith('.json')) continue
       const file = await (handle as FileSystemFileHandle).getFile()
-      items.push({ id: name.replace(/\.json$/, ''), createdAt: file.lastModified, bytes: file.size })
+      items.push({
+        id: name.replace(/\.json$/, ''),
+        createdAt: file.lastModified,
+        bytes: file.size,
+      })
     }
     return items.sort((a, b) => b.createdAt - a.createdAt)
   },

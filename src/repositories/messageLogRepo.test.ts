@@ -88,7 +88,10 @@ describe('processing state', () => {
     })
     const taskId = crypto.randomUUID()
 
-    const done = await messageLogRepo.markProcessed(record.id, { entityType: 'task', entityId: taskId })
+    const done = await messageLogRepo.markProcessed(record.id, {
+      entityType: 'task',
+      entityId: taskId,
+    })
 
     expect(done.status).toBe('done')
     expect(done.resultEntityId).toBe(taskId)

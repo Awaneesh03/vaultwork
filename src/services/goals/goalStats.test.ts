@@ -347,7 +347,10 @@ describe('sorting and filtering', () => {
   })
 
   it('sorts a copy, leaving a shared array alone', () => {
-    const rows = [summary({ title: 'B', sortOrder: 2000 }), summary({ title: 'A', sortOrder: 1000 })]
+    const rows = [
+      summary({ title: 'B', sortOrder: 2000 }),
+      summary({ title: 'A', sortOrder: 1000 }),
+    ]
     const before = titles(rows)
     sortGoals(rows, 'name')
     expect(titles(rows)).toEqual(before)
@@ -361,12 +364,12 @@ describe('sorting and filtering', () => {
       summary({ title: 'dropped', status: 'dropped' }),
     ]
     expect(titles(filterGoals(rows, DEFAULT_GOAL_FILTER))).toEqual(['active', 'paused'])
-    expect(
-      titles(filterGoals(rows, { ...DEFAULT_GOAL_FILTER, state: 'completed' })),
-    ).toEqual(['done'])
-    expect(
-      titles(filterGoals(rows, { ...DEFAULT_GOAL_FILTER, state: 'archived' })),
-    ).toEqual(['dropped'])
+    expect(titles(filterGoals(rows, { ...DEFAULT_GOAL_FILTER, state: 'completed' }))).toEqual([
+      'done',
+    ])
+    expect(titles(filterGoals(rows, { ...DEFAULT_GOAL_FILTER, state: 'archived' }))).toEqual([
+      'dropped',
+    ])
     expect(filterGoals(rows, { ...DEFAULT_GOAL_FILTER, state: 'all' })).toHaveLength(4)
   })
 

@@ -510,7 +510,14 @@ describe('when things go wrong', () => {
       await send('/help'),
     ].join('\n')
 
-    for (const secret of ['sk-', 'api.groq.com', 'Authorization', 'Bearer', 'botToken', '/Users/']) {
+    for (const secret of [
+      'sk-',
+      'api.groq.com',
+      'Authorization',
+      'Bearer',
+      'botToken',
+      '/Users/',
+    ]) {
       expect(replies, secret).not.toContain(secret)
     }
   })

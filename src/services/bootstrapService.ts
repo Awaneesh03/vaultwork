@@ -27,7 +27,9 @@ export interface BootstrapOptions {
  *
  * Returns a Result: a failure here has to render as a screen, not a blank page.
  */
-export async function bootstrapApp(options: BootstrapOptions = {}): Promise<Result<BootstrapReport>> {
+export async function bootstrapApp(
+  options: BootstrapOptions = {},
+): Promise<Result<BootstrapReport>> {
   return attempt(async () => {
     await maintenanceRepo.open()
 

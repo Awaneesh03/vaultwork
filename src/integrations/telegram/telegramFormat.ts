@@ -71,8 +71,7 @@ export function taskList(title: string, tasks: Task[], today: DateStr, empty: st
     return detail === null ? head : `${head}\n   ${detail}`
   })
 
-  const more =
-    tasks.length > shown.length ? `\n\n…and ${tasks.length - shown.length} more.` : ''
+  const more = tasks.length > shown.length ? `\n\n…and ${tasks.length - shown.length} more.` : ''
 
   return `${title}\n\n${lines.join('\n')}${more}`
 }
@@ -96,7 +95,9 @@ export function groupedTaskList(
       if (counter >= MAX_LIST) break
       counter += 1
       const detail = taskDetailLine(task, today)
-      lines.push(detail === null ? `${counter}. ${task.title}` : `${counter}. ${task.title}${DOT}${detail}`)
+      lines.push(
+        detail === null ? `${counter}. ${task.title}` : `${counter}. ${task.title}${DOT}${detail}`,
+      )
     }
     if (lines.length > 0) blocks.push(`${group.label}\n${lines.join('\n')}`)
     if (counter >= MAX_LIST) break
@@ -108,7 +109,9 @@ export function groupedTaskList(
 /** The confirmation after a task is captured. */
 export function taskCreated(task: Task, today: DateStr): string {
   const detail = taskDetailLine(task, today)
-  return detail === null ? `Task created\n\n${task.title}` : `Task created\n\n${task.title}\n${detail}`
+  return detail === null
+    ? `Task created\n\n${task.title}`
+    : `Task created\n\n${task.title}\n${detail}`
 }
 
 export function habitList(habits: { habit: Habit; doneToday: boolean }[]): string {
@@ -218,7 +221,14 @@ export function aiProposal(summary: readonly string[]): string {
     summary.length === 1 ? 'This would:' : `This would make ${summary.length} changes:`
   const lines = summary.map((line, index) => `${index + 1}. ${line}`)
   return clamp(
-    [heading, '', ...lines, '', 'Nothing has changed yet.', '/confirm to apply · /cancel to drop'].join('\n'),
+    [
+      heading,
+      '',
+      ...lines,
+      '',
+      'Nothing has changed yet.',
+      '/confirm to apply · /cancel to drop',
+    ].join('\n'),
   )
 }
 

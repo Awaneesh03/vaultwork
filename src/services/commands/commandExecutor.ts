@@ -64,7 +64,11 @@ const quoted = (value: string) => `“${value}”`
 function describeTask(task: Task, today: string): string | null {
   const parts: string[] = []
   if (task.dueDate) {
-    parts.push(task.dueTime ? `${formatDayLabel(task.dueDate, today)} ${task.dueTime}` : formatDayLabel(task.dueDate, today))
+    parts.push(
+      task.dueTime
+        ? `${formatDayLabel(task.dueDate, today)} ${task.dueTime}`
+        : formatDayLabel(task.dueDate, today),
+    )
   }
   if (task.priority !== 'none') parts.push(task.priority)
   if (task.status === 'done') parts.push('completed')
@@ -346,12 +350,7 @@ async function run(intent: CommandIntent): Promise<CommandResult> {
       return runAdd(intent)
 
     case 'task.complete': {
-      const found = await resolveRef(
-        intent.ref,
-        openTasks,
-        intent,
-        'Which task did you mean?',
-      )
+      const found = await resolveRef(intent.ref, openTasks, intent, 'Which task did you mean?')
       if ('result' in found) return found.result
       if (found.task.status === 'done') {
         return okNone(`${quoted(found.task.title)} is already complete.`)
@@ -388,7 +387,9 @@ async function run(intent: CommandIntent): Promise<CommandResult> {
       const task = await tasks.toggleTask(found.task.id, { source })
       const undoKind = task.status === 'done' ? 'task.uncomplete' : 'task.complete'
       return okTask(
-        task.status === 'done' ? `Completed ${quoted(task.title)}` : `Reopened ${quoted(task.title)}`,
+        task.status === 'done'
+          ? `Completed ${quoted(task.title)}`
+          : `Reopened ${quoted(task.title)}`,
         task,
         { kind: undoKind, source, raw: '', ref: byId(task.id) },
       )
@@ -431,12 +432,7 @@ async function run(intent: CommandIntent): Promise<CommandResult> {
       const found = await resolveRef(intent.ref, liveTasks, intent, 'Which task did you mean?')
       if ('result' in found) return found.result
       const before = found.task
-      const task = await tasks.rescheduleTask(
-        before.id,
-        intent.dueDate,
-        intent.dueTime,
-        { source },
-      )
+      const task = await tasks.rescheduleTask(before.id, intent.dueDate, intent.dueTime, { source })
       const today = platform.clock.today()
       const message =
         task.dueDate === null
@@ -661,13 +657,9 @@ async function run(intent: CommandIntent): Promise<CommandResult> {
       )
 
       const target =
-        intent.projectId === null
-          ? null
-          : ((await projectRepo.get(intent.projectId)) ?? null)
+        intent.projectId === null ? null : ((await projectRepo.get(intent.projectId)) ?? null)
       const message =
-        target === null
-          ? `${quoted(task.title)} → Inbox`
-          : `${quoted(task.title)} → ${target.name}`
+        target === null ? `${quoted(task.title)} → Inbox` : `${quoted(task.title)} → ${target.name}`
 
       return okTask(message, task, {
         kind: 'task.assignProject',
@@ -766,12 +758,9 @@ async function run(intent: CommandIntent): Promise<CommandResult> {
     }
 
     case 'habit.move': {
-      const moved = await habits.moveHabit(
-        intent.orderedIds,
-        intent.fromIndex,
-        intent.toIndex,
-        { source },
-      )
+      const moved = await habits.moveHabit(intent.orderedIds, intent.fromIndex, intent.toIndex, {
+        source,
+      })
       if (!moved) return okNone('Nothing moved.')
       return okHabit('Reordered', moved)
     }
@@ -861,9 +850,7 @@ async function run(intent: CommandIntent): Promise<CommandResult> {
       const deletion = await goals.deleteGoal(found.goal.id, { source })
       const kept = `${deletion.retainedMilestoneCount} milestone${
         deletion.retainedMilestoneCount === 1 ? '' : 's'
-      } and ${deletion.retainedTaskCount} task${
-        deletion.retainedTaskCount === 1 ? '' : 's'
-      } kept`
+      } and ${deletion.retainedTaskCount} task${deletion.retainedTaskCount === 1 ? '' : 's'} kept`
       return okGoal(`Goal deleted · ${kept}`, deletion.goal, {
         kind: 'goal.restore',
         source,
@@ -934,9 +921,7 @@ async function run(intent: CommandIntent): Promise<CommandResult> {
       const kept =
         deletion.retainedTaskCount === 0
           ? 'no tasks affected'
-          : `${deletion.retainedTaskCount} task${
-              deletion.retainedTaskCount === 1 ? '' : 's'
-            } kept`
+          : `${deletion.retainedTaskCount} task${deletion.retainedTaskCount === 1 ? '' : 's'} kept`
       return okMilestone(`Milestone deleted · ${kept}`, deletion.milestone, {
         kind: 'milestone.restore',
         source,
@@ -1011,9 +996,7 @@ async function run(intent: CommandIntent): Promise<CommandResult> {
       const kept =
         deletion.retainedLinkCount === 0
           ? 'no links affected'
-          : `${deletion.retainedLinkCount} link${
-              deletion.retainedLinkCount === 1 ? '' : 's'
-            } kept`
+          : `${deletion.retainedLinkCount} link${deletion.retainedLinkCount === 1 ? '' : 's'} kept`
       return okNote(`Note deleted · ${kept}`, deletion.note, {
         kind: 'note.restore',
         source,
@@ -1079,9 +1062,7 @@ async function run(intent: CommandIntent): Promise<CommandResult> {
       const label = TASK_VIEW_LABELS[intent.view]
       const count = data.tasks.filter((task) => task.status === 'todo').length
       const message =
-        intent.view === 'completed'
-          ? `${label} · ${data.tasks.length}`
-          : `${label} · ${count} open`
+        intent.view === 'completed' ? `${label} · ${data.tasks.length}` : `${label} · ${count} open`
       return okView(message, intent.view, TASK_VIEW_PATHS[intent.view], data.tasks)
     }
 

@@ -100,9 +100,7 @@ export function layoutGraph(
 
   const present = edges.filter(
     (edge) =>
-      edge.source !== edge.target &&
-      positions.has(edge.source) &&
-      positions.has(edge.target),
+      edge.source !== edge.target && positions.has(edge.source) && positions.has(edge.target),
   )
 
   for (let step = 0; step < iterations; step += 1) {
@@ -120,8 +118,8 @@ export function layoutGraph(
         if (distance < 0.01) {
           // Two nodes exactly on top of each other have no direction to push
           // in; nudge them apart deterministically rather than dividing by zero.
-          dx = (seedOf(a.id) - 0.5) || 0.5
-          dy = (seedOf(b.id) - 0.5) || 0.5
+          dx = seedOf(a.id) - 0.5 || 0.5
+          dy = seedOf(b.id) - 0.5 || 0.5
           distance = Math.sqrt(dx * dx + dy * dy)
         }
 

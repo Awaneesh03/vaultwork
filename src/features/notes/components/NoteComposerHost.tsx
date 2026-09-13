@@ -34,8 +34,7 @@ export function NoteComposerHost() {
           title: value.title,
           body: value.body,
           tagIds: [],
-          links:
-            link === null ? [] : [{ refType: link.refType as RefType, refId: link.refId }],
+          links: link === null ? [] : [{ refType: link.refType as RefType, refId: link.refId }],
         })
 
         close()

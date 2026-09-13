@@ -26,7 +26,10 @@ beforeEach(async () => {
 
 let sequence = 0
 
-function update(text: string, overrides: Partial<IncomingTelegramMessage> = {}): IncomingTelegramMessage {
+function update(
+  text: string,
+  overrides: Partial<IncomingTelegramMessage> = {},
+): IncomingTelegramMessage {
   sequence += 1
   return {
     source: 'telegram',

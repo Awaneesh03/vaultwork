@@ -160,10 +160,7 @@ export function AssistantSection() {
       ) : null}
 
       {ai.notice !== null ? (
-        <p
-          role="status"
-          className={`text-[12.5px] ${ai.notice.ok ? 'text-ok' : 'text-danger'}`}
-        >
+        <p role="status" className={`text-[12.5px] ${ai.notice.ok ? 'text-ok' : 'text-danger'}`}>
           {ai.notice.text}
         </p>
       ) : null}

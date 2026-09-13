@@ -29,7 +29,10 @@ export function useDataActions() {
   }, [])
 
   const run = useCallback(
-    async (label: string, action: () => Promise<{ ok: true; text: string } | { ok: false; text: string }>) => {
+    async (
+      label: string,
+      action: () => Promise<{ ok: true; text: string } | { ok: false; text: string }>,
+    ) => {
       setState({ busy: true, message: null, error: null })
       try {
         const result = await action()

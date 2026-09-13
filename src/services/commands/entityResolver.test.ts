@@ -79,24 +79,36 @@ describe('the ambiguity case from the specification', () => {
 describe('resolving to one task', () => {
   it('resolves when only one task matches at all', () => {
     const resolution = resolveTaskByText(BINARY_TREES, 'revise')
-    expect(resolution).toMatchObject({ status: 'resolved', entity: { title: 'Revise Binary Trees' } })
+    expect(resolution).toMatchObject({
+      status: 'resolved',
+      entity: { title: 'Revise Binary Trees' },
+    })
   })
 
   it('prefers an exact title over a longer one that contains it', () => {
     const tasks = [task('Study Binary Trees'), task('Study Binary Trees Advanced')]
     const resolution = resolveTaskByText(tasks, 'study binary trees')
-    expect(resolution).toMatchObject({ status: 'resolved', entity: { title: 'Study Binary Trees' } })
+    expect(resolution).toMatchObject({
+      status: 'resolved',
+      entity: { title: 'Study Binary Trees' },
+    })
   })
 
   it('prefers a prefix match over a mid-string one', () => {
     const tasks = [task('Submit OS lab record'), task('Ask about the OS lab')]
     const resolution = resolveTaskByText(tasks, 'submit os')
-    expect(resolution).toMatchObject({ status: 'resolved', entity: { title: 'Submit OS lab record' } })
+    expect(resolution).toMatchObject({
+      status: 'resolved',
+      entity: { title: 'Submit OS lab record' },
+    })
   })
 
   it('is case- and whitespace-insensitive', () => {
     const resolution = resolveTaskByText(BINARY_TREES, '  STUDY   binary trees ')
-    expect(resolution).toMatchObject({ status: 'resolved', entity: { title: 'Study Binary Trees' } })
+    expect(resolution).toMatchObject({
+      status: 'resolved',
+      entity: { title: 'Study Binary Trees' },
+    })
   })
 
   it('reports nothing at all rather than a bad guess', () => {

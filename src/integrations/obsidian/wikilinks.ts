@@ -108,7 +108,10 @@ export function wikilinkTargets(source: string): string[] {
  * database keeps the durable edge.
  */
 export function formatWikilink(title: string, alias?: string | null): string {
-  const target = title.replace(/[[\]|#]/g, ' ').replace(/\s+/g, ' ').trim()
+  const target = title
+    .replace(/[[\]|#]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
   const safeTarget = target.length > 0 ? target : 'Untitled note'
   return alias && alias.length > 0 ? `[[${safeTarget}|${alias}]]` : `[[${safeTarget}]]`
 }

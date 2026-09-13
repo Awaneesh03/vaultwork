@@ -78,9 +78,7 @@ function Metric({
 }) {
   return (
     <div className="flex min-w-0 flex-col gap-0.5 rounded-md border border-line bg-surface px-2.5 py-1.5">
-      <span className="t-eyebrow text-ink-3">
-        {label}
-      </span>
+      <span className="t-eyebrow text-ink-3">{label}</span>
       <span
         className={cn(
           'tabular text-[15px] font-semibold leading-tight',
@@ -164,7 +162,13 @@ export function ProjectDetailView() {
   const prioritise = useCallback(
     (task: Task, priority: Priority) =>
       void dispatch(
-        { kind: 'task.prioritize', source: 'ui', raw: '', ref: { by: 'id', id: task.id }, priority },
+        {
+          kind: 'task.prioritize',
+          source: 'ui',
+          raw: '',
+          ref: { by: 'id', id: task.id },
+          priority,
+        },
         { notify: 'errors' },
       ),
     [dispatch],
@@ -181,7 +185,13 @@ export function ProjectDetailView() {
 
   const assign = useCallback(
     (taskId: Id, target: Id | null) =>
-      void dispatch({ kind: 'task.assignProject', source: 'ui', raw: '', taskId, projectId: target }),
+      void dispatch({
+        kind: 'task.assignProject',
+        source: 'ui',
+        raw: '',
+        taskId,
+        projectId: target,
+      }),
     [dispatch],
   )
 
@@ -328,10 +338,7 @@ export function ProjectDetailView() {
         All projects
       </Link>
 
-      <DataView<ProjectDetailData>
-        data={data ?? undefined}
-        loading={<DetailSkeleton />}
-      >
+      <DataView<ProjectDetailData> data={data ?? undefined} loading={<DetailSkeleton />}>
         {(value) => (
           <div className="flex flex-col gap-4">
             <header className="flex flex-col gap-2.5">
@@ -418,8 +425,8 @@ export function ProjectDetailView() {
               {value.project.status === 'archived' ? (
                 <p className="inline-flex w-fit items-center gap-1.5 rounded-md border border-line bg-surface px-2.5 py-1 text-[12px] text-ink-2">
                   <Archive size={12} aria-hidden />
-                  Archived. Every task below is still here, and restoring brings the project back
-                  as it was.
+                  Archived. Every task below is still here, and restoring brings the project back as
+                  it was.
                 </p>
               ) : null}
             </header>
@@ -531,9 +538,7 @@ export function ProjectDetailView() {
                 {value.groups.map((group) => (
                   <section key={group.id} className="flex flex-col gap-1">
                     <div className="flex items-baseline gap-2 px-2">
-                      <h3 className="t-eyebrow text-ink-3">
-                        {group.label}
-                      </h3>
+                      <h3 className="t-eyebrow text-ink-3">{group.label}</h3>
                       {group.hint ? (
                         <span className="tabular text-[11px] text-ink-3">{group.hint}</span>
                       ) : null}
