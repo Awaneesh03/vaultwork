@@ -14,16 +14,34 @@ import type { Id } from '@/types/entities'
  * happen. Flattening them into one bubble would hide the distinction that
  * matters most — whether anything is about to change.
  *
+ * So each one is *named* rather than left to be inferred from its shape. The
+ * eyebrow over every reply says which of the five this is, in words, which is
+ * also what makes the distinction survive for a reader who cannot see the
+ * violet rule beside it.
+ *
  * Nothing here executes, resolves or asks a provider. Every control reports
  * upward.
  */
 
-function Bubble({ children }: { children: React.ReactNode }) {
+/**
+ * The assistant speaking.
+ *
+ * A violet rule down the left edge rather than a chat bubble. Violet is the
+ * Assistant's colour and only the Assistant's, so the rule is the mark that
+ * says "this text came from the model" — which matters most at the moment the
+ * next thing on screen is Vaultwork proposing to change your data, in
+ * Vaultwork's own emerald.
+ */
+function Reply({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="flex gap-2.5">
-      <Sparkles size={14} className="mt-1 shrink-0 text-ink-3" aria-hidden />
-      <div className="min-w-0 flex-1">{children}</div>
-    </div>
+    <section className="relative flex flex-col gap-1.5 pl-3.5">
+      <span aria-hidden className="absolute inset-y-0 left-0 w-[2px] rounded-full bg-accent-2/60" />
+      <p className="t-eyebrow flex items-center gap-1.5 text-accent-2">
+        <Sparkles size={10} aria-hidden />
+        {label}
+      </p>
+      <div className="min-w-0">{children}</div>
+    </section>
   )
 }
 
@@ -112,29 +130,39 @@ export function AiTurnView({
   busy: boolean
 }) {
   return (
-    <article className="flex flex-col gap-3">
-      <p className="self-end max-w-[85%] break-words rounded-lg border border-line bg-elevated px-3 py-2 text-strong text-ink">
-        {request}
-      </p>
+    <article className="flex flex-col gap-3.5">
+      {/*
+        The request, as a record rather than a chat bubble pinned to the right.
+        This is a log of what you asked and what came back, not a conversation
+        with a personality — and a right-aligned bubble is the single strongest
+        signal that a screen is pretending to be one.
+      */}
+      <div className="flex flex-col gap-1">
+        <p className="t-eyebrow text-ink-3">You asked</p>
+        <p className="break-words text-strong text-ink">{request}</p>
+      </div>
 
       {result === null ? (
-        <Bubble>
+        <Reply label="Working">
           <p className="text-strong text-ink-3" role="status" aria-live="polite">
             Thinking…
           </p>
-        </Bubble>
+        </Reply>
       ) : null}
 
       {result?.kind === 'answer' ? (
-        <Bubble>
-          <div className="text-strong leading-relaxed text-ink">
+        <Reply label="Answer">
+          <div className="max-w-prose text-strong leading-relaxed text-ink">
             <Markdown source={result.message} />
           </div>
-        </Bubble>
+          {/* Stated, because an answer is the one outcome that changes nothing
+              and the user should not have to deduce that from an absence. */}
+          <p className="mt-2 text-meta text-ink-3">Nothing was changed — this is an answer.</p>
+        </Reply>
       ) : null}
 
       {result?.kind === 'clarification' ? (
-        <Bubble>
+        <Reply label="Needs a detail">
           <div className="flex flex-col gap-2">
             <p className="text-strong text-ink">{result.message}</p>
             <ul className="flex flex-col gap-1 pl-4">
@@ -146,11 +174,11 @@ export function AiTurnView({
             </ul>
             <p className="text-body text-ink-3">Ask again with the one you meant.</p>
           </div>
-        </Bubble>
+        </Reply>
       ) : null}
 
       {result?.kind === 'choices' ? (
-        <Bubble>
+        <Reply label="Needs a choice">
           <div className="flex flex-col gap-3">
             <p className="text-strong text-ink">{result.message}</p>
             {result.steps.map((step) =>
@@ -178,26 +206,26 @@ export function AiTurnView({
               You will still be asked to confirm before anything changes.
             </p>
           </div>
-        </Bubble>
+        </Reply>
       ) : null}
 
       {result?.kind === 'unresolved' ? (
-        <Bubble>
+        <Reply label="Nothing matched">
           <Notice tone="warn">
             <p className="break-words">{result.message}</p>
             <p className="mt-1 text-body text-ink-3">
               Nothing was changed. Try naming it the way it appears in your list.
             </p>
           </Notice>
-        </Bubble>
+        </Reply>
       ) : null}
 
       {result?.kind === 'error' ? (
-        <Bubble>
+        <Reply label="Could not answer">
           <Notice tone="warn">
             <p className="break-words">{result.message}</p>
           </Notice>
-        </Bubble>
+        </Reply>
       ) : null}
 
       {/* A proposal is rendered by the view, which owns the confirmation. */}
