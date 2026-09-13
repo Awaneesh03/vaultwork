@@ -1,6 +1,7 @@
-import { useEffect } from 'react'
+import { Suspense, useEffect } from 'react'
 import { Outlet, useLocation } from 'react-router-dom'
 import { ALL_NAV_ITEMS, SETTINGS_ITEM } from '@/app/navigation'
+import { SkeletonRows } from '@/components/feedback/Skeleton'
 import { ToastHost } from '@/components/feedback/ToastHost'
 import { NoteComposerHost } from '@/features/notes/components/NoteComposerHost'
 import { CommandPalette } from './CommandPalette'
@@ -74,7 +75,18 @@ export function AppShell() {
             key={location.pathname}
             className="mx-auto w-full max-w-6xl animate-[fade-rise_var(--duration-base)_var(--ease-out)] px-4 py-7 sm:px-6 lg:px-8"
           >
-            <Outlet />
+            {/*
+              The boundary for code-split routes.
+              
+              Placed here rather than around <Routes> so the sidebar and top bar
+              stay on screen while a split chunk loads — the window should never
+              blank out to fetch a page. Skeleton rows rather than a spinner,
+              for the reason every list in the app uses them: the shape of what
+              is coming says more than the fact that something is.
+            */}
+            <Suspense fallback={<SkeletonRows rows={5} />}>
+              <Outlet />
+            </Suspense>
           </div>
         </main>
       </div>

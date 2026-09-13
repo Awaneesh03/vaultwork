@@ -1,19 +1,13 @@
+import { lazy } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
-import { AiView } from '@/features/ai/views/AiView'
-import { AnalyticsView } from '@/features/analytics/views/AnalyticsView'
-import { CalendarView } from '@/features/calendar/views/CalendarView'
 import { DashboardView } from '@/features/dashboard/views/DashboardView'
 import { FocusView } from '@/features/focus/views/FocusView'
 import { GoalsView } from '@/features/goals/views/GoalsView'
 import { HabitsView } from '@/features/habits/views/HabitsView'
 import { InboxView } from '@/features/inbox/views/InboxView'
 import { NoteDetailView } from '@/features/notes/views/NoteDetailView'
-import { NoteGraphView } from '@/features/notes/views/NoteGraphView'
 import { NotesView } from '@/features/notes/views/NotesView'
-import { DocumentsView } from '@/features/documents/views/DocumentsView'
-import { ObsidianView } from '@/features/obsidian/views/ObsidianView'
-import { SyncCenterView } from '@/features/obsidian/views/SyncCenterView'
 import { ProjectDetailView } from '@/features/projects/views/ProjectDetailView'
 import { ProjectsView } from '@/features/projects/views/ProjectsView'
 import { SettingsView } from '@/features/settings/views/SettingsView'
@@ -22,6 +16,38 @@ import { CompletedView } from '@/features/tasks/views/CompletedView'
 import { OverdueView } from '@/features/tasks/views/OverdueView'
 import { TodayView } from '@/features/today/views/TodayView'
 import { UpcomingView } from '@/features/upcoming/views/UpcomingView'
+
+/*
+ * Routes that are split out of the initial chunk.
+ *
+ * Chosen by two rules: heavy enough to be worth a request, and not on the path
+ * a launch takes. Dashboard, Inbox, Today and the task lists stay eager —
+ * they are what the app opens on, or what you reach a second later, and making
+ * those wait on a network round trip to feel modern would be a bad trade.
+ *
+ * The Obsidian, Analytics and Assistant screens are the opposite: substantial,
+ * self-contained, and opened deliberately. A fallback is barely visible on a
+ * local file read.
+ */
+const AiView = lazy(() => import('@/features/ai/views/AiView').then((m) => ({ default: m.AiView })))
+const AnalyticsView = lazy(() =>
+  import('@/features/analytics/views/AnalyticsView').then((m) => ({ default: m.AnalyticsView })),
+)
+const CalendarView = lazy(() =>
+  import('@/features/calendar/views/CalendarView').then((m) => ({ default: m.CalendarView })),
+)
+const NoteGraphView = lazy(() =>
+  import('@/features/notes/views/NoteGraphView').then((m) => ({ default: m.NoteGraphView })),
+)
+const ObsidianView = lazy(() =>
+  import('@/features/obsidian/views/ObsidianView').then((m) => ({ default: m.ObsidianView })),
+)
+const SyncCenterView = lazy(() =>
+  import('@/features/obsidian/views/SyncCenterView').then((m) => ({ default: m.SyncCenterView })),
+)
+const DocumentsView = lazy(() =>
+  import('@/features/documents/views/DocumentsView').then((m) => ({ default: m.DocumentsView })),
+)
 
 function NotFound() {
   return (
