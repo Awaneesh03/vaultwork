@@ -1,0 +1,75 @@
+import type { ReactNode } from 'react'
+import { cn } from '@/lib/cn'
+
+/**
+ * The top of every screen, so that every screen begins the same way.
+ *
+ * One title, one optional sentence saying what this place is for, and the
+ * actions that belong to the whole page. Compact on purpose — a workspace
+ * cannot afford a hero banner on a screen you open forty times a day.
+ */
+export function PageHeader({
+  title,
+  description,
+  icon,
+  actions,
+  children,
+  className,
+}: {
+  title: ReactNode
+  description?: ReactNode
+  icon?: ReactNode
+  /** Page-level actions, right-aligned. */
+  actions?: ReactNode
+  /** Filters or tabs that belong under the title rather than beside it. */
+  children?: ReactNode
+  className?: string
+}) {
+  return (
+    <header className={cn('flex flex-col gap-3', className)}>
+      <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
+        <div className="flex min-w-0 flex-col gap-1">
+          <div className="flex items-center gap-2">
+            {icon ? (
+              <span className="shrink-0 text-ink-3" aria-hidden>
+                {icon}
+              </span>
+            ) : null}
+            <h2 className="t-page min-w-0 text-ink">{title}</h2>
+          </div>
+          {description ? (
+            <p className="t-meta max-w-prose text-ink-3">{description}</p>
+          ) : null}
+        </div>
+        {actions ? (
+          <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>
+        ) : null}
+      </div>
+      {children}
+    </header>
+  )
+}
+
+/**
+ * A labelled band inside a page.
+ *
+ * The eyebrow is the only uppercase text in the application, and it is confined
+ * to this component so it stays that way.
+ */
+export function SectionHeader({
+  label,
+  actions,
+  className,
+}: {
+  label: ReactNode
+  actions?: ReactNode
+  className?: string
+}) {
+  return (
+    <div className={cn('flex items-center gap-3', className)}>
+      <h3 className="t-eyebrow shrink-0 text-ink-3">{label}</h3>
+      <span className="h-px min-w-4 flex-1 bg-line" aria-hidden />
+      {actions ? <div className="flex shrink-0 items-center gap-1.5">{actions}</div> : null}
+    </div>
+  )
+}

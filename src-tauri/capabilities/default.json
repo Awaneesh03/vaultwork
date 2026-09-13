@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "The smallest set of permissions M13 actually needs. No shell, no process, no arbitrary filesystem, no HTTP: every file operation goes through this app's own scoped vault commands, which can only reach inside the one folder the user picked.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:event:allow-listen",
+    "core:event:allow-unlisten",
+    "core:window:allow-set-title",
+    "notification:default"
+  ]
+}

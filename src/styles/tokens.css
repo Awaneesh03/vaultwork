@@ -1,0 +1,260 @@
+/*
+ * Design tokens — "Midnight Productivity OS".
+ *
+ * Every colour, radius, shadow and duration in the application comes from here.
+ * No component contains a hex value; a component that needs a new colour needs a
+ * new token, which is what keeps the interface one interface.
+ *
+ * The theme is resolved to a concrete value ("light" | "dark") and stamped on
+ * <html data-theme>. That happens twice: once by the inline boot script in
+ * index.html (so there is no flash of the wrong background) and again by the
+ * ThemeProvider once settings have loaded from Dexie. The media query at the
+ * bottom is the safety net for the case where JavaScript never runs.
+ *
+ * --------------------------------------------------------------------------
+ * The identity
+ *
+ * Dark-first graphite with a violet primary and a mint secondary. The violet
+ * carries interaction — focus, selection, the active route, the assistant. The
+ * mint carries *confirmation*: things that are synced, done, safe. Keeping them
+ * on separate jobs is what stops a two-colour palette becoming decoration.
+ *
+ * Neither is used for large fills. On a dark interface a saturated area is
+ * louder than any amount of text, so the accents live in 1px lines, 2px bars,
+ * small marks and text — and the surfaces stay quiet.
+ *
+ * --------------------------------------------------------------------------
+ * The surface ladder
+ *
+ * Five depths, because a dark interface with two of them is unreadable: you
+ * cannot tell a card from the page it sits on, and every border disappears.
+ * Each rung is a visible step, in this order:
+ *
+ *   canvas   the page
+ *   sidebar  the navigation rail — its own rung so it reads as chrome
+ *   surface  cards, rows, inputs
+ *   elevated popovers, modals, hover-on-a-card
+ *   sunken   recessed chips, key caps, hover-on-the-canvas
+ *
+ * The two border weights have different jobs, and the difference is a contrast
+ * requirement rather than a taste:
+ *
+ *   --line         dividers and card edges. Structural, quiet, decorative
+ *                  enough that WCAG's non-text rule does not apply to it.
+ *   --line-strong  the boundary of anything you can *operate* — inputs,
+ *                  checkboxes, segmented controls. Held at >= 3:1 against both
+ *                  canvas and surface, because that boundary is what tells you
+ *                  where the control is.
+ *
+ * Every value below was checked numerically, not by eye: body and secondary
+ * text clear 4.5:1 on every surface it can land on, in both themes.
+ */
+
+:root {
+  color-scheme: light;
+
+  /* surfaces — five depths and two border weights */
+  --canvas: #f6f6f9;
+  --sidebar: #fbfbfd;
+  --surface: #ffffff;
+  --elevated: #ffffff;
+  --sunken: #eeeef4;
+  --line: #dfe0e9;
+  --line-strong: #8c8d98;
+
+  /* text — three weights of attention */
+  --ink: #14151c;
+  --ink-2: #464a5a;
+  --ink-3: #676b7d;
+
+  /* primary accent — interaction: focus, selection, the active route */
+  --accent: #5b3fd6;
+  --accent-hover: #4a31bd;
+  --accent-ink: #ffffff;
+  --accent-soft: #ebe6ff;
+  --accent-line: #b7a8f2;
+
+  /*
+   * Secondary accent — confirmation: synced, connected, complete.
+   *
+   * A second hue with a *job*, not a second decoration. Where violet means
+   * "you are here" or "this is interactive", mint means "this is settled".
+   */
+  --accent-2: #0c7a67;
+  --accent-2-ink: #ffffff;
+  --accent-2-soft: #d6f2ea;
+  --accent-2-line: #7cc9b7;
+
+  /* semantic, deliberately separate from both accents */
+  --ok: #1f7a4d;
+  --ok-soft: #dcf2e4;
+  --warn: #93630a;
+  --warn-soft: #f8ecd5;
+  --danger: #c0392b;
+  --danger-soft: #fbe3df;
+  --info: #2563c9;
+  --info-soft: #e2ecfd;
+
+  /* priority — none has no mark at all */
+  --priority-low: #8b8f9d;
+  --priority-medium: #4f668a;
+  --priority-high: #93630a;
+  --priority-urgent: #c0392b;
+
+  /*
+   * Project accents. A project stores a colour *name* ("teal"), so the palette
+   * has to be resolvable from a string — which is exactly what a token is for.
+   * Components read `var(--project-teal)`; none of them contains a hex value.
+   */
+  --project-teal: #0f8a76;
+  --project-mint: #2f9c6a;
+  --project-green: #4a8b2c;
+  --project-amber: #a8760c;
+  --project-rose: #b13f5d;
+  --project-violet: #6b4bb8;
+  --project-blue: #2b6cb0;
+  --project-slate: #5a6b74;
+
+  /* shape */
+  --radius-sm: 5px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+
+  /*
+   * Elevation. Two steps only — a card and a thing floating over the app.
+   * A dark interface gets most of its depth from the surface ladder, so the
+   * shadows are there to separate a popover from the page, not to make
+   * everything look like it is hovering.
+   */
+  --shadow-sm: 0 1px 2px rgb(16 18 27 / 0.06), 0 1px 1px rgb(16 18 27 / 0.04);
+  --shadow-lg: 0 16px 40px -12px rgb(16 18 27 / 0.18), 0 4px 12px -4px rgb(16 18 27 / 0.1);
+
+  /* motion */
+  --duration-fast: 120ms;
+  --duration-base: 180ms;
+  --duration-slow: 320ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* density — switched by [data-density] on <html> */
+  --row-height: 40px;
+}
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --canvas: #0b0c10;
+  --sidebar: #0f1116;
+  --surface: #14161d;
+  --elevated: #1a1d26;
+  --sunken: #101219;
+  --line: #2a2e3c;
+  --line-strong: #59637d;
+
+  --ink: #e9ebf2;
+  --ink-2: #a6abbb;
+  --ink-3: #7d8499;
+
+  --accent: #9f8cff;
+  --accent-hover: #b3a3ff;
+  --accent-ink: #0a0812;
+  --accent-soft: #1e1a33;
+  --accent-line: #473c78;
+
+  --accent-2: #4fd9bc;
+  --accent-2-ink: #04140f;
+  --accent-2-soft: #0e2b26;
+  --accent-2-line: #2a6357;
+
+  --ok: #4ed197;
+  --ok-soft: #0f2a1f;
+  --warn: #edb44e;
+  --warn-soft: #2e2413;
+  --danger: #ff7d6d;
+  --danger-soft: #351d1b;
+  --info: #7db2ff;
+  --info-soft: #16233a;
+
+  --priority-low: #7d8499;
+  --priority-medium: #8fabd4;
+  --priority-high: #edb44e;
+  --priority-urgent: #ff7d6d;
+
+  --project-teal: #4fd9bc;
+  --project-mint: #7fe0a6;
+  --project-green: #a8d977;
+  --project-amber: #eec277;
+  --project-rose: #f28fae;
+  --project-violet: #b39cf5;
+  --project-blue: #7fb6f0;
+  --project-slate: #a3b3ba;
+
+  /*
+   * Darker and larger than the light theme's. A shadow on a near-black canvas
+   * has almost nothing to darken, so separation comes from the ring of light
+   * the elevated surface itself provides — the shadow only anchors it.
+   */
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 20px 48px -12px rgb(0 0 0 / 0.7), 0 4px 12px -4px rgb(0 0 0 / 0.5);
+}
+
+[data-density='compact'] {
+  --row-height: 32px;
+}
+
+/* No data-theme stamped (JS disabled) — follow the OS. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme]) {
+    color-scheme: dark;
+
+    --canvas: #0b0c10;
+    --sidebar: #0f1116;
+    --surface: #14161d;
+    --elevated: #1a1d26;
+    --sunken: #101219;
+    --line: #2a2e3c;
+    --line-strong: #59637d;
+
+    --ink: #e9ebf2;
+    --ink-2: #a6abbb;
+    --ink-3: #7d8499;
+
+    --accent: #9f8cff;
+    --accent-hover: #b3a3ff;
+    --accent-ink: #0a0812;
+    --accent-soft: #1e1a33;
+    --accent-line: #473c78;
+
+    --accent-2: #4fd9bc;
+    --accent-2-ink: #04140f;
+    --accent-2-soft: #0e2b26;
+    --accent-2-line: #2a6357;
+
+    --ok: #4ed197;
+    --ok-soft: #0f2a1f;
+    --warn: #edb44e;
+    --warn-soft: #2e2413;
+    --danger: #ff7d6d;
+    --danger-soft: #351d1b;
+    --info: #7db2ff;
+    --info-soft: #16233a;
+
+    --priority-low: #7d8499;
+    --priority-medium: #8fabd4;
+    --priority-high: #edb44e;
+    --priority-urgent: #ff7d6d;
+
+    --project-teal: #4fd9bc;
+    --project-mint: #7fe0a6;
+    --project-green: #a8d977;
+    --project-amber: #eec277;
+    --project-rose: #f28fae;
+    --project-violet: #b39cf5;
+    --project-blue: #7fb6f0;
+    --project-slate: #a3b3ba;
+
+    --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.4);
+    --shadow-lg: 0 20px 48px -12px rgb(0 0 0 / 0.7), 0 4px 12px -4px rgb(0 0 0 / 0.5);
+  }
+}

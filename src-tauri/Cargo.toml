@@ -1,0 +1,68 @@
+[package]
+name = "vaultwork"
+version = "0.1.0"
+description = "Vaultwork — a local-first personal productivity workspace"
+authors = ["Vaultwork"]
+edition = "2021"
+rust-version = "1.77.2"
+
+# The library is what the desktop binary and the integration tests both link
+# against; `main.rs` is a four-line shim over it.
+#
+# `rlib` only. The Tauri template also lists `staticlib` and `cdylib`, which
+# exist for iOS and Android — targets M13 explicitly defers. Keeping them on a
+# desktop-only build fails outright, because a staticlib needs every transitive
+# dependency available as an rlib and `wry` and `muda` are not.
+[lib]
+name = "vaultwork_lib"
+crate-type = ["rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+tauri-plugin-notification = "2"
+tauri-plugin-window-state = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+# Telegram (M14). `rustls-tls` rather than the system TLS stack so the build
+# does not depend on OpenSSL headers being present; `json` for the Bot API.
+reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
+tokio = { version = "1", features = ["time", "sync", "rt"] }
+pdf-extract = "0.12"
+
+# The bot token lives in the OS credential store, never on disk in the clear.
+# macOS Keychain here; the other backends are declared so the intent is legible
+# even though M14 is only verified on macOS.
+[target.'cfg(target_os = "macos")'.dependencies]
+keyring = { version = "3", features = ["apple-native"] }
+
+[target.'cfg(target_os = "windows")'.dependencies]
+keyring = { version = "3", features = ["windows-native"] }
+
+[target.'cfg(target_os = "linux")'.dependencies]
+keyring = { version = "3", features = ["sync-secret-service"] }
+
+[features]
+# Ships a smaller binary in release; the dev profile keeps the devtools.
+default = []
+
+[profile.release]
+# `panic = "abort"` was here, and it is deliberately gone.
+#
+# It made `catch_unwind` inert in the shipped binary while leaving it working in
+# every test — because cargo forces `panic = "unwind"` for test targets, even
+# under `--release`. So the guard around PDF extraction passed its tests and
+# did nothing in the product: a PDF that panics `pdf-extract` aborted the whole
+# application with SIGABRT on the main thread.
+#
+# The guard is scoped to that one third-party call and catches at the innermost
+# point, so nothing unwinds out of Rust. A panic anywhere else still aborts —
+# Rust aborts on unwind out of an `extern "C"` frame — so this recovers what is
+# recoverable and changes nothing about the rest.
+codegen-units = 1
+lto = true
+opt-level = "s"
+strip = true
