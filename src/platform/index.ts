@@ -1,5 +1,6 @@
 import { browserVault, isFileSystemAccessSupported } from './browser/browserVault'
 import { downloadFileSystem } from './browser/downloadFileSystem'
+import { noDesktop } from './browser/noDesktop'
 import { noMenu } from './browser/noMenu'
 import { nullAi } from './browser/nullAi'
 import { unsupportedTelegram } from './browser/unsupportedTelegram'
@@ -11,6 +12,7 @@ import { deriveCapabilities, type Capabilities } from './capabilities'
 import { currentRuntime, isBrowser, isTauri, type RuntimeKind } from './runtime'
 import { tauriBridge } from './tauri/bridge'
 import { createTauriAi } from './tauri/tauriAi'
+import { createTauriDesktop } from './tauri/tauriDesktop'
 import { createTauriMenu } from './tauri/tauriMenu'
 import { createTauriTelegram } from './tauri/tauriTelegram'
 import { createTauriNotifications } from './tauri/tauriNotifications'
@@ -23,6 +25,7 @@ import type {
   TelegramPort,
   NotificationPort,
   SnapshotStore,
+  DesktopPort,
   VaultPort,
 } from './ports'
 
@@ -39,6 +42,8 @@ export interface Platform {
   vault: VaultPort
   /** The native menu bar. Never fires in a browser. */
   menu: MenuPort
+  /** Login items and other OS integration. Inert in a browser. */
+  desktop: DesktopPort
   capabilities: Capabilities
 }
 
@@ -73,6 +78,7 @@ export function resolvePlatform(): Platform {
     ? createTauriNotifications(tauriBridge)
     : webNotifications
   const menu: MenuPort = desktop ? createTauriMenu(tauriBridge) : noMenu
+  const desktopPort: DesktopPort = desktop ? createTauriDesktop(tauriBridge) : noDesktop
   const telegram: TelegramPort = desktop ? createTauriTelegram(tauriBridge) : unsupportedTelegram
 
   // The provider key lives in the OS keychain and is spent in the native
@@ -90,6 +96,7 @@ export function resolvePlatform(): Platform {
     snapshots,
     vault,
     menu,
+    desktop: desktopPort,
   }
 
   return { ...parts, capabilities: deriveCapabilities(parts) }

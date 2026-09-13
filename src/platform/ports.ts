@@ -89,6 +89,32 @@ export interface PdfText {
   bytes: number
 }
 
+/**
+ * Desktop integration that belongs to no other port.
+ *
+ * Currently one setting: whether the operating system opens Vaultwork after
+ * login. Deliberately its own port rather than a field on the Telegram one —
+ * Telegram auto-start decides what happens once Vaultwork is running, this
+ * decides whether it is running at all, and conflating them would make the
+ * Settings copy impossible to write honestly.
+ */
+export interface DesktopPort {
+  readonly id: string
+  /** False in the browser, where there is no login item to register. */
+  readonly isSupported: boolean
+
+  /**
+   * Whether Vaultwork opens after login, as the OS currently has it.
+   *
+   * Asked of the system rather than remembered, so removing the login item in
+   * System Settings is reflected here instead of leaving a checkbox that lies.
+   */
+  launchAtLogin(): Promise<boolean>
+
+  /** Returns the state the OS ended up in, which may differ from the request. */
+  setLaunchAtLogin(enabled: boolean): Promise<boolean>
+}
+
 export interface VaultPort {
   readonly id: string
   /** False when the environment cannot reach a vault at all. */

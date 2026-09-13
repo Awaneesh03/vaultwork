@@ -32,6 +32,7 @@ serde_json = "1"
 reqwest = { version = "0.12", default-features = false, features = ["json", "rustls-tls"] }
 tokio = { version = "1", features = ["time", "sync", "rt"] }
 pdf-extract = "0.12"
+tauri-plugin-autostart = "2"
 
 # The bot token lives in the OS credential store, never on disk in the clear.
 # macOS Keychain here; the other backends are declared so the intent is legible

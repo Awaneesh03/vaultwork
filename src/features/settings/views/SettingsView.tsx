@@ -12,6 +12,7 @@ import { useUiStore } from '@/store/uiStore'
 import { useDataActions } from '../hooks/useDataActions'
 import { useDiagnostics } from '../hooks/useDiagnostics'
 import { AssistantSection } from '../components/AssistantSection'
+import { DesktopSection } from '../components/DesktopSection'
 import { TelegramSection } from '../components/TelegramSection'
 import { useStorageReport } from '../hooks/useStorageReport'
 
@@ -228,6 +229,13 @@ export function SettingsView() {
             .
           </p>
         )}
+      </Section>
+
+      <Section
+        title="Desktop"
+        description="How Vaultwork behaves as a macOS application, separately from what it does once it is open."
+      >
+        <DesktopSection />
       </Section>
 
       <Section

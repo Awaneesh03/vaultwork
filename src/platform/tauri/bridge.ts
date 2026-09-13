@@ -159,6 +159,10 @@ export interface TauriBridge {
   vaultReadPdfText(path: string): Promise<BridgePdfText>
   runtimeInfo(): Promise<BridgeRuntimeInfo>
 
+  /** Launch at login. Reads and writes the real macOS login item. */
+  desktopLaunchAtLogin(): Promise<boolean>
+  desktopSetLaunchAtLogin(enabled: boolean): Promise<boolean>
+
   notificationPermission(): Promise<boolean>
   requestNotificationPermission(): Promise<boolean>
   notify(title: string, body: string | undefined): Promise<void>
@@ -233,6 +237,9 @@ export const tauriBridge: TauriBridge = {
   vaultCreateDirectory: (path) => invoke<void>('vault_create_dir', { path }),
   vaultList: (path) => invoke<BridgeEntry[]>('vault_list', { path: path ?? null }),
   vaultReadPdfText: (path) => invoke<BridgePdfText>('vault_read_pdf_text', { path }),
+
+  desktopLaunchAtLogin: () => invoke<boolean>('desktop_launch_at_login'),
+  desktopSetLaunchAtLogin: (enabled) => invoke<boolean>('desktop_set_launch_at_login', { enabled }),
 
   async runtimeInfo() {
     const raw = await invoke<RawRuntimeInfo>('runtime_info')

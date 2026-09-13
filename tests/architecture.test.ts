@@ -531,6 +531,10 @@ describe('the Tauri runtime boundary', () => {
 
     expect(sources.sort()).toEqual([
       'ai.rs',
+      // OS integration only — the login item, and nothing else. It holds no
+      // model, reads no database and makes no request; see the network check
+      // immediately below, which it is deliberately not exempt from.
+      'desktop.rs',
       'lib.rs',
       'main.rs',
       'menu.rs',

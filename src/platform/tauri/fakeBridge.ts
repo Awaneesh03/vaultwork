@@ -124,6 +124,8 @@ export function createFakeTauriBridge(options: FakeBridgeOptions = {}): FakeTaur
   const directories = new Set<string>()
   /** Extracted text per PDF path — the bridge only ever returns text. */
   const pdfTexts = new Map<string, string>()
+  /** The login item, as the fake OS has it. Starts off, like a fresh install. */
+  let launchAtLogin = false
   const calls: string[] = []
   const sent: { title: string; body: string | undefined }[] = []
   const failures = new Map<string, BridgeFailure | BridgeTelegramFailure | BridgeAiFailure>()
@@ -390,6 +392,21 @@ export function createFakeTauriBridge(options: FakeBridgeOptions = {}): FakeTaur
       for (const full of directories) consider(full, 'directory')
 
       return [...seen.values()].sort((a, b) => a.name.localeCompare(b.name))
+    },
+
+    async desktopLaunchAtLogin() {
+      const problem = guard('desktopLaunchAtLogin', null)
+      if (problem) throw problem
+      return launchAtLogin
+    },
+
+    async desktopSetLaunchAtLogin(enabled: boolean) {
+      const problem = guard('desktopSetLaunchAtLogin', null)
+      if (problem) throw problem
+      launchAtLogin = enabled
+      // The real command re-reads the OS rather than echoing the request, so
+      // the fake returns the stored value for the same reason.
+      return launchAtLogin
     },
 
     async runtimeInfo(): Promise<BridgeRuntimeInfo> {

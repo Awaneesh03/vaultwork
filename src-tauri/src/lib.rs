@@ -23,6 +23,7 @@ mod telegram;
 // Public so `tests/filesystem.rs` can drive the real filesystem functions
 // against a temporary directory. Only the free functions are reachable; the
 // commands still need an `AppHandle` and Tauri's own state.
+pub mod desktop;
 pub mod vault;
 
 use std::sync::Arc;
@@ -37,6 +38,15 @@ pub fn run() {
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
+        /*
+         * Launch at login. `Args::None` because Vaultwork takes no command
+         * line, and nothing is passed to a login-launched instance that a
+         * hand-started one does not get — the two must behave identically.
+         */
+        .plugin(tauri_plugin_autostart::init(
+            tauri_plugin_autostart::MacosLauncher::LaunchAgent,
+            None,
+        ))
         .manage(vault::VaultState::default())
         .manage(Arc::new(telegram::TelegramState::default()))
         .manage(Arc::new(ai::AiState::default()))
@@ -88,6 +98,8 @@ pub fn run() {
             vault::vault_list,
             vault::vault_read_pdf_text,
             vault::runtime_info,
+            desktop::desktop_launch_at_login,
+            desktop::desktop_set_launch_at_login,
             telegram::telegram_status,
             telegram::telegram_configure,
             telegram::telegram_test,
