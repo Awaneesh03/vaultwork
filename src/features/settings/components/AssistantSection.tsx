@@ -134,7 +134,7 @@ export function AssistantSection() {
       ) : null}
 
       {confirmingDisconnect ? (
-        <div className="flex flex-col gap-2 rounded-lg border border-line bg-surface p-3">
+        <div className="flex flex-col gap-2 panel p-3">
           <p className="text-body text-ink">Remove the provider key?</p>
           <p className="text-body text-ink-2">
             Clears the key from this machine and switches the assistant off. Your tasks, notes,

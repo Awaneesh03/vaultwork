@@ -115,7 +115,7 @@ export function CalendarTimeGrid({
   }, [period, showsToday])
 
   return (
-    <div className="overflow-hidden rounded-lg border border-line bg-surface">
+    <div className="overflow-hidden panel">
       {/* Day headers */}
       <div
         className="grid border-b border-line bg-sunken"

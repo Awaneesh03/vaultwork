@@ -107,7 +107,7 @@ export function KnowledgeGraphView({
 
   return (
     <div className={cn('flex flex-col gap-2', className)}>
-      <div className="relative overflow-hidden rounded-lg border border-line bg-surface">
+      <div className="relative overflow-hidden panel">
         <svg
           viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
           width="100%"

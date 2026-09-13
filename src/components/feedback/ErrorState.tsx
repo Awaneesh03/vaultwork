@@ -15,7 +15,7 @@ export function ErrorState({
   onRetry?: () => void
 }) {
   return (
-    <div className="flex flex-col items-start gap-3 rounded-lg border border-line bg-surface p-5">
+    <div className="flex flex-col items-start gap-3 panel p-5">
       <div className="flex items-center gap-2 text-danger">
         <AlertTriangle size={16} aria-hidden />
         <p className="text-strong font-medium">{title}</p>

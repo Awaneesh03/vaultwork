@@ -85,7 +85,7 @@ export function ObsidianView() {
       />
 
       {connected ? (
-        <section className="flex flex-col gap-3.5 rounded-lg border border-line bg-surface p-4 shadow-[var(--shadow-sm)]">
+        <section className="flex flex-col gap-3.5 panel p-4 shadow-[var(--shadow-sm)]">
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="t-section text-ink">Sync</h3>
             <span className="flex-1" />

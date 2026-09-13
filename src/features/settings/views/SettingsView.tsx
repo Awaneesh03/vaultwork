@@ -31,7 +31,7 @@ function Section({
      * rules. Settings is a screen people scan for one control, and a bounded
      * panel is far easier to skip past than a paragraph break.
      */
-    <section className="flex flex-col gap-3.5 rounded-lg border border-line bg-surface p-4 shadow-[var(--shadow-sm)]">
+    <section className="flex flex-col gap-3.5 panel p-4 shadow-[var(--shadow-sm)]">
       <div className="flex flex-col gap-1">
         <h3 className="t-section text-ink">{title}</h3>
         {description ? <p className="t-meta max-w-prose text-ink-3">{description}</p> : null}
@@ -132,7 +132,7 @@ export function SettingsView() {
       >
         <DataView data={storage.report} isEmpty={() => false}>
           {(report) => (
-            <div className="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4">
+            <div className="flex flex-col gap-3 panel p-4">
               <div className="flex items-center gap-2">
                 <HardDrive size={14} className="text-ink-3" aria-hidden />
                 <span className="text-strong text-ink">
@@ -207,7 +207,7 @@ export function SettingsView() {
         {data.state.error ? <p className="text-body text-danger">{data.state.error}</p> : null}
 
         {data.snapshots && data.snapshots.length > 0 ? (
-          <ul className="divide-y divide-line rounded-lg border border-line bg-surface">
+          <ul className="divide-y divide-line panel">
             {data.snapshots.map((snapshot) => (
               <li key={snapshot.id} className="flex items-center gap-3 px-3.5 py-2.5">
                 <span className="flex-1 font-mono text-body text-ink-2">{snapshot.id}</span>
@@ -335,7 +335,7 @@ export function SettingsView() {
           person writing a note would meet it — it answers "is my data actually
           safe here?", which is a question you go looking for.
         */}
-        <details className="rounded-lg border border-line bg-surface">
+        <details className="panel">
           <summary className="cursor-pointer px-3.5 py-2.5 text-body text-ink-2">
             Diagnostics
           </summary>

@@ -224,7 +224,7 @@ export function FocusView() {
           }
         >
           {(sessions) => (
-            <ul className="divide-y divide-line rounded-lg border border-line bg-surface">
+            <ul className="divide-y divide-line panel">
               {sessions.map((session) => (
                 <HistoryRow key={session.id} session={session} />
               ))}

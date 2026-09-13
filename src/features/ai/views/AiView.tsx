@@ -48,7 +48,7 @@ function Unavailable({ reason }: { reason: NonNullable<AiAssistant['unavailable'
   }[reason]
 
   return (
-    <div className="flex max-w-prose flex-col gap-3 rounded-lg border border-line bg-surface p-5 shadow-[var(--shadow-sm)]">
+    <div className="flex max-w-prose flex-col gap-3 panel p-5 shadow-[var(--shadow-sm)]">
       <h2 className="t-section text-ink">{copy.title}</h2>
       <p className="t-body leading-relaxed text-ink-2">{copy.body}</p>
       <div>

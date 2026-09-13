@@ -221,7 +221,7 @@ export function HabitsView() {
 
       {data ? (
         <div
-          className="flex flex-wrap items-center gap-3 rounded-lg border border-line bg-surface px-3 py-2"
+          className="flex flex-wrap items-center gap-3 panel px-3 py-2"
           aria-label="Today's habits"
         >
           <span className="t-eyebrow text-ink-3">Today</span>

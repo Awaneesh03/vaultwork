@@ -30,10 +30,7 @@ export function UnscheduledPanel({
   className?: string
 }) {
   return (
-    <section
-      aria-label="Unscheduled"
-      className={cn('flex min-w-0 flex-col rounded-lg border border-line bg-surface', className)}
-    >
+    <section aria-label="Unscheduled" className={cn('flex min-w-0 flex-col panel', className)}>
       <header className="flex items-center gap-2 border-b border-line px-3 py-2">
         <Inbox size={12} className="text-ink-3" aria-hidden />
         <h3 className="t-eyebrow text-ink-3">Unscheduled</h3>

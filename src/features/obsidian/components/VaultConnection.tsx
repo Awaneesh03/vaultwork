@@ -53,7 +53,7 @@ export function VaultConnection({
   const state = status?.state ?? null
 
   return (
-    <section className="flex flex-col gap-3 rounded-lg border border-line bg-surface p-4 shadow-[var(--shadow-sm)]">
+    <section className="flex flex-col gap-3 panel p-4 shadow-[var(--shadow-sm)]">
       <div className="flex flex-wrap items-center gap-2">
         <FolderOpen size={15} className="shrink-0 text-accent" aria-hidden />
         <h3 className="text-strong font-semibold text-ink">Obsidian vault</h3>

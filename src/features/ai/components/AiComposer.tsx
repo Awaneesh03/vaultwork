@@ -51,7 +51,7 @@ export function AiComposer({
       <label htmlFor="ai-composer" className="sr-only">
         Ask the assistant
       </label>
-      <div className="flex items-end gap-2 rounded-lg border border-line bg-surface p-2 focus-within:border-accent-line">
+      <div className="flex items-end gap-2 panel p-2 focus-within:border-accent-line">
         <textarea
           id="ai-composer"
           ref={field}

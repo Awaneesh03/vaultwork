@@ -69,7 +69,7 @@ function Section({
   if (items.length === 0) return null
 
   return (
-    <section className="overflow-hidden rounded-lg border border-line bg-surface">
+    <section className="overflow-hidden panel">
       <h3>
         <button
           type="button"
@@ -361,7 +361,7 @@ export function SyncCenterView() {
               ) : null}
 
               {plan.errors.length > 0 ? (
-                <section className="flex flex-col gap-1.5 rounded-lg border border-line bg-surface p-3">
+                <section className="flex flex-col gap-1.5 panel p-3">
                   <h3 className="t-eyebrow text-ink-3">Could not be read</h3>
                   <ul className="flex flex-col gap-1">
                     {plan.errors.map((error) => (

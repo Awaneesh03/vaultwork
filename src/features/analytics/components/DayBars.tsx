@@ -52,7 +52,7 @@ export function DayBars({ data, label, format = (value) => String(value) }: DayB
   )
 
   return (
-    <figure className="flex flex-col gap-2.5 rounded-lg border border-line bg-surface p-3.5 shadow-[var(--shadow-sm)]">
+    <figure className="flex flex-col gap-2.5 panel p-3.5 shadow-[var(--shadow-sm)]">
       <figcaption id={captionId} className="text-body font-medium text-ink-2">
         {label}
       </figcaption>

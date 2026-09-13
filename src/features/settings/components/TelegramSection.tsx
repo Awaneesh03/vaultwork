@@ -199,7 +199,7 @@ export function TelegramSection() {
       ) : null}
 
       {confirmingDisconnect ? (
-        <div className="flex flex-col gap-2 rounded-lg border border-line bg-surface p-3">
+        <div className="flex flex-col gap-2 panel p-3">
           <p className="text-body text-ink">Remove the bot token?</p>
           <p className="text-body text-ink-2">
             Stops polling and clears the token and the authorized chat from this machine. Your

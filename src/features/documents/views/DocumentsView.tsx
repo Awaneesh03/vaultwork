@@ -112,7 +112,7 @@ export function DocumentsView() {
               description="Search looks at note text and the text extracted from your PDFs. A PDF with no text layer has nothing to match."
             />
           ) : (
-            <ul className="divide-y divide-line rounded-lg border border-line bg-surface">
+            <ul className="divide-y divide-line panel">
               {results.map((hit) => (
                 <HitRow key={`${hit.sourceType}:${hit.id}`} hit={hit} />
               ))}
@@ -141,7 +141,7 @@ export function DocumentsView() {
             }
           >
             {(rows) => (
-              <ul className="divide-y divide-line rounded-lg border border-line bg-surface">
+              <ul className="divide-y divide-line panel">
                 {rows.map((document) => {
                   const note = extractionNote(document)
                   return (

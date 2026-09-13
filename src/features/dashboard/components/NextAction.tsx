@@ -42,7 +42,7 @@ export function NextAction({
     return (
       <section
         aria-label="Next action"
-        className="flex flex-col gap-2 rounded-lg border border-line bg-surface p-5 shadow-[var(--shadow-sm)]"
+        className="flex flex-col gap-2 panel p-5 shadow-[var(--shadow-sm)]"
       >
         <span className="t-eyebrow flex items-center gap-1.5 text-ink-3">
           <Sparkles size={12} aria-hidden />

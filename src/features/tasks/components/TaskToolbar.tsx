@@ -207,7 +207,7 @@ export function TaskToolbar({
       </div>
 
       {open ? (
-        <div className="flex flex-col gap-2.5 rounded-lg border border-line bg-surface p-3">
+        <div className="flex flex-col gap-2.5 panel p-3">
           <div className="flex flex-wrap items-center gap-1.5">
             <span className="mr-1 t-eyebrow text-ink-3">Priority</span>
             {PRIORITIES.filter((priority) => priority !== 'none').map((priority) => (

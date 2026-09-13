@@ -26,7 +26,7 @@ const RANGE_LABEL: Record<AnalyticsRange, string> = {
 /** A headline number. Not a chart, because a single value is not a shape. */
 function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="flex flex-col gap-1 rounded-lg border border-line bg-surface px-3.5 py-3 shadow-[var(--shadow-sm)]">
+    <div className="flex flex-col gap-1 panel px-3.5 py-3 shadow-[var(--shadow-sm)]">
       <span className="t-eyebrow text-ink-3">{label}</span>
       <span className="t-stat text-ink">{value}</span>
       {hint ? <span className="t-meta text-ink-3">{hint}</span> : null}
