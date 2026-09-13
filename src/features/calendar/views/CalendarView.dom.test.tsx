@@ -7,7 +7,7 @@ import { createProject, executeText } from '@/services'
 import { useCalendarUiStore } from '@/store/calendarUiStore'
 import { useTaskUiStore } from '@/store/taskUiStore'
 import { useToastStore } from '@/store/toastStore'
-import { freezeClock, resetDatabase, waitOutsideAct } from '../../../../tests/helpers'
+import { freezeClock, resetDatabase } from '../../../../tests/helpers'
 import { CalendarView } from './CalendarView'
 
 /**
@@ -121,10 +121,14 @@ describe('the month view', () => {
   })
 
   it('collapses a busy day into "+N more" rather than growing the cell', async () => {
+    const tSetup = Date.now()
     for (let i = 1; i <= 6; i += 1) await capture(`Task ${i} 2026-09-10`)
+    console.log('[timing] 6 captures took', Date.now() - tSetup, 'ms')
 
+    const tMount = Date.now()
     mount()
     await grid()
+    console.log('[timing] mount+grid took', Date.now() - tMount, 'ms')
 
     const cell = screen.getByRole('gridcell', { name: /10 Sep 2026, 6 tasks/ })
     // Three chips fit; the rest collapse.
@@ -144,21 +148,27 @@ describe('the month view', () => {
     expect(useCalendarUiStore.getState().selectedDate).toBe('2026-09-10')
 
     /*
-     * Polled outside `act`, not with `waitFor`.
+     * Known flaky, and characterised rather than papered over.
      *
-     * The click switches mode to `day` and sets `selectedDate`, which *rebuilds*
-     * the calendar's live query — a new options object, so a new subscription.
-     * `waitFor` polls from inside `act`, and in this jsdom + fake-indexeddb
-     * setup that starves Dexie's liveQuery task queue: the DOM does update, but
-     * only once control returns to real timers, so the poll never observes it
-     * however long it is given. That is why this failed roughly one run in five
-     * under the full parallel suite and passed every time in isolation — and
-     * why raising the timeout would have hidden it rather than fixed it.
+     * When this works the day view paints in 16-20ms. When it fails it never
+     * paints at all — the assertion still fails at 4000ms having seen nothing.
+     * It is a *binary* missed emission, not slowness, so raising the timeout
+     * does not help and neither did moving the poll outside `act`: that made it
+     * worse (2 failures in 8 isolated runs), because `waitFor` polling inside
+     * `act` is what flushes the update.
      *
-     * `waitOutsideAct` schedules the poll where the subscription can actually
-     * deliver. The assertion is unchanged.
+     * The cause is the first emission of `useCalendar`'s live query going
+     * missing after its deps change, under fake-indexeddb. `useCalendar` itself
+     * is correct — primitive deps, no resubscribe thrash — so the fix is not in
+     * the test and not obviously in the hook either.
+     *
+     * The timeout is deliberately below vitest's 5000ms `testTimeout` so a
+     * failure reports *this* assertion rather than dying as a bare suite
+     * timeout with nothing to diagnose, which is how it presented before.
      */
-    await waitOutsideAct(() => expect(screen.getByText('Thursday, 10 Sep 2026')).toBeTruthy())
+    await waitFor(() => expect(screen.getByText('Thursday, 10 Sep 2026')).toBeTruthy(), {
+      timeout: 4000,
+    })
   })
 })
 

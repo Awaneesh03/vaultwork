@@ -1,5 +1,6 @@
 import { FileText, NotebookPen, Search } from 'lucide-react'
 import { Link } from 'react-router-dom'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { Badge } from '@/components/ui/Badge'
 import { DataView } from '@/components/feedback/DataView'
 import { EmptyState } from '@/components/feedback/EmptyState'
@@ -79,14 +80,11 @@ export function DocumentsView() {
   return (
     <div className="flex max-w-3xl flex-col gap-6">
       <header className="flex flex-col gap-1">
-        <h2 className="t-page flex items-center gap-2">
-          <FileText size={16} className="text-ink-3" aria-hidden />
-          Documents
-        </h2>
-        <p className="t-meta max-w-prose text-ink-3">
-          PDFs read from your Obsidian vault. Vaultwork indexes their text so you can search it —
-          the files themselves are never changed.
-        </p>
+        <PageHeader
+          icon={<FileText size={15} aria-hidden />}
+          title="Documents"
+          description="PDFs read from your Obsidian vault. Vaultwork indexes their text so you can search it — the files themselves are never changed."
+        />
       </header>
 
       <label className="flex items-center gap-2 rounded-md border border-line-strong bg-surface px-2.5 py-2 transition-colors focus-within:border-accent hover:border-accent-line">

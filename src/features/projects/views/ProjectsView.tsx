@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Archive, FolderKanban, Inbox, Plus, TriangleAlert } from 'lucide-react'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { DataView } from '@/components/feedback/DataView'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { Skeleton } from '@/components/feedback/Skeleton'
@@ -196,16 +197,12 @@ export function ProjectsView() {
 
   return (
     <section className="flex flex-col gap-4">
-      <header className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <FolderKanban size={18} className="text-accent" aria-hidden />
-          <h2 className="text-display font-semibold tracking-tight text-ink">Projects</h2>
-          {data ? (
-            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-meta text-ink-2">
-              {data.activeTotal}
-            </span>
-          ) : null}
-          <span className="flex-1" />
+      <PageHeader
+        icon={<FolderKanban size={15} aria-hidden />}
+        title="Projects"
+        description="Work with a lifecycle. Progress is computed from completed tasks every time it is read, so it cannot drift and cannot be faked."
+        meta={data ? <span className="tabular">{data.activeTotal} active</span> : null}
+        actions={
           <Button
             variant="primary"
             size="sm"
@@ -214,12 +211,8 @@ export function ProjectsView() {
           >
             New project
           </Button>
-        </div>
-        <p className="max-w-prose text-strong text-ink-2">
-          Work with a lifecycle. Progress is computed from completed tasks every time it is read, so
-          it cannot drift and cannot be faked.
-        </p>
-      </header>
+        }
+      />
 
       {data ? (
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">

@@ -23,6 +23,7 @@ import type { Priority } from '@/types/enums'
 import { useTagActions } from '../hooks/useTagActions'
 import { useTaskListShortcuts } from '../hooks/useTaskListShortcuts'
 import { useTaskView } from '../hooks/useTaskView'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { QuickAddBar } from './QuickAddBar'
 import { ReschedulePopover } from './ReschedulePopover'
 import { TaskDetailPanel } from './TaskDetailPanel'
@@ -281,23 +282,29 @@ export function TaskViewScreen({ view }: { view: TaskViewId }) {
 
   return (
     <section className="flex flex-col gap-4">
-      <header className="flex flex-col gap-1.5">
-        <div className="flex items-center gap-2.5">
-          <chrome.icon size={18} className="text-accent" aria-hidden />
-          <h2 className="text-display font-semibold tracking-tight">{chrome.title}</h2>
-          {data ? (
-            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-meta text-ink-3">
-              {data.tasks.length}
-            </span>
-          ) : null}
-          {data && data.totalEstimateMin > 0 ? (
-            <span className="tabular text-meta text-ink-3">
-              ≈ {formatEstimate(data.totalEstimateMin)}
-            </span>
-          ) : null}
-        </div>
-        <p className="max-w-prose text-strong text-ink-2">{chrome.blurb}</p>
-      </header>
+      {/*
+        The shared page header, so these six screens open exactly the way every
+        other screen in the application does. The counts move into its `meta`
+        slot, on the title's baseline, so "Today · 12 · ≈ 3h" reads as one
+        statement rather than as a heading with badges stuck to it.
+      */}
+      <PageHeader
+        icon={<chrome.icon size={15} aria-hidden />}
+        title={chrome.title}
+        description={chrome.blurb}
+        meta={
+          data ? (
+            <>
+              <span className="tabular">
+                {data.tasks.length} {data.tasks.length === 1 ? 'task' : 'tasks'}
+              </span>
+              {data.totalEstimateMin > 0 ? (
+                <span className="tabular">≈ {formatEstimate(data.totalEstimateMin)}</span>
+              ) : null}
+            </>
+          ) : null
+        }
+      />
 
       {chrome.quickAdd ? (
         <QuickAddBar

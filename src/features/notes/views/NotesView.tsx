@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react'
 import { FileText, Network, Plus } from 'lucide-react'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { DataView } from '@/components/feedback/DataView'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { Skeleton } from '@/components/feedback/Skeleton'
@@ -91,37 +92,31 @@ export function NotesView() {
 
   return (
     <section className="flex flex-col gap-4">
-      <header className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <FileText size={18} className="text-accent" aria-hidden />
-          <h2 className="text-display font-semibold tracking-tight text-ink">Notes</h2>
-          {data ? (
-            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-meta text-ink-2">
-              {data.counts.all}
-            </span>
-          ) : null}
-          <span className="flex-1" />
-          <Link
-            to="/notes/graph"
-            className="inline-flex h-7 items-center gap-1.5 rounded-md border border-line px-2.5 text-body font-medium text-ink-2 hover:border-accent-line hover:text-ink"
-          >
-            <Network size={12} aria-hidden />
-            Graph
-          </Link>
-          <Button
-            variant="primary"
-            size="sm"
-            onClick={() => openComposer()}
-            icon={<Plus size={12} aria-hidden />}
-          >
-            New note
-          </Button>
-        </div>
-        <p className="max-w-prose text-strong text-ink-2">
-          Markdown, linked to the work it is about. Every note already reserves its place in an
-          Obsidian vault, so syncing later moves files rather than migrating data.
-        </p>
-      </header>
+      <PageHeader
+        icon={<FileText size={15} aria-hidden />}
+        title="Notes"
+        description="Markdown, linked to the work it is about. Every note already reserves its place in an Obsidian vault, so syncing later moves files rather than migrating data."
+        meta={data ? <span className="tabular">{data.counts.all} notes</span> : null}
+        actions={
+          <>
+            <Link
+              to="/notes/graph"
+              className="inline-flex h-7 items-center gap-1.5 rounded-md border border-line px-2.5 text-body font-medium text-ink-2 hover:border-accent-line hover:text-ink"
+            >
+              <Network size={12} aria-hidden />
+              Graph
+            </Link>
+            <Button
+              variant="primary"
+              size="sm"
+              onClick={() => openComposer()}
+              icon={<Plus size={12} aria-hidden />}
+            >
+              New note
+            </Button>
+          </>
+        }
+      />
 
       <NoteToolbar
         filter={filter}

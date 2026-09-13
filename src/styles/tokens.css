@@ -14,10 +14,15 @@
  * --------------------------------------------------------------------------
  * The identity
  *
- * Dark-first graphite with a violet primary and a mint secondary. The violet
- * carries interaction — focus, selection, the active route, the assistant. The
- * mint carries *confirmation*: things that are synced, done, safe. Keeping them
- * on separate jobs is what stops a two-colour palette becoming decoration.
+ * Dark-first, on warm-neutral graphite rather than a blue-grey one: a workspace
+ * that is open all day should feel like paper under lamplight, not like a
+ * terminal.
+ *
+ * Emerald is the primary and carries interaction — focus, selection, the active
+ * route, the confirming action. Violet is the secondary and is reserved almost
+ * entirely for the Assistant, which is the one part of Vaultwork that is not
+ * the user acting on their own data. Two hues, two jobs; that is what stops a
+ * palette becoming decoration.
  *
  * Neither is used for large fills. On a dark interface a saturated area is
  * louder than any amount of text, so the accents live in 1px lines, 2px bars,
@@ -54,25 +59,25 @@
   color-scheme: light;
 
   /* surfaces — five depths and two border weights */
-  --canvas: #f6f6f9;
-  --sidebar: #fbfbfd;
+  --canvas: #f6f7f5;
+  --sidebar: #fbfcfa;
   --surface: #ffffff;
   --elevated: #ffffff;
-  --sunken: #eeeef4;
-  --line: #dfe0e9;
-  --line-strong: #8c8d98;
+  --sunken: #eceee9;
+  --line: #dee1db;
+  --line-strong: #8d908c;
 
   /* text — three weights of attention */
-  --ink: #14151c;
-  --ink-2: #464a5a;
-  --ink-3: #676b7d;
+  --ink: #141713;
+  --ink-2: #454b47;
+  --ink-3: #676d6b;
 
   /* primary accent — interaction: focus, selection, the active route */
-  --accent: #5b3fd6;
-  --accent-hover: #4a31bd;
+  --accent: #0d7a5a;
+  --accent-hover: #0a6349;
   --accent-ink: #ffffff;
-  --accent-soft: #ebe6ff;
-  --accent-line: #b7a8f2;
+  --accent-soft: #daf1e7;
+  --accent-line: #7cc7ab;
 
   /*
    * Secondary accent — confirmation: synced, connected, complete.
@@ -80,15 +85,15 @@
    * A second hue with a *job*, not a second decoration. Where violet means
    * "you are here" or "this is interactive", mint means "this is settled".
    */
-  --accent-2: #0c7a67;
+  --accent-2: #6b4bb8;
   --accent-2-ink: #ffffff;
-  --accent-2-soft: #d6f2ea;
-  --accent-2-line: #7cc9b7;
+  --accent-2-soft: #ece7fa;
+  --accent-2-line: #b4a3ea;
 
   /* semantic, deliberately separate from both accents */
   --ok: #1f7a4d;
   --ok-soft: #dcf2e4;
-  --warn: #93630a;
+  --warn: #92620a;
   --warn-soft: #f8ecd5;
   --danger: #c0392b;
   --danger-soft: #fbe3df;
@@ -96,9 +101,9 @@
   --info-soft: #e2ecfd;
 
   /* priority — none has no mark at all */
-  --priority-low: #8b8f9d;
+  --priority-low: #8b8f8c;
   --priority-medium: #4f668a;
-  --priority-high: #93630a;
+  --priority-high: #92620a;
   --priority-urgent: #c0392b;
 
   /*
@@ -144,28 +149,28 @@
 [data-theme='dark'] {
   color-scheme: dark;
 
-  --canvas: #0b0c10;
-  --sidebar: #0f1116;
-  --surface: #14161d;
-  --elevated: #1a1d26;
-  --sunken: #101219;
-  --line: #2a2e3c;
-  --line-strong: #59637d;
+  --canvas: #0c0d0c;
+  --sidebar: #101210;
+  --surface: #151715;
+  --elevated: #1b1e1b;
+  --sunken: #111311;
+  --line: #262a26;
+  --line-strong: #5c665e;
 
-  --ink: #e9ebf2;
-  --ink-2: #a6abbb;
-  --ink-3: #7d8499;
+  --ink: #eaeee9;
+  --ink-2: #a8b0a8;
+  --ink-3: #8b948c;
 
-  --accent: #9f8cff;
-  --accent-hover: #b3a3ff;
-  --accent-ink: #0a0812;
-  --accent-soft: #1e1a33;
-  --accent-line: #473c78;
+  --accent: #45d9a0;
+  --accent-hover: #5ee0ad;
+  --accent-ink: #04140d;
+  --accent-soft: #0d2a20;
+  --accent-line: #2b6b53;
 
-  --accent-2: #4fd9bc;
-  --accent-2-ink: #04140f;
-  --accent-2-soft: #0e2b26;
-  --accent-2-line: #2a6357;
+  --accent-2: #b39cf5;
+  --accent-2-ink: #0d0918;
+  --accent-2-soft: #1e1833;
+  --accent-2-line: #4a3d7a;
 
   --ok: #4ed197;
   --ok-soft: #0f2a1f;
@@ -176,12 +181,12 @@
   --info: #7db2ff;
   --info-soft: #16233a;
 
-  --priority-low: #7d8499;
+  --priority-low: #8b948c;
   --priority-medium: #8fabd4;
   --priority-high: #edb44e;
   --priority-urgent: #ff7d6d;
 
-  --project-teal: #4fd9bc;
+  --project-teal: #45d9a0;
   --project-mint: #7fe0a6;
   --project-green: #a8d977;
   --project-amber: #eec277;
@@ -208,28 +213,28 @@
   :root:not([data-theme]) {
     color-scheme: dark;
 
-    --canvas: #0b0c10;
-    --sidebar: #0f1116;
-    --surface: #14161d;
-    --elevated: #1a1d26;
-    --sunken: #101219;
-    --line: #2a2e3c;
-    --line-strong: #59637d;
+    --canvas: #0c0d0c;
+    --sidebar: #101210;
+    --surface: #151715;
+    --elevated: #1b1e1b;
+    --sunken: #111311;
+    --line: #262a26;
+    --line-strong: #5c665e;
 
-    --ink: #e9ebf2;
-    --ink-2: #a6abbb;
-    --ink-3: #7d8499;
+    --ink: #eaeee9;
+    --ink-2: #a8b0a8;
+    --ink-3: #8b948c;
 
-    --accent: #9f8cff;
-    --accent-hover: #b3a3ff;
-    --accent-ink: #0a0812;
-    --accent-soft: #1e1a33;
-    --accent-line: #473c78;
+    --accent: #45d9a0;
+    --accent-hover: #5ee0ad;
+    --accent-ink: #04140d;
+    --accent-soft: #0d2a20;
+    --accent-line: #2b6b53;
 
-    --accent-2: #4fd9bc;
-    --accent-2-ink: #04140f;
-    --accent-2-soft: #0e2b26;
-    --accent-2-line: #2a6357;
+    --accent-2: #b39cf5;
+    --accent-2-ink: #0d0918;
+    --accent-2-soft: #1e1833;
+    --accent-2-line: #4a3d7a;
 
     --ok: #4ed197;
     --ok-soft: #0f2a1f;
@@ -240,12 +245,12 @@
     --info: #7db2ff;
     --info-soft: #16233a;
 
-    --priority-low: #7d8499;
+    --priority-low: #8b948c;
     --priority-medium: #8fabd4;
     --priority-high: #edb44e;
     --priority-urgent: #ff7d6d;
 
-    --project-teal: #4fd9bc;
+    --project-teal: #45d9a0;
     --project-mint: #7fe0a6;
     --project-green: #a8d977;
     --project-amber: #eec277;

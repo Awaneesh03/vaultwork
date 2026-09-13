@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Archive, Plus, Repeat } from 'lucide-react'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { DataView } from '@/components/feedback/DataView'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { Skeleton } from '@/components/feedback/Skeleton'
@@ -194,16 +195,12 @@ export function HabitsView() {
 
   return (
     <section className="flex flex-col gap-4">
-      <header className="flex flex-col gap-2">
-        <div className="flex flex-wrap items-center gap-2.5">
-          <Repeat size={18} className="text-accent" aria-hidden />
-          <h2 className="text-display font-semibold tracking-tight text-ink">Habits</h2>
-          {data ? (
-            <span className="tabular rounded-sm bg-sunken px-1.5 py-0.5 text-meta text-ink-2">
-              {data.activeTotal}
-            </span>
-          ) : null}
-          <span className="flex-1" />
+      <PageHeader
+        icon={<Repeat size={15} aria-hidden />}
+        title="Habits"
+        description="A habit is what you intend to repeat; its history is what actually happened. Days a habit is not scheduled never count against it."
+        meta={data ? <span className="tabular">{data.activeTotal} active</span> : null}
+        actions={
           <Button
             variant="primary"
             size="sm"
@@ -212,12 +209,8 @@ export function HabitsView() {
           >
             New habit
           </Button>
-        </div>
-        <p className="max-w-prose text-strong text-ink-2">
-          A habit is what you intend to repeat; its history is what actually happened. Days a habit
-          is not scheduled never count against it.
-        </p>
-      </header>
+        }
+      />
 
       {data ? (
         <div

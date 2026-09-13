@@ -1,4 +1,5 @@
 import { BarChart3 } from 'lucide-react'
+import { PageHeader } from '@/components/ui/PageHeader'
 import { DataView } from '@/components/feedback/DataView'
 import { EmptyState } from '@/components/feedback/EmptyState'
 import { formatEstimate, formatHour } from '@/lib/date'
@@ -92,16 +93,11 @@ export function AnalyticsView() {
   return (
     <div className="flex max-w-5xl flex-col gap-7">
       <header className="flex flex-wrap items-start justify-between gap-3">
-        <div className="flex flex-col gap-1">
-          <h2 className="t-page flex items-center gap-2">
-            <BarChart3 size={16} className="text-ink-3" aria-hidden />
-            Analytics
-          </h2>
-          <p className="t-meta max-w-prose text-ink-3">
-            Counted from the event log each time you open this, so these numbers cannot drift away
-            from what actually happened.
-          </p>
-        </div>
+        <PageHeader
+          icon={<BarChart3 size={15} aria-hidden />}
+          title="Analytics"
+          description="Counted from the event log each time you open this, so these numbers cannot drift away from what actually happened."
+        />
 
         {/* The one control, above the charts it changes. */}
         <div
