@@ -47,12 +47,18 @@ describe('the workspace', () => {
 
     mount(`/notes/${other.id}`)
 
+    /*
+     * The rail and the pane are fed by two independent live queries, which
+     * settle in whichever order Dexie delivers them. Waiting on one and then
+     * reading the other synchronously is a coin toss — both are waited for.
+     */
     // The note being edited…
-    await waitFor(() => expect(screen.getByLabelText('Note title')).toBeTruthy())
-    expect((screen.getByLabelText('Note title') as HTMLInputElement).value).toBe('Graphs')
+    await waitFor(() =>
+      expect((screen.getByLabelText('Note title') as HTMLInputElement).value).toBe('Graphs'),
+    )
     // …and the rest of the collection, at the same time. Before this redesign
     // opening a note replaced the list with a page carrying a back button.
-    expect(screen.getByRole('link', { name: 'Binary search' })).toBeTruthy()
+    expect(await screen.findByRole('link', { name: 'Binary search' })).toBeTruthy()
   })
 
   it('marks the open note in the rail, and only that one', async () => {
@@ -88,7 +94,7 @@ describe('the workspace', () => {
       expect((screen.getByLabelText('Note title') as HTMLInputElement).value).toBe('Binary search'),
     )
     // The rail did not go anywhere.
-    expect(screen.getByRole('link', { name: 'Binary search' })).toBeTruthy()
+    expect(await screen.findByRole('link', { name: 'Binary search' })).toBeTruthy()
   })
 
   it('walks the rail with the arrow keys', async () => {
