@@ -1,6 +1,6 @@
 import { NavLink } from 'react-router-dom'
 import { Settings as SettingsIcon, X } from 'lucide-react'
-import { NAV_GROUPS } from '@/app/navigation'
+import { NAV_GROUPS, ROUTES } from '@/app/navigation'
 import { CountBadge } from '@/components/ui/Badge'
 import { Kbd } from '@/components/ui/Kbd'
 import { useTaskCounts } from '@/features/tasks/hooks/useTaskCounts'
@@ -57,9 +57,15 @@ export function Sidebar() {
       <div className="flex h-14 shrink-0 items-center justify-between px-3.5">
         <div className="flex items-center gap-2.5">
           {/*
-            The mark: a violet square with a mint corner. Small, geometric, and
-            the only decorative element in the chrome — an identity needs one
-            fixed point, and this is cheaper than a logo file.
+            The mark: an emerald square with a violet corner. Small, geometric,
+            and the only decorative element in the chrome — an identity needs
+            one fixed point, and this is cheaper than a logo file.
+
+            It is the product's own two accents side by side, which is the one
+            place both belong: the corner is not indicating anything, it is
+            half of the logo. (The comment said "violet square with a mint
+            corner" until Phase 6 — written before the palette was reversed,
+            and describing the opposite of what it draws.)
           */}
           <span className="relative h-[18px] w-[18px] shrink-0 rounded-[5px] bg-accent" aria-hidden>
             <span className="absolute right-[3px] bottom-[3px] h-[6px] w-[6px] rounded-[2px] bg-accent-2" />
@@ -97,6 +103,19 @@ export function Sidebar() {
                           aria-hidden
                         />
                         <span className="flex-1 truncate">{item.label}</span>
+                        {/*
+                          The Assistant, marked. It is the one entry that
+                          reaches a network and the one that answers in its own
+                          voice, and violet is the colour that says so
+                          everywhere else in the application. The name carries
+                          the meaning for anyone who cannot see the dot.
+                        */}
+                        {item.path === ROUTES.ai ? (
+                          <span
+                            className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent-2"
+                            aria-hidden
+                          />
+                        ) : null}
                         <NavCount path={item.path} counts={counts} />
                         {item.shortcut ? (
                           <Kbd className="opacity-0 transition-opacity group-hover:opacity-100">

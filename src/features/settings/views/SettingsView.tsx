@@ -497,7 +497,12 @@ export function SettingsView() {
                 >
                   Replace my data
                 </Button>
-                <Button size="sm" variant="ghost" onClick={() => setPendingImport(null)}>
+                {/*
+                  A full secondary, not a ghost. The confirmation card in the
+                  Assistant settled this already: backing out of something
+                  destructive must never be the harder of the two to find.
+                */}
+                <Button size="sm" variant="secondary" onClick={() => setPendingImport(null)}>
                   Cancel
                 </Button>
               </div>
