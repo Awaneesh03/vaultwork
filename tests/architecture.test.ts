@@ -1011,7 +1011,14 @@ describe('the AI boundary', () => {
      * than UI type and is deliberately outside the scale. Anything else
      * appearing here means a screen has started inventing its own sizes again.
      */
-    const ALLOWED = new Set(['52px', '68px'])
+    /*
+     * The display numerals — a focus countdown and the analytics headline.
+     * These are figures you read from across a desk, not interface text, and a
+     * scale built for labels and rows has nothing sensible to say about them.
+     * The list is short and enumerated so adding a third means deciding it is
+     * genuinely display type rather than a screen inventing a size again.
+     */
+    const ALLOWED = new Set(['40px', '52px', '68px'])
     const offenders: string[] = []
 
     for (const file of walk(SRC)) {
