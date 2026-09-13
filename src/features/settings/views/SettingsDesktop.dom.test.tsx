@@ -201,6 +201,80 @@ describe('Telegram cannot hold Settings hostage', () => {
  * presence and, more importantly, that it never becomes a place a secret can
  * be read back out of.
  */
+describe('the Telegram automation controls', () => {
+  const realTelegram = platform.telegram
+
+  afterEach(() => {
+    Object.defineProperty(platform, 'telegram', { value: realTelegram, configurable: true })
+  })
+
+  /** A status with everything off, so each test states only what it needs. */
+  const status = (over: Partial<Awaited<ReturnType<typeof realTelegram.status>>> = {}) => ({
+    configured: false,
+    running: false,
+    botUsername: null,
+    authorizedChatId: null,
+    pendingChatId: null,
+    pendingChatName: null,
+    autoStart: false,
+    lastError: null,
+    keychainReads: 0,
+    ...over,
+  })
+
+  const mountWith = (over: Parameters<typeof status>[0]) => {
+    Object.defineProperty(platform, 'telegram', {
+      value: {
+        ...realTelegram,
+        isSupported: true,
+        status: async () => status(over),
+        subscribeStatus: async () => () => {},
+      },
+      configurable: true,
+    })
+    app()
+  }
+
+  /*
+   * The setting that removes the daily "open Settings and press Start" existed
+   * the whole time and was missed, because it sat last in an undifferentiated
+   * stack of buttons. These pin the two things that make it findable: it is
+   * under its own heading, and it says what it does.
+   */
+  it('offers auto-start under an Automation heading once a token is saved', async () => {
+    mountWith({ configured: true })
+
+    expect(await screen.findByText('Automation')).toBeTruthy()
+    expect(screen.getByRole('checkbox', { name: /Start Telegram automatically/ })).toBeTruthy()
+  })
+
+  it('says plainly that the bot only runs while Vaultwork does', async () => {
+    // Polling lives in the desktop process. Someone expecting overnight replies
+    // should learn that here rather than by wondering why nothing answered.
+    mountWith({ configured: true })
+
+    expect(await screen.findByText(/only while Vaultwork is running/)).toBeTruthy()
+  })
+
+  it('hides automation entirely until Telegram is configured', async () => {
+    // Offering to automate something that cannot run is an invitation to a
+    // setting that does nothing.
+    mountWith({ configured: false })
+
+    await screen.findByText('Telegram')
+    expect(screen.queryByText('Automation')).toBeNull()
+    expect(screen.queryByRole('checkbox', { name: /Start Telegram automatically/ })).toBeNull()
+  })
+
+  it('keeps "configured" and "running" as separate statements', async () => {
+    // A saved token means Telegram *can* run, not that it is running.
+    mountWith({ configured: true, running: false })
+
+    expect(await screen.findByRole('button', { name: 'Start' })).toBeTruthy()
+    expect(screen.queryByRole('button', { name: 'Stop' })).toBeNull()
+  })
+})
+
 describe('the Assistant section', () => {
   const realAi = platform.ai
 

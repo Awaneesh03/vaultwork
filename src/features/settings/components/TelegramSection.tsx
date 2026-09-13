@@ -123,7 +123,8 @@ export function TelegramSection() {
       ) : null}
 
       {status.configured ? (
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          <h4 className="t-eyebrow mr-1 text-ink-3">Connection</h4>
           <Button size="sm" disabled={telegram.busy} onClick={() => void telegram.test()}>
             Test connection
           </Button>
@@ -153,15 +154,48 @@ export function TelegramSection() {
       ) : null}
 
       {status.configured ? (
-        <label className="flex items-center gap-2 text-[12.5px] text-ink-2">
-          <input
-            type="checkbox"
-            checked={status.autoStart}
-            disabled={telegram.busy}
-            onChange={(event) => void telegram.setAutoStart(event.target.checked)}
-          />
-          Start Telegram automatically when Vaultwork opens
-        </label>
+        /*
+         * Automation, under its own heading and separated from the manual
+         * controls above it.
+         *
+         * The distinction this section has to carry is "configured" versus
+         * "running": a saved token means Telegram *can* run, not that it is
+         * running now. Those were previously one undifferentiated stack of
+         * controls with the auto-start checkbox last, which is why it reads as
+         * an afterthought and gets missed — the setting that removes the daily
+         * click was the least prominent thing on the panel.
+         */
+        <div className="flex flex-col gap-2 rounded-lg border border-line bg-sunken p-3">
+          <h4 className="t-eyebrow text-ink-3">Automation</h4>
+
+          <label className="flex items-start gap-2.5 text-[12.5px] text-ink">
+            <input
+              type="checkbox"
+              className="mt-[3px]"
+              checked={status.autoStart}
+              disabled={telegram.busy}
+              onChange={(event) => void telegram.setAutoStart(event.target.checked)}
+            />
+            <span className="flex flex-col gap-0.5">
+              <span className="font-medium">Start Telegram automatically</span>
+              <span className="text-[12px] text-ink-3">
+                Starts the worker when Vaultwork opens, so you do not have to come here and press
+                Start. Turning the bot off here, or disconnecting it, also turns this off.
+              </span>
+            </span>
+          </label>
+
+          {/*
+            Said plainly rather than implied. Polling lives in the desktop
+            process, so closing Vaultwork stops it — a user who expects a bot
+            that answers overnight should learn that here and not by wondering
+            why nothing replied.
+          */}
+          <p className="border-t border-line pt-2 text-[11.5px] text-ink-3">
+            Telegram runs only while Vaultwork is running. Closing the app stops the bot until you
+            open it again.
+          </p>
+        </div>
       ) : null}
 
       {confirmingDisconnect ? (
