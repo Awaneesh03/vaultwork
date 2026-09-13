@@ -54,6 +54,11 @@ vaultwork-backup*.json
 .Spotlight-V100
 .Trashes
 
+# ── Logs ──────────────────────────────────────────────────────────────────
+*.log
+npm-debug.log*
+yarn-error.log*
+
 # ── Editors ───────────────────────────────────────────────────────────────
 .idea/
 *.swp
