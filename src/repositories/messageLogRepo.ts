@@ -102,6 +102,21 @@ export const messageLogRepo = {
     return this.setStatus(id, 'failed', { error })
   },
 
+  /**
+   * Hides a message without erasing it (M18.3).
+   *
+   * A dismissed capture leaves every list, but the row — what was said, and
+   * when — stays, soft-deleted like everything else here. `listByStatus`
+   * already skips deleted rows, so no reader needs to learn a new status.
+   */
+  async dismiss(id: Id): Promise<void> {
+    try {
+      await db.messageLog.update(id, { deletedAt: nowTs(), updatedAt: nowTs() })
+    } catch (error) {
+      throw toRepositoryError('messageLog', error, 'dismiss')
+    }
+  },
+
   async setStatus(
     id: Id,
     status: MessageStatus,

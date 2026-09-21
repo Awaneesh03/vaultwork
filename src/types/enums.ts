@@ -72,6 +72,8 @@ export const PROVENANCE_SOURCES = [
   'web',
   'claude',
   'notebooklm',
+  /** M18.3: captured in the Universal Inbox; `sourceId` is the capture's id. */
+  'inbox',
 ] as const
 export type ProvenanceSource = (typeof PROVENANCE_SOURCES)[number]
 
@@ -100,13 +102,22 @@ export const EVENT_SOURCES = [
   'telegram',
   'ai',
   'obsidian',
+  /** M18.3: resolved from a Universal Inbox capture. */
+  'inbox',
 ] as const
 export type EventSource = (typeof EVENT_SOURCES)[number]
 
 export const SYNC_DIRECTIONS = ['push', 'pull', 'both'] as const
 export type SyncDirection = (typeof SYNC_DIRECTIONS)[number]
 
-export const MESSAGE_SOURCES = ['telegram'] as const
+/**
+ * Where an inbound message came from.
+ *
+ * `inbox` (M18.3) is a capture typed into Vaultwork itself. It shares the table
+ * with Telegram because it is the same thing — raw text awaiting a decision —
+ * and the unique `[source+externalId]` index keeps the two apart.
+ */
+export const MESSAGE_SOURCES = ['telegram', 'inbox'] as const
 export type MessageSource = (typeof MESSAGE_SOURCES)[number]
 
 export const MESSAGE_STATUSES = ['pending', 'done', 'failed'] as const
@@ -125,3 +136,21 @@ export function isMember<T extends readonly string[]>(
   return (value): value is T[number] =>
     typeof value === 'string' && (members as readonly string[]).includes(value)
 }
+
+/**
+ * What a Universal Inbox capture can become (M18.3).
+ *
+ * Every one maps to an existing creation command; an "event" is a task with a
+ * date and a time, which is what the Calendar already shows. There is no type
+ * here for anything the application cannot already create.
+ */
+export const INBOX_TYPES = [
+  'task',
+  'event',
+  'note',
+  'knowledge',
+  'project',
+  'goal',
+  'habit',
+] as const
+export type InboxType = (typeof INBOX_TYPES)[number]

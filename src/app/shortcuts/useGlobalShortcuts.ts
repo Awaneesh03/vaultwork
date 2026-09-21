@@ -58,6 +58,7 @@ export function useGlobalShortcuts(): void {
   const location = useLocation()
   const toggleCommandPalette = useUiStore((s) => s.toggleCommandPalette)
   const setCommandPaletteOpen = useUiStore((s) => s.setCommandPaletteOpen)
+  const setCaptureOpen = useUiStore((s) => s.setCaptureOpen)
   const setQuickAddOpen = useTaskUiStore((s) => s.setQuickAddOpen)
   const focusSearch = useTaskUiStore((s) => s.focusSearch)
   const openTask = useTaskUiStore((s) => s.openTask)
@@ -170,6 +171,15 @@ export function useGlobalShortcuts(): void {
         return
       }
 
+      // I captures anything, from anywhere (M18.3). It decides nothing: the
+      // text is kept the moment Enter is pressed, and what it becomes is
+      // settled afterwards — in the dialog, or later in the Inbox.
+      if (key === 'i') {
+        event.preventDefault()
+        setCaptureOpen(true)
+        return
+      }
+
       // N captures. What it captures depends on where you are: on the projects
       // list the obvious new thing is a project, and teleporting to Today
       // instead — which is what an unqualified "go somewhere with a quick add
@@ -232,6 +242,7 @@ export function useGlobalShortcuts(): void {
     navigate,
     toggleCommandPalette,
     setCommandPaletteOpen,
+    setCaptureOpen,
     setQuickAddOpen,
     focusSearch,
     openTask,

@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { ALL_NAV_ITEMS, SETTINGS_ITEM } from '@/app/navigation'
 import { SkeletonRows } from '@/components/feedback/Skeleton'
 import { ToastHost } from '@/components/feedback/ToastHost'
+import { CaptureHost } from '@/features/inbox/components/CaptureHost'
 import { NoteComposerHost } from '@/features/notes/components/NoteComposerHost'
 import { CommandPalette } from './CommandPalette'
 import { Sidebar } from './Sidebar'
@@ -93,6 +94,7 @@ export function AppShell() {
 
       <CommandPalette />
       <NoteComposerHost />
+      <CaptureHost />
       <ToastHost />
     </div>
   )

@@ -36,6 +36,7 @@ export const PROVENANCE_SOURCE_LABELS: Record<ProvenanceSource, string> = {
   web: 'Web',
   claude: 'Claude',
   notebooklm: 'NotebookLM',
+  inbox: 'Inbox',
 }
 
 export const isKnowledgeKind = (value: unknown): value is KnowledgeKind =>

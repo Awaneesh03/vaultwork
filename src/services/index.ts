@@ -122,3 +122,7 @@ export * from './mcpSnapshotService'
 
 /* Milestone 18.2 — knowledge artifacts, provenance and research packs. */
 export * from './researchPackService'
+
+/* Milestone 18.3 — the Universal Inbox. */
+export * from './inboxService'
+export type { Classification, InboxProposal, InboxQuestion } from './inbox/inboxProposal'

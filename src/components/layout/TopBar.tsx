@@ -1,18 +1,19 @@
-import { Menu, Search } from 'lucide-react'
+import { Menu, Plus, Search } from 'lucide-react'
 import { Kbd } from '@/components/ui/Kbd'
 import { useUiStore } from '@/store/uiStore'
 
 /**
- * The window's own bar: where you are, and the one control that gets you
- * anywhere else.
+ * The window's own bar: where you are, the one control that gets you anywhere
+ * else, and (M18.3) the one control that takes in anything.
  *
  * Deliberately almost empty. Every pixel spent here is spent on every screen,
  * and the page below already says what it is — so this carries the route name,
- * the search affordance, and nothing else.
+ * capture, the search affordance, and nothing else.
  */
 export function TopBar({ title }: { title: string }) {
   const toggleSidebar = useUiStore((s) => s.toggleSidebar)
   const setCommandPaletteOpen = useUiStore((s) => s.setCommandPaletteOpen)
+  const setCaptureOpen = useUiStore((s) => s.setCaptureOpen)
 
   return (
     <header className="flex h-14 shrink-0 items-center gap-3 border-b border-line bg-canvas/85 px-4 backdrop-blur-md">
@@ -28,6 +29,17 @@ export function TopBar({ title }: { title: string }) {
       <h1 className="t-section min-w-0 truncate text-ink">{title}</h1>
 
       <div className="flex-1" />
+
+      {/* M18.3: the one control that captures anything, on every screen. */}
+      <button
+        type="button"
+        onClick={() => setCaptureOpen(true)}
+        className="flex h-8 items-center gap-1.5 rounded-md border border-accent-line/60 bg-accent-soft px-2.5 text-body text-accent transition-colors hover:border-accent-line hover:bg-accent-soft/80"
+      >
+        <Plus size={14} aria-hidden />
+        <span className="hidden sm:inline">Capture</span>
+        <Kbd className="ml-1 hidden sm:inline-flex">I</Kbd>
+      </button>
 
       <button
         type="button"

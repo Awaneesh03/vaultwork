@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import {
   CalendarClock,
@@ -121,7 +121,14 @@ function ListSkeleton() {
   )
 }
 
-export function TaskViewScreen({ view }: { view: TaskViewId }) {
+export function TaskViewScreen({
+  view,
+  lead = null,
+}: {
+  view: TaskViewId
+  /** Content between the header and the list — the Inbox's captured queue (M18.3). */
+  lead?: ReactNode
+}) {
   const chrome = CHROME[view]
   const data = useTaskView(view)
   const navigate = useNavigate()
@@ -305,6 +312,8 @@ export function TaskViewScreen({ view }: { view: TaskViewId }) {
           ) : null
         }
       />
+
+      {lead}
 
       {chrome.quickAdd ? (
         <QuickAddBar

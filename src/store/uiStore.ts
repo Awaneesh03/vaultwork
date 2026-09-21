@@ -24,6 +24,9 @@ interface UiState {
    * export a backup the user asked for in a previous session.
    */
   menuRequest: MenuAction | null
+  /** The Universal Inbox capture dialog (M18.3). */
+  captureOpen: boolean
+  setCaptureOpen: (open: boolean) => void
   setSidebarOpen: (open: boolean) => void
   toggleSidebar: () => void
   setCommandPaletteOpen: (open: boolean) => void
@@ -36,6 +39,8 @@ export const useUiStore = create<UiState>((set) => ({
   sidebarOpen: false,
   commandPaletteOpen: false,
   menuRequest: null,
+  captureOpen: false,
+  setCaptureOpen: (captureOpen) => set({ captureOpen }),
   setSidebarOpen: (sidebarOpen) => set({ sidebarOpen }),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
   setCommandPaletteOpen: (commandPaletteOpen) => set({ commandPaletteOpen }),

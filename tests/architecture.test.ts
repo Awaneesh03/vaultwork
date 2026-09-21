@@ -1824,3 +1824,66 @@ describe('the knowledge artifact boundary', () => {
     for (const key of added) expect(key).toMatch(/^vaultwork-/)
   })
 })
+
+/**
+ * M18.3's boundary: the Universal Inbox is a way in, not a way to write.
+ *
+ * A capture becomes something only through the existing executor; the
+ * classifier touches nothing; and the inbox gave neither the model nor any
+ * other producer a new capability on the way.
+ */
+describe('the universal inbox boundary', () => {
+  it('keeps the classifier pure: no persistence, no platform, no UI', () => {
+    const offenders = IMPORTS.filter(
+      (ref) =>
+        ref.file === 'src/services/inbox/inboxProposal.ts' &&
+        /^(src\/(repositories|db|platform|features|components|store|ai)|dexie|react)/.test(
+          ref.resolved,
+        ),
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+  })
+
+  it('writes only through the executor and its own capture log', () => {
+    const file = 'src/services/inboxService.ts'
+    const source = readFileSync(join(ROOT, file), 'utf8')
+
+    // The only repositories it names: its own table, and projects to read.
+    const repos = [...source.matchAll(/\b(\w+Repo)\b/g)].map((match) => match[1])
+    expect([...new Set(repos)].sort()).toEqual(['messageLogRepo', 'projectRepo'])
+    // Projects are only ever read.
+    expect(source).not.toMatch(/projectRepo\.(create|update|softDelete|restore|put|add)/)
+    // Every entity is created by `execute`, never by a service call of its own.
+    expect(source).toContain('execute(proposalToIntent(')
+    expect(source).not.toMatch(/\b(createTask|createNote|createProject|createGoal|createHabit)\(/)
+  })
+
+  it('can express only creation — no update, delete, move or complete', () => {
+    const source = readFileSync(join(SRC, 'services', 'inbox', 'inboxProposal.ts'), 'utf8')
+    const kinds = [...source.matchAll(/kind: '([a-z]+\.[a-zA-Z]+)'/g)].map((match) => match[1])
+    expect([...new Set(kinds)].sort()).toEqual([
+      'goal.add',
+      'habit.add',
+      'note.add',
+      'project.add',
+      'task.add',
+    ])
+  })
+
+  it('left the model’s allowlist exactly as it was', async () => {
+    const { AI_ALLOWED_INTENT_KINDS } = await import('@/ai/aiTypes')
+    expect([...AI_ALLOWED_INTENT_KINDS]).toEqual(['task.add', 'task.complete', 'task.reschedule'])
+  })
+
+  it('calls no AI provider — classification is local', () => {
+    const files = [
+      ...walk(join(SRC, 'features', 'inbox')),
+      join(SRC, 'services', 'inboxService.ts'),
+      join(SRC, 'services', 'inbox', 'inboxProposal.ts'),
+    ].filter((path) => !/\.test\.tsx?$/.test(path))
+    for (const file of files) {
+      const source = readFileSync(file, 'utf8')
+      expect(source, file).not.toMatch(/platform\.ai|askAi|aiComplete|@\/ai\//)
+    }
+  })
+})
