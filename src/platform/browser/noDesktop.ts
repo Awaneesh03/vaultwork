@@ -19,4 +19,13 @@ export const noDesktop: DesktopPort = {
   async setLaunchAtLogin() {
     return false
   },
+
+  /**
+   * No-op, deliberately silent.
+   *
+   * The MCP snapshot exists for a local process reading a file next to the
+   * desktop app; a browser tab has neither. Callers check `isSupported` first,
+   * and this stays harmless for the ones that do not.
+   */
+  async writeMcpSnapshot() {},
 }

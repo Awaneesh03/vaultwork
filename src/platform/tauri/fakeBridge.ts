@@ -72,6 +72,9 @@ export interface FakeTauriBridge extends TauriBridge {
   /** Puts a PDF in the vault, described by the text it extracts to. */
   seedPdf(path: string, text: string): void
 
+  /** Snapshots the renderer has exported, newest last. M18.1. */
+  readonly mcpSnapshots: string[]
+
   // ------------------------------------------------------------- telegram
   /** Messages the bot was asked to deliver, in order. */
   readonly telegramSent: { chatId: string; text: string }[]
@@ -141,6 +144,7 @@ export function createFakeTauriBridge(options: FakeBridgeOptions = {}): FakeTaur
   let aiEnabled: boolean = options.aiEnabled ?? false
   const aiReply: string = options.aiReply ?? '{"ok":true}'
   const aiRequests: { messages: { role: string; content: string }[]; json: boolean }[] = []
+  const mcpSnapshots: string[] = []
 
   let telegramToken: string | null = options.telegramToken ?? null
   let telegramAuthorized: string | null = options.telegramAuthorizedChatId ?? null
@@ -579,6 +583,17 @@ export function createFakeTauriBridge(options: FakeBridgeOptions = {}): FakeTaur
 
     aiRequests,
     aiStoredKey: () => aiKey,
+
+    mcpSnapshots,
+
+    async mcpSnapshotWrite(contents) {
+      const planned = record('mcpSnapshotWrite')
+      if (planned) throw planned
+      // Rust parses before it writes, so a fake that accepted anything would
+      // let a broken projection pass a test the real command would reject.
+      JSON.parse(contents)
+      mcpSnapshots.push(contents)
+    },
 
     async aiStatus(): Promise<BridgeAiStatus> {
       // Honours a planned failure, because `invoke` really can reject here and

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { bootstrapApp, type BootstrapReport } from '@/services'
+import { bootstrapApp, startMcpSnapshotWriter, type BootstrapReport } from '@/services'
 
 export type BootstrapState =
   | { status: 'loading' }
@@ -17,9 +17,15 @@ export function useBootstrap(): BootstrapState {
 
   useEffect(() => {
     let cancelled = false
+    // Started only on success, and only on desktop (the writer checks): a
+    // snapshot built from a database that would not open would describe a day
+    // nobody has.
+    let stopSnapshots: (() => void) | null = null
+
     void (async () => {
       const result = await bootstrapApp({ seed: import.meta.env.DEV })
       if (cancelled) return
+      if (result.ok) stopSnapshots = startMcpSnapshotWriter()
       setState(
         result.ok
           ? { status: 'ready', report: result.value }
@@ -28,6 +34,7 @@ export function useBootstrap(): BootstrapState {
     })()
     return () => {
       cancelled = true
+      stopSnapshots?.()
     }
   }, [])
 

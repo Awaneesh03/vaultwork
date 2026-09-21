@@ -116,3 +116,6 @@ export type {
   AiConfirmationState,
   AiExecutionOutcome,
 } from './ai/aiConfirmationService'
+
+/* Milestone 18.1 — the read-only MCP snapshot Claude Desktop reads. */
+export * from './mcpSnapshotService'

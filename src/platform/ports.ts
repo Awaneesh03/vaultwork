@@ -113,6 +113,16 @@ export interface DesktopPort {
 
   /** Returns the state the OS ended up in, which may differ from the request. */
   setLaunchAtLogin(enabled: boolean): Promise<boolean>
+
+  /**
+   * Replaces the MCP snapshot on disk (M18.1).
+   *
+   * Takes the document and nothing else: the destination is decided in Rust,
+   * so this is an export of one bounded projection rather than a file write the
+   * renderer aims. A build with no desktop has nowhere to put it and says so
+   * through `isSupported`, so callers skip it instead of handling a throw.
+   */
+  writeMcpSnapshot(json: string): Promise<void>
 }
 
 export interface VaultPort {

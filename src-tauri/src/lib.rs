@@ -15,6 +15,7 @@
 //!      (`store.rs`).
 
 mod ai;
+mod mcp;
 mod menu;
 mod paths;
 mod secrets;
@@ -117,6 +118,8 @@ pub fn run() {
             ai::ai_set_model,
             ai::ai_test,
             ai::ai_complete,
+            // M18.1. One write, one fixed destination: see `mcp.rs`.
+            mcp::mcp_snapshot_write,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Vaultwork");

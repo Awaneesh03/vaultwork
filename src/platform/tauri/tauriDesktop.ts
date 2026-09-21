@@ -25,6 +25,12 @@ export function createTauriDesktop(bridge: TauriBridge): DesktopPort {
       }
     },
 
+    writeMcpSnapshot(json: string) {
+      // Not caught: a snapshot that failed to write must not look like one that
+      // did, or Claude Desktop would keep answering from a file nobody updated.
+      return bridge.mcpSnapshotWrite(json)
+    },
+
     setLaunchAtLogin(enabled: boolean) {
       // Deliberately not caught: changing a setting that silently failed is
       // exactly the case the user needs told about.

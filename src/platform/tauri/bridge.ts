@@ -209,6 +209,15 @@ export interface TauriBridge {
   aiSetModel(model: string): Promise<BridgeAiStatus>
   aiTest(): Promise<BridgeAiProbe>
   aiComplete(request: BridgeAiRequest): Promise<BridgeAiCompletion>
+
+  /*
+   * The MCP snapshot (M18.1).
+   *
+   * One direction and no path. There is no `mcpSnapshotRead` and no
+   * `mcpSnapshotPath`, because Rust exposes neither: the renderer can replace
+   * the snapshot and learn nothing else about where it went.
+   */
+  mcpSnapshotWrite(contents: string): Promise<void>
 }
 
 /** The event `src-tauri/src/menu.rs` emits. Kept in step by name, deliberately. */
@@ -237,6 +246,8 @@ export const tauriBridge: TauriBridge = {
   vaultCreateDirectory: (path) => invoke<void>('vault_create_dir', { path }),
   vaultList: (path) => invoke<BridgeEntry[]>('vault_list', { path: path ?? null }),
   vaultReadPdfText: (path) => invoke<BridgePdfText>('vault_read_pdf_text', { path }),
+
+  mcpSnapshotWrite: (contents) => invoke<void>('mcp_snapshot_write', { contents }),
 
   desktopLaunchAtLogin: () => invoke<boolean>('desktop_launch_at_login'),
   desktopSetLaunchAtLogin: (enabled) => invoke<boolean>('desktop_set_launch_at_login', { enabled }),

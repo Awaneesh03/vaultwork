@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "vaultwork": {
+      "command": "node",
+      "args": ["/ABSOLUTE/PATH/TO/vaultwork/mcp/src/server.ts"]
+    }
+  }
+}

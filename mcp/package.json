@@ -1,0 +1,11 @@
+{
+  "name": "vaultwork-mcp",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Read-only MCP server exposing a local Vaultwork snapshot to Claude Desktop (M18.1).",
+  "bin": { "vaultwork-mcp": "./src/server.ts" },
+  "scripts": {
+    "start": "node ./src/server.ts"
+  }
+}

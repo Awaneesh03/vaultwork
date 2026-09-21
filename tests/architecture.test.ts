@@ -538,6 +538,10 @@ describe('the Tauri runtime boundary', () => {
       'desktop.rs',
       'lib.rs',
       'main.rs',
+      // M18.1. One command that writes one file to one path the renderer
+      // cannot name. No model, no database, no reader: see the M18.1 boundary
+      // test below for what it is not allowed to become.
+      'mcp.rs',
       'menu.rs',
       'paths.rs',
       'secrets.rs',
@@ -1677,5 +1681,70 @@ describe('duplicated knowledge stays in step', () => {
     expect([...TASK_ROUTES].sort()).toEqual(
       TASK_VIEW_IDS.map((view) => TASK_VIEW_PATHS[view]).sort(),
     )
+  })
+})
+
+/**
+ * M18.1's boundary: MCP is an export, not a second way into the application.
+ *
+ * The integration is deliberately one-directional — Vaultwork writes a bounded
+ * file, a separate process reads it — and these are the claims that would stop
+ * being true first if someone made it convenient: a read command "just to check
+ * what was written", a path parameter "just for tests", a second command.
+ */
+describe('the MCP boundary', () => {
+  const RUST_SRC = join(ROOT, 'src-tauri', 'src')
+
+  it('adds exactly one native command, and it only writes', () => {
+    const lib = readFileSync(join(RUST_SRC, 'lib.rs'), 'utf8')
+    const handlers = [...lib.matchAll(/mcp::(\w+),/g)].map((match) => match[1])
+
+    expect(handlers).toEqual(['mcp_snapshot_write'])
+
+    const source = readFileSync(join(RUST_SRC, 'mcp.rs'), 'utf8')
+    // No command that hands the snapshot, or its location, back to the renderer.
+    expect(source).not.toMatch(/#\[tauri::command\][\s\S]{0,200}fn\s+mcp_snapshot_read/)
+    expect(source).not.toContain('mcp_snapshot_path')
+  })
+
+  it('lets the renderer choose the contents but never the destination', () => {
+    const source = readFileSync(join(RUST_SRC, 'mcp.rs'), 'utf8')
+
+    // The command takes the document and the app handle. A `path: String` here
+    // would turn one export into a general file write.
+    const command = /#\[tauri::command\]\s*pub fn mcp_snapshot_write\(([^)]*)\)/.exec(source)
+    expect(command?.[1]).toBe('app: AppHandle, contents: String')
+
+    // And the filename is a constant in Rust, named nowhere in the renderer.
+    expect(source).toContain('const FILE: &str = "mcp-snapshot.json"')
+    for (const file of walk(SRC)) {
+      expect(readFileSync(file, 'utf8'), `${file} must not name the snapshot file`).not.toContain(
+        'mcp-snapshot.json',
+      )
+    }
+  })
+
+  it('keeps the MCP server outside the application layers', () => {
+    // The server is a separate program. If it ever imported from `src/`, it
+    // would be running Vaultwork's code against a database it cannot open.
+    for (const name of readdirSync(join(ROOT, 'mcp', 'src'))) {
+      const source = readFileSync(join(ROOT, 'mcp', 'src', name), 'utf8')
+      for (const banned of ['@/', '../src/', 'dexie', 'repositories', '@tauri-apps', 'invoke(']) {
+        expect(source, `mcp/src/${name} must not reach into the app (${banned})`).not.toContain(
+          banned,
+        )
+      }
+    }
+  })
+
+  it('projects the snapshot field by field, never by spreading a row', () => {
+    // The guarantee that no credential and no vault path travels is structural:
+    // every field in the snapshot is one somebody typed into `toTask`/`toProject`.
+    const source = readFileSync(join(SRC, 'services', 'mcpSnapshotService.ts'), 'utf8')
+    expect(source).not.toMatch(/\.\.\.task\b/)
+    expect(source).not.toMatch(/\.\.\.project\b/)
+    // Matched as a field read rather than as a word, so the comment explaining
+    // why it is dropped does not trip the rule that drops it.
+    expect(source).not.toMatch(/\.vaultPath/)
   })
 })
