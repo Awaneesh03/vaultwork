@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import {
   connectVault,
+  createResearchPack,
   deleteFromVault,
   disconnectVault,
   exportAllNotes,
@@ -17,6 +18,7 @@ import {
   type BulkExportResult,
   type ImportPreview,
   type NoteSyncReport,
+  type ResearchPackResult,
   type VaultScan,
   type VaultStatus,
 } from '@/services'
@@ -266,4 +268,56 @@ export function useVaultScan(): VaultScanController {
       }
     },
   }
+}
+
+export interface ResearchPackController {
+  /** Whether a pack can be written right now. `null` while that is being asked. */
+  connected: boolean | null
+  busy: boolean
+  error: string | null
+  result: ResearchPackResult | null
+  create: () => Promise<void>
+}
+
+/**
+ * A project's research pack (M18.2).
+ *
+ * Asks the vault's status once, on mount — a permission *query*, never a
+ * prompt — so the action can say "connect a vault first" instead of failing
+ * after a click. Writing happens only on `create`, which is a user gesture.
+ */
+export function useResearchPack(projectId: Id | null): ResearchPackController {
+  const [connected, setConnected] = useState<boolean | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [result, setResult] = useState<ResearchPackResult | null>(null)
+
+  useEffect(() => {
+    let alive = true
+    getVaultStatus()
+      .then((status) => {
+        if (alive) setConnected(status.state === 'connected')
+      })
+      .catch(() => {
+        if (alive) setConnected(false)
+      })
+    return () => {
+      alive = false
+    }
+  }, [])
+
+  const create = useCallback(async () => {
+    if (projectId === null) return
+    setBusy(true)
+    setError(null)
+    try {
+      setResult(await createResearchPack(projectId))
+    } catch (thrown) {
+      setError(readable(thrown))
+    } finally {
+      setBusy(false)
+    }
+  }, [projectId])
+
+  return { connected, busy, error, result, create }
 }

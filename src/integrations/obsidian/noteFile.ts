@@ -1,4 +1,7 @@
+import type { Provenance } from '@/types/entities'
+import type { KnowledgeKind } from '@/types/enums'
 import { normalizeContent } from './content'
+import { isKnowledgeKind, sanitizeProvenance } from './knowledge'
 import {
   EMPTY_FRONTMATTER,
   parseFrontmatter,
@@ -25,6 +28,9 @@ export interface SerializableNote {
   body: string
   createdAt: number
   updatedAt: number
+  /** M18.2. Absent or null for an ordinary note, which then writes no key. */
+  kind?: KnowledgeKind | null | undefined
+  provenance?: Provenance | null | undefined
 }
 
 export interface SerializeOptions {
@@ -68,6 +74,14 @@ export function serializeNote(note: SerializableNote, options: SerializeOptions 
     created: toIso(note.createdAt),
     updated: toIso(note.updatedAt),
     tags: options.tags ?? [],
+    kind: note.kind ?? null,
+    source: note.provenance?.source ?? null,
+    sourceId: note.provenance?.sourceId ?? null,
+    sourceUrl: note.provenance?.sourceUrl ?? null,
+    captured:
+      note.provenance?.capturedAt === null || note.provenance?.capturedAt === undefined
+        ? null
+        : toIso(note.provenance.capturedAt),
   }
 
   const block = serializeFrontmatter(frontmatter)
@@ -83,6 +97,9 @@ export interface ParsedNoteFile {
   createdAt: number | null
   updatedAt: number | null
   tags: string[]
+  /** M18.2, validated: an unknown kind or source reads as `null`, never as-is. */
+  kind: KnowledgeKind | null
+  provenance: Provenance | null
   body: string
   frontmatter: Frontmatter
   hadFrontmatter: boolean
@@ -106,6 +123,16 @@ export function parseNoteFile(source: string): ParsedNoteFile {
     createdAt: fromIso(frontmatter.created),
     updatedAt: fromIso(frontmatter.updated),
     tags: frontmatter.tags,
+    kind: isKnowledgeKind(frontmatter.kind) ? frontmatter.kind : null,
+    // A file is untrusted input: whatever it says about its source passes the
+    // same sanitiser a new artifact does, so a hand-edited URL with a token in
+    // it is cleaned on the way in rather than stored as written.
+    provenance: sanitizeProvenance({
+      source: frontmatter.source,
+      sourceId: frontmatter.sourceId,
+      sourceUrl: frontmatter.sourceUrl,
+      capturedAt: fromIso(frontmatter.captured),
+    }),
     body: normalizeContent(document.body),
     frontmatter,
     hadFrontmatter: document.hadFrontmatter,

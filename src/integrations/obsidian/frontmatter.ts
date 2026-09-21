@@ -14,8 +14,29 @@
  * back. Vaultwork owns its own keys and is a guest among the rest.
  */
 
-/** The keys Vaultwork claims. Everything else belongs to the user. */
-export const OWNED_KEYS = ['id', 'title', 'created', 'updated', 'tags'] as const
+/**
+ * The keys Vaultwork claims. Everything else belongs to the user.
+ *
+ * The M18.2 knowledge keys are namespaced (`vaultwork-…`) where the original
+ * five are not. `type` and `source` are among the most common keys people put
+ * in their own notes, and claiming them would mean an export overwriting a
+ * user's metadata with Vaultwork's — the one thing this module promises not to
+ * do. They are flat scalars rather than a nested map because Obsidian's
+ * Properties panel cannot display a nested map, and this parser deliberately
+ * understands no nesting.
+ */
+export const OWNED_KEYS = [
+  'id',
+  'title',
+  'created',
+  'updated',
+  'tags',
+  'vaultwork-kind',
+  'vaultwork-source',
+  'vaultwork-source-id',
+  'vaultwork-source-url',
+  'vaultwork-captured',
+] as const
 
 export interface Frontmatter {
   /** Parsed values for the keys Vaultwork understands. */
@@ -24,6 +45,12 @@ export interface Frontmatter {
   created: string | null
   updated: string | null
   tags: string[]
+  /** M18.2 knowledge metadata, as the raw strings the file holds. */
+  kind: string | null
+  source: string | null
+  sourceId: string | null
+  sourceUrl: string | null
+  captured: string | null
   /**
    * Every other key, as raw YAML lines, in the order they appeared.
    *
@@ -48,6 +75,11 @@ export const EMPTY_FRONTMATTER: Frontmatter = {
   created: null,
   updated: null,
   tags: [],
+  kind: null,
+  source: null,
+  sourceId: null,
+  sourceUrl: null,
+  captured: null,
   unknown: [],
 }
 
@@ -195,6 +227,21 @@ export function parseFrontmatter(source: string): ParsedDocument {
         // An empty value leaves `openList` pointing here for the items below.
         break
       }
+      case 'vaultwork-kind':
+        frontmatter.kind = unquote(pair.value) || null
+        break
+      case 'vaultwork-source':
+        frontmatter.source = unquote(pair.value) || null
+        break
+      case 'vaultwork-source-id':
+        frontmatter.sourceId = unquote(pair.value) || null
+        break
+      case 'vaultwork-source-url':
+        frontmatter.sourceUrl = unquote(pair.value) || null
+        break
+      case 'vaultwork-captured':
+        frontmatter.captured = unquote(pair.value) || null
+        break
     }
   }
 
@@ -231,6 +278,20 @@ export function serializeFrontmatter(frontmatter: Frontmatter): string {
   if (frontmatter.tags.length > 0) {
     lines.push('tags:')
     for (const tag of frontmatter.tags) lines.push(`  - ${quote(tag)}`)
+  }
+
+  // Written only when set, so an ordinary note's file is byte-identical to the
+  // one M11 wrote. A new line in every exported note would move every hash.
+  if (frontmatter.kind !== null) lines.push(`vaultwork-kind: ${quote(frontmatter.kind)}`)
+  if (frontmatter.source !== null) lines.push(`vaultwork-source: ${quote(frontmatter.source)}`)
+  if (frontmatter.sourceId !== null) {
+    lines.push(`vaultwork-source-id: "${frontmatter.sourceId.replace(/"/g, '\\"')}"`)
+  }
+  if (frontmatter.sourceUrl !== null) {
+    lines.push(`vaultwork-source-url: ${quote(frontmatter.sourceUrl)}`)
+  }
+  if (frontmatter.captured !== null) {
+    lines.push(`vaultwork-captured: ${quote(frontmatter.captured)}`)
   }
 
   for (const line of frontmatter.unknown) lines.push(line)

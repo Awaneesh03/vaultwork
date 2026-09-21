@@ -35,6 +35,7 @@ export function NoteComposerHost() {
           body: value.body,
           tagIds: [],
           links: link === null ? [] : [{ refType: link.refType as RefType, refId: link.refId }],
+          knowledgeKind: value.knowledgeKind,
         })
 
         close()

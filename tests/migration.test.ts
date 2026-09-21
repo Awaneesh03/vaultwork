@@ -228,6 +228,9 @@ describe('the documents upgrade (v2 -> v3)', () => {
    * that can only be checked against a real upgrade.
    */
   const UP_TO_V2 = MIGRATIONS.filter((m) => m.version <= 2)
+  // Pinned to v3 rather than "whatever is latest", so this keeps testing the
+  // v2 -> v3 step itself when later versions are appended.
+  const UP_TO_V3 = MIGRATIONS.filter((m) => m.version <= 3)
 
   it('adds the store and leaves every existing row untouched', async () => {
     const before = await open(UP_TO_V2)
@@ -262,7 +265,7 @@ describe('the documents upgrade (v2 -> v3)', () => {
     })
     before.close()
 
-    const after = await open(MIGRATIONS)
+    const after = await open(UP_TO_V3)
     expect(after.verno).toBe(3)
 
     // The new table exists and is empty. Nothing is invented on upgrade.
@@ -374,5 +377,50 @@ describe('the real schema', () => {
 
     db.close()
     await Dexie.delete('vaultwork-index-probe')
+  })
+})
+
+describe('the knowledge upgrade (v3 -> v4)', () => {
+  /*
+   * Version 4 gives every note `kind` and `provenance`, as `null`. No store
+   * changes and no index — the claim worth checking against a real upgrade is
+   * that a note the user has been editing for months comes through with its
+   * content and its `updatedAt` exactly as they were.
+   */
+  const UP_TO_V3 = MIGRATIONS.filter((m) => m.version <= 3)
+
+  it('backfills null knowledge fields and changes nothing else', async () => {
+    const before = await open(UP_TO_V3)
+    expect(before.verno).toBe(3)
+    await before.table('notes').add({
+      id: 'n1',
+      title: 'Recursion',
+      body: 'the body a user wrote',
+      tagIds: ['t1'],
+      vaultPath: 'notes/recursion.md',
+      createdAt: 10,
+      updatedAt: 20,
+      deletedAt: null,
+    })
+    before.close()
+
+    const after = await open(MIGRATIONS)
+    expect(after.verno).toBe(4)
+    expect(CURRENT_SCHEMA_VERSION).toBe(4)
+
+    expect(await after.table('notes').get('n1')).toEqual({
+      id: 'n1',
+      title: 'Recursion',
+      body: 'the body a user wrote',
+      tagIds: ['t1'],
+      vaultPath: 'notes/recursion.md',
+      createdAt: 10,
+      // Not bumped: gaining two empty fields is not an edit.
+      updatedAt: 20,
+      deletedAt: null,
+      kind: null,
+      provenance: null,
+    })
+    after.close()
   })
 })

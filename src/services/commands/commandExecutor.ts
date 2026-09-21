@@ -973,6 +973,8 @@ async function run(intent: CommandIntent): Promise<CommandResult> {
           body: intent.body,
           tagIds: intent.tagIds,
           links: intent.links,
+          kind: intent.knowledgeKind,
+          provenance: intent.provenance,
         },
         { source },
       )

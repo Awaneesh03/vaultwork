@@ -236,6 +236,11 @@ describe('frontmatter primitives', () => {
       created: '2026-01-01T00:00:00.000Z',
       updated: '2026-01-02T00:00:00.000Z',
       tags: ['a', 'b'],
+      kind: null,
+      source: null,
+      sourceId: null,
+      sourceUrl: null,
+      captured: null,
       unknown: ['custom: value'],
     })
     const parsed = parseFrontmatter(`${block}\n\nbody\n`)

@@ -119,3 +119,6 @@ export type {
 
 /* Milestone 18.1 — the read-only MCP snapshot Claude Desktop reads. */
 export * from './mcpSnapshotService'
+
+/* Milestone 18.2 — knowledge artifacts, provenance and research packs. */
+export * from './researchPackService'

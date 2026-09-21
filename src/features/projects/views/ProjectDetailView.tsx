@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/feedback/Skeleton'
 import { Button } from '@/components/ui/Button'
 import { Kbd } from '@/components/ui/Kbd'
 import { BacklinksPanel } from '@/features/notes/components/BacklinksPanel'
+import { ResearchPackPanel } from '@/features/obsidian/components/ResearchPackPanel'
 import { useBacklinks } from '@/features/notes/hooks/useNotes'
 import { useCommands } from '@/hooks/useCommands'
 import { useNoteUiStore } from '@/store/noteUiStore'
@@ -583,11 +584,16 @@ export function ProjectDetailView() {
       </DataView>
 
       {project ? (
-        <BacklinksPanel
-          className="border-t border-line pt-4"
-          backlinks={backlinks}
-          onCreate={() => openNoteComposer({ refType: 'project', refId: project.id })}
-        />
+        <>
+          {/* Vaultwork is the action layer above; this is the knowledge layer. */}
+          <BacklinksPanel
+            className="border-t border-line pt-4"
+            heading="Knowledge"
+            backlinks={backlinks}
+            onCreate={() => openNoteComposer({ refType: 'project', refId: project.id })}
+          />
+          <ResearchPackPanel projectId={project.id} />
+        </>
       ) : null}
 
       <TaskDetailPanel

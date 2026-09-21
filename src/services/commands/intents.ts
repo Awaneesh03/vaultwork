@@ -6,11 +6,12 @@ import type {
   Milestone,
   Note,
   Project,
+  Provenance,
   Subtask,
   Task,
   TimeStr,
 } from '@/types/entities'
-import type { EventSource, Priority, ProjectStatus, RefType } from '@/types/enums'
+import type { EventSource, KnowledgeKind, Priority, ProjectStatus, RefType } from '@/types/enums'
 import type { GoalPatch, MilestonePatch } from '../goalService'
 import type { NoteLinkInput, NotePatch } from '../noteService'
 import type { HabitPatch } from '../habitService'
@@ -131,7 +132,22 @@ export type CommandIntent =
   | Intent<'milestone.restore', { milestoneId: Id }>
   | Intent<'milestone.move', { goalId: Id; orderedIds: Id[]; fromIndex: number; toIndex: number }>
   | Intent<'task.assignMilestone', { taskId: Id; milestoneId: Id | null }>
-  | Intent<'note.add', { title: string; body: string; tagIds: Id[]; links: NoteLinkInput[] }>
+  | Intent<
+      'note.add',
+      {
+        title: string
+        body: string
+        tagIds: Id[]
+        links: NoteLinkInput[]
+        /**
+         * M18.2: a knowledge artifact rather than an ordinary note. Not called
+         * `kind`, which is this union's discriminant — the two would intersect
+         * into `never` and silently remove `note.add` from the union.
+         */
+        knowledgeKind?: KnowledgeKind | null | undefined
+        provenance?: Provenance | null | undefined
+      }
+    >
   | Intent<'note.update', { noteId: Id; patch: NotePatch }>
   | Intent<'note.delete', { ref: EntityRef }>
   | Intent<'note.restore', { noteId: Id }>

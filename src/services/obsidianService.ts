@@ -26,8 +26,8 @@ import { resolveWikilink, wikilinkTargets } from '@/integrations/obsidian/wikili
 import { platform } from '@/platform'
 import { VaultError, type VaultPermission, type VaultPort } from '@/platform'
 import { noteRepo, tagRepo, vaultDocumentRepo, vaultLinkRepo } from '@/repositories'
-import type { Id, Note } from '@/types/entities'
-import type { EventSource } from '@/types/enums'
+import type { Id, Note, Provenance } from '@/types/entities'
+import type { EventSource, KnowledgeKind } from '@/types/enums'
 import { eventBus } from './eventBus'
 import { createNote, noteTitle, updateNote } from './noteService'
 
@@ -194,7 +194,13 @@ export async function restoreVault(): Promise<VaultStatus> {
   return getVaultStatus()
 }
 
-async function requireConnected(): Promise<VaultPermission> {
+/**
+ * Throws unless the vault can be written right now.
+ *
+ * Exported for `knowledgeService`, so "is the vault usable?" keeps exactly one
+ * answer however many services write to it.
+ */
+export async function requireConnected(): Promise<VaultPermission> {
   const status = await getVaultStatus()
   if (status.state === 'unsupported') {
     throw new VaultError('unsupported', STATE_MESSAGES.unsupported)
@@ -233,6 +239,8 @@ export async function serializeNoteForVault(note: Note): Promise<string> {
       body: note.body,
       createdAt: note.createdAt,
       updatedAt: note.updatedAt,
+      kind: note.kind,
+      provenance: note.provenance,
     },
     { tags: names, ...(preserved ? { existing: preserved } : {}) },
   )
@@ -506,6 +514,9 @@ export interface ImportPreview {
   status: SyncStatus
   body: string
   tags: string[]
+  /** M18.2: what the file says it is, validated by `parseNoteFile`. */
+  kind: KnowledgeKind | null
+  provenance: Provenance | null
 }
 
 /**
@@ -545,6 +556,8 @@ export async function previewImport(path: string): Promise<ImportPreview> {
     status,
     body: parsed.body,
     tags: parsed.tags,
+    kind: parsed.kind,
+    provenance: parsed.provenance,
   }
 }
 
@@ -598,7 +611,18 @@ export async function importNote(path: string, options: ImportOptions = {}): Pro
     const note = await createNote({ title: preview.title, body: preview.body }, { source })
     noteId = note.id
     created = true
-    await noteRepo.update(note.id, { vaultPath: uniqueVaultPath(safe, taken) }, { emit: false })
+    // Kind and provenance ride on the same write as the path, rather than
+    // through `createNote`'s input: that would scaffold an empty artifact with
+    // headings the file never had, and an import is a faithful copy.
+    await noteRepo.update(
+      note.id,
+      {
+        vaultPath: uniqueVaultPath(safe, taken),
+        kind: preview.kind,
+        provenance: preview.provenance,
+      },
+      { emit: false },
+    )
   }
 
   const note = await noteRepo.getOrThrow(noteId)

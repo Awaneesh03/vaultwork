@@ -1748,3 +1748,79 @@ describe('the MCP boundary', () => {
     expect(source).not.toMatch(/\.vaultPath/)
   })
 })
+
+/**
+ * M18.2's boundary: Obsidian is the knowledge layer, reached one way.
+ *
+ * The claims a reviewer would otherwise take on trust: that the AI layer still
+ * has no route to a file, that research packs write only through `VaultPort`
+ * and only to paths that passed validation, that no new native command was
+ * needed, and that the pack folder is one the vault scan really ignores.
+ */
+describe('the knowledge artifact boundary', () => {
+  it('gives the AI layer no route to the vault or the pack writer', () => {
+    const offenders = IMPORTS.filter(
+      (ref) =>
+        inLayer(ref.file, 'src/ai/', 'src/services/ai/') &&
+        !/\.test\.tsx?$/.test(ref.file) &&
+        /(researchPackService|obsidianService|obsidianSyncService|integrations\/obsidian|platform\/(browser|tauri))/.test(
+          ref.resolved,
+        ),
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+  })
+
+  it('lets the model propose no note at all — artifacts come from people', () => {
+    // A future milestone may teach the assistant to propose a knowledge
+    // artifact; it will do so through the confirmation gate and the executor,
+    // and this test is the tripwire that makes that a deliberate change.
+    for (const file of walk(join(SRC, 'ai')).filter((path) => !path.endsWith('.test.ts'))) {
+      expect(readFileSync(file, 'utf8'), file).not.toContain("'note.add'")
+    }
+  })
+
+  it('writes research packs only through VaultPort, to validated paths, never deleting', () => {
+    const file = 'src/services/researchPackService.ts'
+    const imports = IMPORTS.filter((ref) => ref.file === file)
+    for (const ref of imports) {
+      expect(ref.resolved, `${file} must not reach an adapter`).not.toMatch(
+        /platform\/(browser|tauri)|@tauri-apps|^node:|^fs$/,
+      )
+    }
+
+    const source = readFileSync(join(ROOT, file), 'utf8')
+    expect(source).toContain('getVaultPort()')
+    expect(source).toContain('assertSafeVaultPath(')
+    // Written, never removed: a pack cannot take a user's file with it.
+    expect(source).not.toMatch(/\.deleteFile\(|\.delete\(/)
+  })
+
+  it('needs no new native command', () => {
+    // Read from the handler list itself, not the whole file: `lib.rs` says in
+    // prose that there is "no knowledge graph" in Rust, which is true and is
+    // not a command.
+    const lib = readFileSync(join(ROOT, 'src-tauri', 'src', 'lib.rs'), 'utf8')
+    const handlers = /generate_handler!\[([\s\S]*?)\]/.exec(lib)?.[1] ?? ''
+    const modules = new Set([...handlers.matchAll(/(\w+)::\w+/g)].map((match) => match[1]))
+
+    expect([...modules].sort()).toEqual(['ai', 'desktop', 'mcp', 'telegram', 'vault'])
+    expect(handlers).not.toMatch(/knowledge|research|notebook|pack/i)
+  })
+
+  it('writes packs to a folder the vault scan genuinely ignores', async () => {
+    const { RESEARCH_PACK_ROOT } = await import('@/integrations/obsidian/knowledge')
+    const { isIgnoredDirectory } = await import('@/integrations/obsidian/syncPlan')
+    const first = RESEARCH_PACK_ROOT.split('/')[0] ?? ''
+    // The scan's own predicate, not a restatement of it.
+    expect(isIgnoredDirectory(first)).toBe(true)
+  })
+
+  it('claims only namespaced frontmatter keys beyond the original five', async () => {
+    const { OWNED_KEYS } = await import('@/integrations/obsidian/frontmatter')
+    const added = OWNED_KEYS.filter(
+      (key) => !['id', 'title', 'created', 'updated', 'tags'].includes(key),
+    )
+    expect(added.length).toBeGreaterThan(0)
+    for (const key of added) expect(key).toMatch(/^vaultwork-/)
+  })
+})

@@ -13,9 +13,10 @@ import {
   projectRepo,
   tagRepo,
   taskRepo,
+  vaultLinkRepo,
 } from '@/repositories'
 import type { DateStr, Id, Note, NoteLink, Tag } from '@/types/entities'
-import type { RefType } from '@/types/enums'
+import type { KnowledgeKind, RefType } from '@/types/enums'
 import { noteTitle } from './noteService'
 
 /**
@@ -332,6 +333,14 @@ export interface Backlink {
   title: string
   excerpt: string
   updatedAt: number
+  /** M18.2: the knowledge kind, or `null` for an ordinary note. */
+  kind: KnowledgeKind | null
+  /**
+   * M18.2: where the note lives in Obsidian — set only when it has actually
+   * been written there. A reserved-but-never-exported path is not a file, and
+   * showing it as one would claim a relationship that does not exist.
+   */
+  obsidianPath: string | null
 }
 
 /**
@@ -345,15 +354,19 @@ export async function getBacklinks(refType: RefType, refId: Id): Promise<Backlin
   const links = await noteLinkRepo.forRef(refType, refId)
   if (links.length === 0) return []
 
-  const notes = await Promise.all(links.map((link) => noteRepo.get(link.noteId)))
+  const notes = (await Promise.all(links.map((link) => noteRepo.get(link.noteId)))).filter(
+    (note): note is Note => note !== undefined,
+  )
+  const bindings = await Promise.all(notes.map((note) => vaultLinkRepo.forEntity('note', note.id)))
 
   return notes
-    .filter((note): note is Note => note !== undefined)
-    .map((note) => ({
+    .map((note, index) => ({
       noteId: note.id,
       title: noteTitle(note),
       excerpt: markdownExcerpt(note.body, 90),
       updatedAt: note.updatedAt,
+      kind: note.kind,
+      obsidianPath: bindings[index]?.path ?? null,
     }))
     .sort((a, b) => b.updatedAt - a.updatedAt || (a.noteId < b.noteId ? -1 : 1))
 }

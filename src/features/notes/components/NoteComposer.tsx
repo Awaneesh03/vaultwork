@@ -2,15 +2,22 @@ import { useEffect, useRef, useState } from 'react'
 import { FileText, X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { Kbd } from '@/components/ui/Kbd'
+import { KNOWLEDGE_KIND_LABELS } from '@/integrations/obsidian/knowledge'
 import { cn } from '@/lib/cn'
+import { KNOWLEDGE_KINDS, type KnowledgeKind } from '@/types/enums'
 
 /**
  * Quick capture for notes, reachable anywhere with Shift+N.
  *
- * Deliberately two fields and nothing else. The point of a capture box is to
- * get a thought out of your head without deciding where it goes — tags, links
- * and formatting all belong to the editor you land in afterwards, not to the
- * moment you had the idea.
+ * Deliberately two fields and one optional choice. The point of a capture box
+ * is to get a thought out of your head without deciding where it goes — tags,
+ * links and formatting all belong to the editor you land in afterwards, not to
+ * the moment you had the idea.
+ *
+ * The choice is the knowledge kind (M18.2), and it defaults to a plain note, so
+ * capture behaves exactly as it always did unless you ask for more. Picking
+ * "Decision" is the moment you know you are keeping something durable, which
+ * is why it lives here rather than in a settings panel later.
  */
 export function NoteComposer({
   busy = false,
@@ -21,11 +28,17 @@ export function NoteComposer({
   busy?: boolean
   /** Named when the composer was opened from an entity, e.g. "Study Trees". */
   contextLabel?: string | null
-  onSubmit: (value: { title: string; body: string; open: boolean }) => void
+  onSubmit: (value: {
+    title: string
+    body: string
+    open: boolean
+    knowledgeKind: KnowledgeKind | null
+  }) => void
   onCancel: () => void
 }) {
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
+  const [knowledgeKind, setKnowledgeKind] = useState<KnowledgeKind | null>(null)
   const titleRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -34,7 +47,7 @@ export function NoteComposer({
 
   // An empty note is legitimate — you may want somewhere to write — so there is
   // nothing to validate and the button is never disabled on content grounds.
-  const submit = (open: boolean) => onSubmit({ title, body, open })
+  const submit = (open: boolean) => onSubmit({ title, body, open, knowledgeKind })
 
   return (
     <div
@@ -86,6 +99,30 @@ export function NoteComposer({
           aria-label="Note title"
           className="w-full rounded-md border border-line bg-surface px-2.5 py-1.5 text-strong text-ink placeholder:text-ink-3 focus:border-accent-line"
         />
+
+        <label className="flex items-center gap-2 text-meta text-ink-3">
+          Kind
+          <select
+            value={knowledgeKind ?? ''}
+            onChange={(event) =>
+              setKnowledgeKind(
+                event.target.value === '' ? null : (event.target.value as KnowledgeKind),
+              )
+            }
+            aria-label="Knowledge kind"
+            className="rounded-md border border-line bg-surface px-2 py-1 text-body text-ink focus:border-accent-line"
+          >
+            <option value="">Note</option>
+            {KNOWLEDGE_KINDS.map((kind) => (
+              <option key={kind} value={kind}>
+                {KNOWLEDGE_KIND_LABELS[kind]}
+              </option>
+            ))}
+          </select>
+          {knowledgeKind !== null && body.trim().length === 0 ? (
+            <span className="truncate">Starts with its section headings.</span>
+          ) : null}
+        </label>
 
         <textarea
           value={body}

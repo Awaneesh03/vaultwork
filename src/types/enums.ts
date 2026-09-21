@@ -37,6 +37,44 @@ export type FocusOutcome = (typeof FOCUS_OUTCOMES)[number]
 export const REF_TYPES = ['task', 'project', 'goal', 'habit', 'none'] as const
 export type RefType = (typeof REF_TYPES)[number]
 
+/**
+ * What kind of durable knowledge a note is (M18.2).
+ *
+ * A note with no kind is an ordinary note, and most notes are. A kind marks an
+ * *explicit* knowledge artifact — something the user chose to keep as a brief,
+ * a decision or a review — which is what makes it worth giving a structure and
+ * a provenance. Vaultwork never manufactures one per task.
+ */
+export const KNOWLEDGE_KINDS = [
+  'brief',
+  'decision',
+  'meeting',
+  'research',
+  'learning',
+  'review',
+  'synthesis',
+] as const
+export type KnowledgeKind = (typeof KNOWLEDGE_KINDS)[number]
+
+/**
+ * Where a knowledge artifact's information came from.
+ *
+ * Not who saved it — every note is saved by the user — but what the content is
+ * *of*: something Vaultwork already knew, something the user wrote, something
+ * read from an email or a web page, something Claude or NotebookLM produced.
+ * Answering "where did this come from?" is the whole job.
+ */
+export const PROVENANCE_SOURCES = [
+  'user',
+  'vaultwork',
+  'email',
+  'calendar',
+  'web',
+  'claude',
+  'notebooklm',
+] as const
+export type ProvenanceSource = (typeof PROVENANCE_SOURCES)[number]
+
 export const RECURRENCE_FREQS = ['daily', 'weekly', 'monthly', 'yearly'] as const
 export type RecurrenceFreq = (typeof RECURRENCE_FREQS)[number]
 

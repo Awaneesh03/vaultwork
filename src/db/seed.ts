@@ -266,6 +266,8 @@ export function buildSeed(now: Date = new Date()) {
     body: '## Traversals\n\n- Inorder gives sorted output on a BST\n- Preorder is the one to use when copying a tree\n\n## Questions\n\n- When is Morris traversal actually worth it?\n',
     tagIds: [tags.dsa.id],
     vaultPath: buildVaultPath({ title: 'Binary tree traversal notes', tags: ['dsa'] }),
+    kind: null,
+    provenance: null,
   }
 
   const looseNote: Note = {
@@ -275,6 +277,8 @@ export function buildSeed(now: Date = new Date()) {
     body: '- [ ] Designing Data-Intensive Applications\n- [x] The Pragmatic Programmer\n',
     tagIds: [],
     vaultPath: buildVaultPath({ title: 'Reading list' }),
+    kind: null,
+    provenance: null,
   }
 
   const notes: Note[] = [traversalNote, looseNote]

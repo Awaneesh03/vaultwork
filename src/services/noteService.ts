@@ -1,9 +1,22 @@
+import {
+  isKnowledgeKind,
+  knowledgeBody,
+  sanitizeProvenance,
+} from '@/integrations/obsidian/knowledge'
 import { buildVaultPath, uniqueVaultPath } from '@/integrations/obsidian/vaultPath'
 import { markdownToText } from '@/lib/markdown'
 import { platform } from '@/platform'
-import { noteLinkRepo, noteRepo, tagRepo } from '@/repositories'
-import type { Id, Note, NoteLink } from '@/types/entities'
-import type { EventSource, RefType } from '@/types/enums'
+import {
+  goalRepo,
+  habitRepo,
+  noteLinkRepo,
+  noteRepo,
+  projectRepo,
+  tagRepo,
+  taskRepo,
+} from '@/repositories'
+import type { Id, Note, NoteLink, Provenance } from '@/types/entities'
+import type { EventSource, KnowledgeKind, RefType } from '@/types/enums'
 import { eventBus } from './eventBus'
 
 /**
@@ -35,6 +48,16 @@ export interface NoteInput {
   tagIds?: Id[] | undefined
   /** Attached at creation, so "new note about this task" is one call. */
   links?: NoteLinkInput[] | undefined
+  /**
+   * M18.2: makes the note an explicit knowledge artifact. An empty body is
+   * then given the kind's section headings, once, at creation.
+   */
+  kind?: KnowledgeKind | null | undefined
+  /**
+   * Where the content came from. Sanitised before it is stored; an artifact
+   * with none recorded is taken to be the user's own writing.
+   */
+  provenance?: Provenance | null | undefined
 }
 
 export interface NoteLinkInput {
@@ -123,8 +146,23 @@ export async function createNote(
 ): Promise<Note> {
   const source: EventSource = options.source ?? 'ui'
   const title = clean(input.title ?? '')
-  const body = input.body ?? ''
   const tagIds = input.tagIds ?? []
+
+  // Validated here rather than trusted from the intent: a kind can arrive from
+  // any producer, and one this build does not know is an ordinary note.
+  const kind = isKnowledgeKind(input.kind) ? input.kind : null
+  const provenance =
+    kind === null
+      ? input.provenance == null
+        ? null
+        : sanitizeProvenance(input.provenance)
+      : (sanitizeProvenance(input.provenance) ?? USER_PROVENANCE)
+
+  const typed = input.body ?? ''
+  const body =
+    kind !== null && typed.trim().length === 0
+      ? knowledgeBody(kind, await linkedTitles(input.links ?? []))
+      : typed
 
   const note = await noteRepo.create(
     {
@@ -133,6 +171,8 @@ export async function createNote(
       tagIds,
       // The whole point of the milestone: the location exists from the start.
       vaultPath: await reservePath(title.length > 0 ? title : UNTITLED_NOTE, tagIds),
+      kind,
+      provenance,
     },
     { source, emit: false },
   )
@@ -150,10 +190,39 @@ export async function createNote(
       title: noteTitle(note),
       vaultPath: note.vaultPath,
       links: (input.links ?? []).length,
+      kind,
     },
   })
 
   return note
+}
+
+/** An artifact nobody gave a source for is the user's own writing. */
+const USER_PROVENANCE: Provenance = {
+  source: 'user',
+  sourceId: null,
+  sourceUrl: null,
+  capturedAt: null,
+}
+
+/**
+ * The names of what a new artifact is linked to, for its `## Related` list.
+ *
+ * Read by id at creation and written as text, once. After that the body is the
+ * user's; the canonical relationship stays in `noteLinks`, where a renamed
+ * project is renamed everywhere with no propagation step.
+ */
+async function linkedTitles(links: NoteLinkInput[]): Promise<string[]> {
+  const titles = await Promise.all(
+    links.map(async ({ refType, refId }) => {
+      if (refType === 'project') return (await projectRepo.get(refId))?.name
+      if (refType === 'task') return (await taskRepo.get(refId))?.title
+      if (refType === 'goal') return (await goalRepo.get(refId))?.title
+      if (refType === 'habit') return (await habitRepo.get(refId))?.name
+      return undefined
+    }),
+  )
+  return titles.filter((title): title is string => typeof title === 'string')
 }
 
 // -------------------------------------------------------------------- update

@@ -7,10 +7,12 @@ import type {
   GoalStatus,
   HabitCadence,
   HabitKind,
+  KnowledgeKind,
   MessageSource,
   MessageStatus,
   Priority,
   ProjectStatus,
+  ProvenanceSource,
   RecurrenceFreq,
   RefType,
   SyncDirection,
@@ -168,6 +170,31 @@ export interface Note extends BaseRecord {
    * by M9 onwards; nullable only because M1 rows predate the guarantee.
    */
   vaultPath: string | null
+  /**
+   * M18.2: the kind of knowledge artifact this is, or `null` for an ordinary
+   * note. Not indexed — nothing queries by it, so it costs no schema change.
+   */
+  kind: KnowledgeKind | null
+  /** M18.2: where the information came from. `null` when nobody recorded it. */
+  provenance: Provenance | null
+}
+
+/**
+ * Where a knowledge artifact's information came from (M18.2).
+ *
+ * Minimal on purpose. It names the source and, where one exists, the thing
+ * within it — never the credential used to reach it. A URL is kept only after
+ * `sanitizeProvenance` has refused userinfo and stripped secret-shaped query
+ * parameters, because provenance is written into a Markdown file anyone with
+ * the vault can read.
+ */
+export interface Provenance {
+  source: ProvenanceSource
+  /** The entity or message within the source, e.g. a project id. */
+  sourceId: string | null
+  sourceUrl: string | null
+  /** When the information was captured from its source. */
+  capturedAt: Timestamp | null
 }
 
 /**

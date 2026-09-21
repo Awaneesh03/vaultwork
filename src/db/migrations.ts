@@ -131,6 +131,33 @@ export const MIGRATIONS: MigrationDefinition[] = [
       vaultDocuments: 'id, &vaultPath, title, kind, importedAt, updatedAt, deletedAt',
     },
   },
+
+  /**
+   * Version 4 — M18.2 knowledge artifacts.
+   *
+   * A note gains `kind` and `provenance`. Neither is indexed, so no store
+   * changes: nothing queries notes by kind, and an index nobody reads is a
+   * write cost with no return.
+   *
+   * The upgrade still runs, because "absent" and "null" are different values
+   * and the rest of the application is written against `null`. Backfilling
+   * once here means no reader has to remember that a pre-M18.2 note is
+   * missing the field entirely. `updatedAt` is untouched: an existing note did
+   * not change, it gained two empty fields.
+   */
+  {
+    version: 4,
+    stores: {},
+    upgrade: async (tx) => {
+      await tx
+        .table<{ kind?: unknown; provenance?: unknown }>('notes')
+        .toCollection()
+        .modify((note) => {
+          if (note.kind === undefined) note.kind = null
+          if (note.provenance === undefined) note.provenance = null
+        })
+    },
+  },
 ]
 
 export const CURRENT_SCHEMA_VERSION = MIGRATIONS[MIGRATIONS.length - 1]?.version ?? 1
