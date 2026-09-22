@@ -154,3 +154,51 @@ export const INBOX_TYPES = [
   'habit',
 ] as const
 export type InboxType = (typeof INBOX_TYPES)[number]
+
+/**
+ * The integrations Vaultwork can describe (M18.4) — the ones that exist today.
+ *
+ * Deliberately not the other source vocabularies. `EventSource` says which
+ * surface caused a write, `MessageSource` which channel text arrived on, and
+ * `ProvenanceSource` where information came from; this says which *connected
+ * thing* is being described. Where a word appears in more than one list —
+ * `obsidian`, `telegram`, `vaultwork` — it is spelled the same, and each list
+ * keeps the meaning it has always had. Nothing here is persisted.
+ *
+ * `assistant` is the AI provider the Assistant calls, whichever it is; `mcp` is
+ * the read-only snapshot Claude Desktop reads. A source is added here when it
+ * is built, not when it is imagined.
+ */
+export const SOURCE_IDS = ['vaultwork', 'obsidian', 'assistant', 'mcp', 'telegram'] as const
+export type SourceId = (typeof SOURCE_IDS)[number]
+
+/**
+ * What a source's state is right now — about the connection, not the app.
+ *
+ * `available` means usable but not proven by a round trip; `connected` means
+ * the adapter itself reports a live connection. The difference is the point:
+ * a configured key is not a working provider, and saying "connected" for one
+ * would be a claim nothing checked.
+ */
+export const SOURCE_STATUSES = [
+  'connected',
+  'available',
+  'disconnected',
+  'requiresSetup',
+  'unavailable',
+  'error',
+] as const
+export type SourceStatus = (typeof SOURCE_STATUSES)[number]
+
+/** What a source does today, in this build. A closed list, and a short one. */
+export const SOURCE_CAPABILITIES = [
+  'read',
+  'write',
+  'search',
+  'import',
+  'export',
+  'sync',
+  'capture',
+  'reason',
+] as const
+export type SourceCapability = (typeof SOURCE_CAPABILITIES)[number]

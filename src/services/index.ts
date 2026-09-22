@@ -126,3 +126,12 @@ export * from './researchPackService'
 /* Milestone 18.3 — the Universal Inbox. */
 export * from './inboxService'
 export type { Classification, InboxProposal, InboxQuestion } from './inbox/inboxProposal'
+
+/* Milestone 18.4 — the source registry: integrations described, never operated. */
+export {
+  getSource,
+  getSources,
+  isSourceId,
+  UnknownSourceError,
+  type SourceDescription,
+} from './sourceRegistryService'

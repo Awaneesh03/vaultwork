@@ -1887,3 +1887,65 @@ describe('the universal inbox boundary', () => {
     }
   })
 })
+
+/**
+ * M18.4's boundary: the source registry describes integrations; it does not
+ * reach them any way their own services do not, and it grants nothing.
+ */
+describe('the source registry boundary', () => {
+  const REGISTRY = 'src/services/sourceRegistryService.ts'
+
+  it('reaches integrations only through their own status APIs', () => {
+    const offenders = IMPORTS.filter(
+      (ref) =>
+        ref.file === REGISTRY &&
+        /^(src\/(repositories|db|features|components|store|ai)|dexie|@tauri-apps)|platform\/(browser|tauri)/.test(
+          ref.resolved,
+        ),
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+
+    const source = readFileSync(join(ROOT, REGISTRY), 'utf8')
+    // Status reads only — no port method that changes, sends or writes.
+    expect(source).not.toMatch(
+      /platform\.\w+\.(connect|disconnect|configure|start|stop|send|ack|writeFile|deleteFile|complete|setEnabled|authorize|notify)/,
+    )
+    expect(source).not.toMatch(/\bexecute\(|commandExecutor|fetch\(|invoke\(/)
+  })
+
+  it('exports no way to act on a source', () => {
+    const source = readFileSync(join(ROOT, REGISTRY), 'utf8')
+    const exported = [...source.matchAll(/export (?:async )?function (\w+)/g)].map((m) => m[1])
+    expect(exported.sort()).toEqual(['describeSources', 'getSource', 'getSources'])
+  })
+
+  it('gives the AI layer no view of the registry, so it cannot become a route', () => {
+    const offenders = IMPORTS.filter(
+      (ref) =>
+        inLayer(ref.file, 'src/ai/', 'src/services/ai/') &&
+        ref.resolved.includes('sourceRegistryService'),
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+  })
+
+  it('keeps the Settings readout on the hook, never on the platform', () => {
+    const files = [
+      'src/features/settings/components/ConnectedSourcesSection.tsx',
+      'src/features/settings/hooks/useSources.ts',
+    ]
+    const offenders = IMPORTS.filter(
+      (ref) =>
+        files.includes(ref.file) && /^src\/(platform|repositories|db)|^dexie/.test(ref.resolved),
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+  })
+
+  it('left the MCP tool surface at the three M18.1 tools', async () => {
+    const { TOOL_NAMES } = await import('../mcp/src/tools.ts')
+    expect([...TOOL_NAMES].sort()).toEqual([
+      'vaultwork_get_projects',
+      'vaultwork_get_tasks',
+      'vaultwork_get_today',
+    ])
+  })
+})

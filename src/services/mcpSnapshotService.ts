@@ -278,12 +278,26 @@ export async function buildMcpSnapshot(
   }
 }
 
+/**
+ * When this process last published a snapshot successfully (M18.4).
+ *
+ * The one fact about MCP Vaultwork can actually verify: that the file was
+ * written. Whether Claude Desktop is configured to read it is outside this
+ * process, and nothing here pretends to know.
+ */
+let lastPublishedAt: Timestamp | null = null
+
+export function getMcpSnapshotPublishedAt(): Timestamp | null {
+  return lastPublishedAt
+}
+
 /** Builds and publishes. Silent about its contents, loud about nothing. */
 export async function writeMcpSnapshot(): Promise<boolean> {
   if (!platform.desktop.isSupported) return false
   try {
     const snapshot = await buildMcpSnapshot()
     await platform.desktop.writeMcpSnapshot(JSON.stringify(snapshot))
+    lastPublishedAt = platform.clock.now()
     return true
   } catch (error) {
     // Never the snapshot itself: a failure is reported by kind, and the user's

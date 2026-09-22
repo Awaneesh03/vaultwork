@@ -23,6 +23,7 @@ import { useUiStore } from '@/store/uiStore'
 import { useDataActions } from '../hooks/useDataActions'
 import { useDiagnostics } from '../hooks/useDiagnostics'
 import { AssistantSection } from '../components/AssistantSection'
+import { ConnectedSourcesSection } from '../components/ConnectedSourcesSection'
 import { DesktopSection } from '../components/DesktopSection'
 import { TelegramSection } from '../components/TelegramSection'
 import { useStorageReport } from '../hooks/useStorageReport'
@@ -327,6 +328,13 @@ export function SettingsView() {
             </div>
           </Field>
         ) : null}
+      </Group>
+
+      <Group
+        title="Connected sources"
+        description="Everything Vaultwork is connected to, and what each can do in this build. Each integration is still set up in its own place."
+      >
+        <ConnectedSourcesSection />
       </Group>
 
       <Group
