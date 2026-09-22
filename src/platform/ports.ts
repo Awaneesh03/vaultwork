@@ -505,3 +505,69 @@ export class PortNotSupportedError extends Error {
     this.name = 'PortNotSupportedError'
   }
 }
+
+// ------------------------------------------------------ external context (M19.1)
+
+/**
+ * One calendar event, normalised to what the Today page needs — and no more.
+ *
+ * A provider's full event (attendees, descriptions, conference links, colours)
+ * is deliberately not carried: an adapter maps to this shape at the boundary,
+ * so nothing above the port ever sees a provider's field names or its private
+ * detail. Events are external facts, not Vaultwork tasks, and are never stored.
+ */
+export interface CalendarEvent {
+  /** The provider's id, opaque — never a Vaultwork id. */
+  id: string
+  title: string
+  start: Timestamp
+  /** `null` when the provider gave no end, rather than a guessed duration. */
+  end: Timestamp | null
+  allDay: boolean
+  status: 'confirmed' | 'tentative'
+}
+
+/**
+ * One email worth a glance, as metadata — never the message itself.
+ *
+ * There is no body field, on purpose. A short snippet is the ceiling of what
+ * reaches Vaultwork; reading a whole message belongs to the mail client (or to
+ * Claude, through its own connector), not to a productivity dashboard.
+ */
+export interface EmailSignal {
+  id: string
+  subject: string
+  sender: string
+  receivedAt: Timestamp
+  /** The provider's own importance flag, not Vaultwork's opinion. */
+  important: boolean
+  snippet: string
+}
+
+/**
+ * A read-only calendar (M19.1).
+ *
+ * One operation, because Today needs one: the events in a window. There is no
+ * create, update or delete, and no way to name a URL, a calendar id or a
+ * query — an adapter decides which calendar, and the renderer cannot redirect
+ * it. `isSupported` is false until a real connector exists in this build.
+ */
+export interface CalendarPort {
+  readonly id: string
+  readonly isSupported: boolean
+  eventsBetween(from: Timestamp, to: Timestamp): Promise<CalendarEvent[]>
+}
+
+/**
+ * A read-only mailbox (M19.1).
+ *
+ * One operation: a handful of recent signals the provider itself marked as
+ * important. No search string, no folder, no message fetch, no send — the
+ * narrowest thing that can put "Professor X wrote about the deadline" on the
+ * Today page.
+ */
+export interface EmailPort {
+  readonly id: string
+  readonly isSupported: boolean
+  recentSignals(limit: number): Promise<EmailSignal[]>
+}

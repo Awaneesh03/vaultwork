@@ -4,6 +4,8 @@ import { noDesktop } from './browser/noDesktop'
 import { noMenu } from './browser/noMenu'
 import { nullAi } from './browser/nullAi'
 import { unsupportedTelegram } from './browser/unsupportedTelegram'
+import { unconnectedCalendar } from './browser/unconnectedCalendar'
+import { unconnectedEmail } from './browser/unconnectedEmail'
 import { createMemorySnapshotStore, opfsSnapshotStore } from './browser/opfsSnapshotStore'
 import { systemClock } from './browser/systemClock'
 import { unsupportedVault } from './browser/unsupportedVault'
@@ -19,7 +21,9 @@ import { createTauriNotifications } from './tauri/tauriNotifications'
 import { createTauriVault } from './tauri/tauriVault'
 import type {
   AiPort,
+  CalendarPort,
   ClockPort,
+  EmailPort,
   FileSystemPort,
   MenuPort,
   TelegramPort,
@@ -44,6 +48,13 @@ export interface Platform {
   menu: MenuPort
   /** Login items and other OS integration. Inert in a browser. */
   desktop: DesktopPort
+  /**
+   * M19.1: read-only external context. No connector exists in any build yet,
+   * so both are the unconnected adapters everywhere; a real one replaces them
+   * here and nowhere else.
+   */
+  calendar: CalendarPort
+  email: EmailPort
   capabilities: Capabilities
 }
 
@@ -97,6 +108,8 @@ export function resolvePlatform(): Platform {
     vault,
     menu,
     desktop: desktopPort,
+    calendar: unconnectedCalendar,
+    email: unconnectedEmail,
   }
 
   return { ...parts, capabilities: deriveCapabilities(parts) }

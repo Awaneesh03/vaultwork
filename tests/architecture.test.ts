@@ -2016,3 +2016,103 @@ describe('the Today Engine boundary', () => {
     expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
   })
 })
+
+describe('the external context boundary', () => {
+  const SERVICE = 'src/services/externalContextService.ts'
+  const PORTS = 'src/platform/ports.ts'
+  const UI = [
+    'src/features/dashboard/hooks/useExternalContext.ts',
+    'src/features/dashboard/components/ExternalContextSections.tsx',
+  ]
+
+  it('reaches calendar and email only through the typed ports', () => {
+    const offenders = IMPORTS.filter(
+      (ref) =>
+        ref.file === SERVICE &&
+        !/^src\/(lib|types)\//.test(ref.resolved) &&
+        ref.resolved !== 'src/platform',
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+    const code = codeOf(join(ROOT, SERVICE))
+    expect(code).toContain('platform.calendar')
+    expect(code).toContain('platform.email')
+  })
+
+  it('builds no generic request, OAuth flow or source action anywhere in the frontend', () => {
+    const offenders = walk(SRC)
+      .filter((file) =>
+        /genericFetch|genericGoogleApi|genericOAuth|genericExternalRequest|executeSourceAction|googleapis\.com|oauth2|refresh_token/i.test(
+          codeOf(file),
+        ),
+      )
+      .map((file) => relative(ROOT, file))
+    expect(offenders).toEqual([])
+    expect(codeOf(join(ROOT, SERVICE))).not.toMatch(/fetch\(|invoke\(|XMLHttpRequest/)
+  })
+
+  it('gives the ports no way to write', () => {
+    const ports = codeOf(join(ROOT, PORTS))
+    const block = (name: string) =>
+      new RegExp(`interface ${name} \\{([\\s\\S]*?)\\n\\}`).exec(ports)?.[1] ?? ''
+    const calendar = block('CalendarPort')
+    const email = block('EmailPort')
+    expect(calendar).toContain('eventsBetween(')
+    expect(email).toContain('recentSignals(')
+    for (const body of [calendar, email]) {
+      expect(body).not.toMatch(/send|delete|move|create|update|insert|patch|trash|archive|label/i)
+    }
+    // No body field to fill: an email signal is a subject line, not a message.
+    expect(block('EmailSignal')).not.toMatch(/\bbody\b|html|attachment/i)
+  })
+
+  it('persists nothing: no repositories, database or storage', () => {
+    const offenders = IMPORTS.filter(
+      (ref) =>
+        [SERVICE, ...UI].includes(ref.file) &&
+        /^src\/(repositories|db)|^dexie|dexie-react-hooks/.test(ref.resolved),
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+    for (const file of [SERVICE, ...UI]) {
+      expect(codeOf(join(ROOT, file)), file).not.toMatch(
+        /localStorage|sessionStorage|indexedDB|writeFile|appendLog/,
+      )
+    }
+  })
+
+  it('stays out of the Today context, the live query, the MCP snapshot and the registry', () => {
+    const readers = [
+      'src/services/today/todayService.ts',
+      'src/services/today/todayEngine.ts',
+      'src/services/mcpSnapshotService.ts',
+      'src/services/sourceRegistryService.ts',
+      'src/features/dashboard/hooks/useToday.ts',
+    ]
+    for (const file of readers) {
+      expect(codeOf(join(ROOT, file)), file).not.toMatch(
+        /externalContextService|readCalendar|readEmail|platform\.(calendar|email)/,
+      )
+    }
+    expect(codeOf(join(ROOT, UI[0]!))).not.toMatch(/useLiveQuery|liveQuery/)
+  })
+
+  it('keeps Today’s UI off the platform — it asks the service', () => {
+    const offenders = IMPORTS.filter(
+      (ref) => UI.includes(ref.file) && /^src\/(platform|repositories|db)/.test(ref.resolved),
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+  })
+
+  it('opens no network path: the WebView CSP and the native command set are unchanged', () => {
+    const conf = JSON.parse(readFileSync(join(ROOT, 'src-tauri', 'tauri.conf.json'), 'utf8')) as {
+      app: { security: { csp: string } }
+    }
+    const connect = /connect-src ([^;]*)/.exec(conf.app.security.csp)?.[1]
+    expect(connect).toBe("'self' ipc: http://ipc.localhost")
+
+    const lib = readFileSync(join(ROOT, 'src-tauri', 'src', 'lib.rs'), 'utf8')
+    const handlers = /generate_handler!\[([\s\S]*?)\]/.exec(lib)?.[1] ?? ''
+    const modules = new Set([...handlers.matchAll(/(\w+)::\w+/g)].map((match) => match[1]))
+    expect([...modules].sort()).toEqual(['ai', 'desktop', 'mcp', 'telegram', 'vault'])
+    expect(handlers).not.toMatch(/calendar|gmail|email|google|oauth/i)
+  })
+})

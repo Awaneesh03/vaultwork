@@ -35,7 +35,9 @@ import { TodayHabits } from '../components/TodayHabits'
 import { DashboardTaskList } from '../components/DashboardTaskList'
 import { NextAction } from '../components/NextAction'
 import { RecentActivity } from '../components/RecentActivity'
+import { ExternalContextSections } from '../components/ExternalContextSections'
 import { TodaySoFar } from '../components/TodaySoFar'
+import { sourcesSentence, useExternalContext } from '../hooks/useExternalContext'
 import { useToday } from '../hooks/useToday'
 
 /**
@@ -81,6 +83,8 @@ function DashboardSkeleton() {
 
 export function DashboardView() {
   const data = useToday()
+  // M19.1: read on its own, beside the Today context — never inside it.
+  const external = useExternalContext()
   const navigate = useNavigate()
   const { dispatch, run, pending } = useCommands()
   const tagActions = useTagActions()
@@ -326,6 +330,13 @@ export function DashboardView() {
               capturesWaiting={value.capturesWaiting}
             />
 
+            {/* M19.1: calendar and email, only when a source answered. */}
+            <ExternalContextSections
+              calendar={external.calendar}
+              email={external.email}
+              today={value.today}
+            />
+
             {/* The context: what is coming, where it belongs, what just changed. */}
             <div className="grid items-start gap-3 lg:grid-cols-3">
               <DashboardCard
@@ -426,10 +437,11 @@ export function DashboardView() {
               <span>— live from the local database.</span>
               {/* M19: which sources the day was built from, stated plainly. */}
               <span>
-                {value.sources.knowledge === 'included'
-                  ? 'Built from Vaultwork and your linked notes.'
-                  : 'Built from Vaultwork alone.'}{' '}
-                Email, external calendars and other sources are not connected.
+                {sourcesSentence(
+                  value.sources.knowledge === 'included',
+                  external.calendar,
+                  external.email,
+                )}
               </span>
             </p>
           </div>

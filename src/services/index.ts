@@ -139,3 +139,6 @@ export {
 /* Milestone 19 — the Today Engine: one deterministic context for the day. */
 export * from './today/todayService'
 export type { TimeBudget, TimeFit, TodayProgress } from './today/todayEngine'
+
+/* Milestone 19.1 — read-only external context (calendar, email), in memory only. */
+export * from './externalContextService'
