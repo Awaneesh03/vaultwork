@@ -1,5 +1,7 @@
-import { Check, Clock, Sparkles, Timer, TriangleAlert } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Check, Clock, FileText, Sparkles, Timer, TriangleAlert } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
+import type { Backlink } from '@/services'
 import { cn } from '@/lib/cn'
 import { formatDayLabel, formatEstimate, formatTime } from '@/lib/date'
 import { PRIORITY_LABELS } from '@/features/tasks/priority'
@@ -28,10 +30,16 @@ export function NextAction({
   onComplete,
   onSchedule,
   onCapture,
+  reason = null,
+  knowledge = [],
 }: {
   task: Task | null
   today: DateStr
   projects: Project[]
+  /** M19: why this task was chosen, from the Today Engine. */
+  reason?: string | null
+  /** M19: notes already linked to this task or its project. Never a search. */
+  knowledge?: Backlink[]
   onOpen: (task: Task) => void
   onComplete: (task: Task) => void
   onSchedule: (task: Task) => void
@@ -150,8 +158,33 @@ export function NextAction({
 
             {project ? <span className="truncate text-ink-2">{project.name}</span> : null}
           </div>
+
+          {/* M19: the rule's own justification, in words. */}
+          {reason ? <p className="mt-1.5 text-meta text-ink-2">Why: {reason}</p> : null}
         </div>
       </div>
+
+      {knowledge.length > 0 ? (
+        <div className="flex flex-col gap-1">
+          <span className="t-eyebrow text-ink-3">Related knowledge</span>
+          <ul className="flex flex-col gap-0.5">
+            {knowledge.map((note) => (
+              <li key={note.noteId} className="min-w-0">
+                <Link
+                  to={`/notes/${note.noteId}`}
+                  className="flex min-w-0 items-center gap-1.5 text-body text-ink-2 hover:text-ink"
+                >
+                  <FileText size={12} className="shrink-0 text-ink-3" aria-hidden />
+                  <span className="min-w-0 truncate">{note.title}</span>
+                  {note.obsidianPath !== null ? (
+                    <span className="shrink-0 text-meta text-ink-3">· In Obsidian</span>
+                  ) : null}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
 
       <div className="flex flex-wrap gap-1.5">
         <Button variant="primary" size="sm" onClick={() => onComplete(task)}>

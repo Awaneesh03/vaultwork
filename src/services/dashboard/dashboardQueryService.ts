@@ -20,6 +20,7 @@ import {
   describeEvent,
   greetingFor,
   headlineFor,
+  rankForNextAction,
   selectNextAction,
   type ActivityEntry,
   type DashboardSummary,
@@ -65,6 +66,13 @@ export interface DashboardData {
 
   /** The single task to work on next, or `null` when nothing is open. */
   nextAction: Task | null
+
+  /**
+   * M19: every open task due today or earlier, unsliced, in Next Action order.
+   * The previews below are capped for a card; the Today Engine's time budget
+   * needs the whole plate, and reads it here rather than querying tasks again.
+   */
+  planned: Task[]
 
   /** Overdue tasks, ordered as the Overdue view orders them. */
   overdue: Task[]
@@ -187,6 +195,10 @@ export async function getDashboard(): Promise<DashboardData> {
     headline: headlineFor(summary),
 
     nextAction: selectNextAction(open, today),
+    planned: rankForNextAction(
+      open.filter((task) => task.dueDate !== null && task.dueDate <= today),
+      today,
+    ),
 
     overdue: overdueAll.slice(0, DASHBOARD_LIMITS.overdue),
     overdueTotal: overdueAll.length,

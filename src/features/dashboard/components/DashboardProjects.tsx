@@ -3,7 +3,25 @@ import { TriangleAlert } from 'lucide-react'
 import { ROUTES } from '@/app/navigation'
 import { ProjectProgress } from '@/features/projects/components/ProjectProgress'
 import { projectColorVar, projectIcon } from '@/features/projects/projectAppearance'
+import { daysBetween, formatDayLabel } from '@/lib/date'
 import type { ProjectSummary } from '@/services'
+import type { DateStr } from '@/types/entities'
+
+/** How far ahead a project deadline is worth mentioning on Today (M19). */
+const DEADLINE_HORIZON_DAYS = 7
+
+/**
+ * "Deadline tomorrow", "Deadline passed Mon 14 Sep" — or nothing, when the
+ * deadline is far enough off that saying so is noise. Words, not colour alone.
+ */
+function deadlineNote(deadline: DateStr | null, today: DateStr | undefined): string | null {
+  if (deadline === null || today === undefined) return null
+  const days = daysBetween(today, deadline)
+  if (days < 0) return `Deadline passed ${formatDayLabel(deadline, today)}`
+  if (days > DEADLINE_HORIZON_DAYS) return null
+  const label = formatDayLabel(deadline, today)
+  return `Deadline ${days <= 1 ? label.toLowerCase() : label}`
+}
 
 /**
  * Active projects, at a glance.
@@ -16,7 +34,14 @@ import type { ProjectSummary } from '@/services'
  * counts as active is a domain question, and answering it in JSX is how two
  * screens end up disagreeing about it.
  */
-export function DashboardProjects({ projects }: { projects: ProjectSummary[] }) {
+export function DashboardProjects({
+  projects,
+  today,
+}: {
+  projects: ProjectSummary[]
+  /** M19: when given, an approaching or passed deadline is named on its row. */
+  today?: DateStr
+}) {
   return (
     <ul className="flex flex-col divide-y divide-line">
       {projects.map(({ project, stats }) => {
@@ -61,6 +86,11 @@ export function DashboardProjects({ projects }: { projects: ProjectSummary[] }) 
                     {stats.remaining} left
                   </span>
                 </span>
+                {deadlineNote(project.deadline, today) !== null ? (
+                  <span className="mt-0.5 block text-micro text-warn">
+                    {deadlineNote(project.deadline, today)}
+                  </span>
+                ) : null}
               </span>
             </Link>
           </li>

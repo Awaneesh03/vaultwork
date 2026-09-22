@@ -135,3 +135,7 @@ export {
   UnknownSourceError,
   type SourceDescription,
 } from './sourceRegistryService'
+
+/* Milestone 19 — the Today Engine: one deterministic context for the day. */
+export * from './today/todayService'
+export type { TimeBudget, TimeFit, TodayProgress } from './today/todayEngine'

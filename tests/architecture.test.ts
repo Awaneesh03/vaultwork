@@ -1949,3 +1949,70 @@ describe('the source registry boundary', () => {
     ])
   })
 })
+
+/**
+ * M19's boundary: the Today Engine reads what Vaultwork owns, through the
+ * services that own it — no model, no second task model, no new route to data.
+ */
+describe('the Today Engine boundary', () => {
+  const ENGINE = 'src/services/today/todayEngine.ts'
+  const SERVICE = 'src/services/today/todayService.ts'
+
+  it('keeps the rules pure: dates and types, nothing else', () => {
+    const offenders = IMPORTS.filter(
+      (ref) => ref.file === ENGINE && !/^src\/(lib|types)\//.test(ref.resolved),
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+  })
+
+  it('reaches no database, native bridge, model, MCP or registry', () => {
+    const offenders = IMPORTS.filter(
+      (ref) =>
+        (ref.file === ENGINE || ref.file === SERVICE) &&
+        /^(src\/(db|ai|platform|features|components|store)|dexie|@tauri-apps)|services\/ai\/|mcp\/|sourceRegistryService|obsidianService|obsidianSyncService|researchPackService/.test(
+          ref.resolved,
+        ),
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+
+    for (const file of [ENGINE, SERVICE]) {
+      const source = readFileSync(join(ROOT, file), 'utf8')
+      expect(source, file).not.toMatch(/platform\.ai|askAi|\.complete\(|fetch\(|invoke\(/)
+    }
+  })
+
+  it('defines no second task model', () => {
+    for (const file of [ENGINE, SERVICE]) {
+      const source = readFileSync(join(ROOT, file), 'utf8')
+      expect(source, file).not.toMatch(/interface \w*Task\b|type \w*Task\s*=/)
+    }
+  })
+
+  it('reads tasks only through the Dashboard’s single query', () => {
+    const source = readFileSync(join(ROOT, SERVICE), 'utf8')
+    expect(source).toContain('await getDashboard()')
+    expect(source).not.toMatch(/taskRepo|projectRepo|habitRepo|goalRepo/)
+  })
+
+  it('writes nothing', () => {
+    for (const file of [ENGINE, SERVICE]) {
+      const source = readFileSync(join(ROOT, file), 'utf8')
+      expect(source, file).not.toMatch(
+        /\.(create|update|softDelete|restore|append|markProcessed|dismiss)\(|\bexecute\(|eventBus/,
+      )
+    }
+  })
+
+  it('keeps the Dashboard on the hook, never on repositories or the platform', () => {
+    const files = [
+      'src/features/dashboard/hooks/useToday.ts',
+      'src/features/dashboard/components/TodaySoFar.tsx',
+      'src/features/dashboard/views/DashboardView.tsx',
+    ]
+    const offenders = IMPORTS.filter(
+      (ref) =>
+        files.includes(ref.file) && /^src\/(repositories|db|platform)|^dexie$/.test(ref.resolved),
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+  })
+})

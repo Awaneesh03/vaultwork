@@ -15,7 +15,7 @@ import { DataView } from '@/components/feedback/DataView'
 import { Skeleton } from '@/components/feedback/Skeleton'
 import { useCommands } from '@/hooks/useCommands'
 import { formatDayLabel } from '@/lib/date'
-import type { DashboardData, TaskPatch } from '@/services'
+import type { TaskPatch, TodayContext } from '@/services'
 import { useTaskUiStore } from '@/store/taskUiStore'
 import type { Id, Task } from '@/types/entities'
 import type { Priority } from '@/types/enums'
@@ -35,7 +35,8 @@ import { TodayHabits } from '../components/TodayHabits'
 import { DashboardTaskList } from '../components/DashboardTaskList'
 import { NextAction } from '../components/NextAction'
 import { RecentActivity } from '../components/RecentActivity'
-import { useDashboard } from '../hooks/useDashboard'
+import { TodaySoFar } from '../components/TodaySoFar'
+import { useToday } from '../hooks/useToday'
 
 /**
  * The daily command centre.
@@ -51,6 +52,13 @@ import { useDashboard } from '../hooks/useDashboard'
  * numbers, then the decisions that need making (next action, overdue, today),
  * then the context that informs them (upcoming, projects, activity).
  */
+
+/** "3 days late", per overdue task — how late, in words beside the due date. */
+function latenessNotes(lateness: Map<string, number>): Map<string, string> {
+  return new Map(
+    [...lateness].map(([id, days]) => [id, `${days} ${days === 1 ? 'day' : 'days'} late`]),
+  )
+}
 
 function DashboardSkeleton() {
   return (
@@ -72,7 +80,7 @@ function DashboardSkeleton() {
 }
 
 export function DashboardView() {
-  const data = useDashboard()
+  const data = useToday()
   const navigate = useNavigate()
   const { dispatch, run, pending } = useCommands()
   const tagActions = useTagActions()
@@ -214,7 +222,7 @@ export function DashboardView() {
 
   return (
     <div className="flex flex-col gap-5">
-      <DataView<DashboardData> data={data} loading={<DashboardSkeleton />} isEmpty={() => false}>
+      <DataView<TodayContext> data={data} loading={<DashboardSkeleton />} isEmpty={() => false}>
         {(value) => (
           <div className="flex flex-col gap-5">
             <DashboardHeader
@@ -239,6 +247,8 @@ export function DashboardView() {
 
             <NextAction
               task={value.nextAction}
+              reason={value.nextAction ? (value.reasons.get(value.nextAction.id) ?? null) : null}
+              knowledge={value.knowledge}
               today={value.today}
               projects={value.allProjects}
               onOpen={(task) => openTask(task.id)}
@@ -263,6 +273,7 @@ export function DashboardView() {
               >
                 <DashboardTaskList
                   tasks={value.overdue}
+                  notes={latenessNotes(value.lateness)}
                   tags={value.tags}
                   projects={value.allProjects}
                   today={value.today}
@@ -307,6 +318,13 @@ export function DashboardView() {
                 </div>
               </DashboardCard>
             </div>
+
+            {/* M19: how the day is going — context, so it follows the decisions. */}
+            <TodaySoFar
+              progress={value.dayProgress}
+              budget={value.timeBudget}
+              capturesWaiting={value.capturesWaiting}
+            />
 
             {/* The context: what is coming, where it belongs, what just changed. */}
             <div className="grid items-start gap-3 lg:grid-cols-3">
@@ -375,7 +393,7 @@ export function DashboardView() {
                 isEmpty={value.projects.length === 0}
                 empty="No active projects yet."
               >
-                <DashboardProjects projects={value.projects} />
+                <DashboardProjects projects={value.projects} today={value.today} />
               </DashboardCard>
 
               <DashboardCard
@@ -406,6 +424,13 @@ export function DashboardView() {
                 {value.counts['tags'] ?? 0} tags · {value.eventCount} events
               </span>
               <span>— live from the local database.</span>
+              {/* M19: which sources the day was built from, stated plainly. */}
+              <span>
+                {value.sources.knowledge === 'included'
+                  ? 'Built from Vaultwork and your linked notes.'
+                  : 'Built from Vaultwork alone.'}{' '}
+                Email, external calendars and other sources are not connected.
+              </span>
             </p>
           </div>
         )}
