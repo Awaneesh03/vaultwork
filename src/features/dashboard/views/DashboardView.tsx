@@ -335,6 +335,7 @@ export function DashboardView() {
               calendar={external.calendar}
               email={external.email}
               today={value.today}
+              onCheckAgain={external.checkAgain}
             />
 
             {/* The context: what is coming, where it belongs, what just changed. */}

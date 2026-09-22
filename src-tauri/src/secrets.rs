@@ -33,7 +33,7 @@ pub fn read_count() -> u64 {
 const SERVICE: &str = "app.vaultwork.desktop";
 
 /// Every secret this application is allowed to hold.
-const KNOWN_KEYS: &[&str] = &["telegram.botToken", "ai.groq.apiKey"];
+const KNOWN_KEYS: &[&str] = &["telegram.botToken", "ai.groq.apiKey", "google.refreshToken"];
 
 #[derive(Debug)]
 pub struct SecretError(pub String);
@@ -86,3 +86,6 @@ pub const TELEGRAM_TOKEN: &str = "telegram.botToken";
 /// The AI provider credential. Namespaced by provider so a second provider is a
 /// second allowlist entry rather than a shared slot two features fight over.
 pub const AI_GROQ_KEY: &str = "ai.groq.apiKey";
+/// The Google account's OAuth refresh token (M19.2). Access tokens are never
+/// stored anywhere — they live in `google.rs`'s memory for about an hour.
+pub const GOOGLE_REFRESH_TOKEN: &str = "google.refreshToken";

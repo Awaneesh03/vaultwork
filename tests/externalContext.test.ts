@@ -1,6 +1,6 @@
-import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { db } from '@/db'
-import { platform, type CalendarPort, type EmailPort } from '@/platform'
+import { PortNotSupportedError, platform, type CalendarPort, type EmailPort } from '@/platform'
 import {
   EXTERNAL_LIMITS,
   boundEvents,
@@ -242,6 +242,74 @@ describe('reading email', () => {
   })
 })
 
+describe('a connected source that cannot answer (M19.2)', () => {
+  it('reads "not connected" as absence, not as a failure', async () => {
+    install(
+      'calendar',
+      calendarOf(async () => {
+        throw new PortNotSupportedError('calendar', 'eventsBetween')
+      }),
+    )
+    install(
+      'email',
+      emailOf(async () => {
+        throw new PortNotSupportedError('email', 'recentSignals')
+      }),
+    )
+    expect(await readCalendar()).toEqual({ state: 'unavailable' })
+    expect(await readEmail()).toEqual({ state: 'unavailable' })
+  })
+
+  it('gives a source that never answers fifteen seconds, then calls it an error', async () => {
+    vi.useFakeTimers()
+    try {
+      install(
+        'calendar',
+        calendarOf(() => new Promise(() => {})),
+      )
+      install(
+        'email',
+        emailOf(() => new Promise(() => {})),
+      )
+      let calendar: unknown
+      let email: unknown
+      void readCalendar().then((state) => (calendar = state))
+      void readEmail().then((state) => (email = state))
+
+      await vi.advanceTimersByTimeAsync(EXTERNAL_LIMITS.deadlineMs - 1)
+      expect(calendar).toBeUndefined()
+      expect(email).toBeUndefined()
+
+      await vi.advanceTimersByTimeAsync(1)
+      expect(calendar).toMatchObject({ state: 'error' })
+      expect(email).toMatchObject({ state: 'error' })
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+
+  it('keeps an answer that arrives in time', async () => {
+    vi.useFakeTimers()
+    try {
+      install(
+        'calendar',
+        calendarOf(
+          () =>
+            new Promise((resolve) => {
+              setTimeout(() => resolve([]), EXTERNAL_LIMITS.deadlineMs - 10)
+            }),
+        ),
+      )
+      let calendar: unknown
+      void readCalendar().then((state) => (calendar = state))
+      await vi.advanceTimersByTimeAsync(EXTERNAL_LIMITS.deadlineMs + 100)
+      expect(calendar).toMatchObject({ state: 'ready', items: [] })
+    } finally {
+      vi.useRealTimers()
+    }
+  })
+})
+
 describe('what external context never touches', () => {
   const connected = () => {
     install(
@@ -299,7 +367,7 @@ describe('what external context never touches', () => {
     expect(snapshot).not.toMatch(/Interview|Offer/)
   })
 
-  it('adds no source to the registry — nothing is connected to describe', async () => {
+  it('adds no calendar or email source to the registry — Google is one account source', async () => {
     connected()
     const ids = (await getSources()).map((source) => source.id)
     expect(ids).toEqual([...SOURCE_IDS])

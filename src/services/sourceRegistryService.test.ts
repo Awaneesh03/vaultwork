@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest'
-import { platform, type AiStatus, type TelegramStatus } from '@/platform'
+import { platform, type AiStatus, type GoogleStatus, type TelegramStatus } from '@/platform'
 import {
   EVENT_SOURCES,
   MESSAGE_SOURCES,
@@ -76,7 +76,14 @@ const one = (id: SourceId, overrides: Partial<SourceInputs> = {}) => {
 describe('the registry', () => {
   it('describes every known source, in a stable order', () => {
     expect(describeSources(inputs()).map((source) => source.id)).toEqual([...SOURCE_IDS])
-    expect([...SOURCE_IDS]).toEqual(['vaultwork', 'obsidian', 'assistant', 'mcp', 'telegram'])
+    expect([...SOURCE_IDS]).toEqual([
+      'vaultwork',
+      'obsidian',
+      'assistant',
+      'mcp',
+      'telegram',
+      'google',
+    ])
   })
 
   it('always has the local database available for read, write and search', () => {
@@ -200,6 +207,8 @@ describe('in this build (the browser runtime tests run in)', () => {
       assistant: 'unavailable',
       mcp: 'unavailable',
       telegram: 'unavailable',
+      // M19.2: a browser cannot hold a Google grant.
+      google: 'unavailable',
     })
   })
 
@@ -299,5 +308,68 @@ describe('what the registry refuses', () => {
         (PROVENANCE_SOURCES as readonly string[]).includes(id),
     )
     expect(shared.sort()).toEqual(['obsidian', 'telegram', 'vaultwork'])
+  })
+})
+
+describe('the Google account (M19.2)', () => {
+  const google = (overrides: Partial<GoogleStatus> = {}): GoogleStatus => ({
+    configuredInBuild: true,
+    authorized: true,
+    connecting: false,
+    reconnectRequired: false,
+    calendar: true,
+    gmail: true,
+    account: 'you@example.com',
+    connectedAt: NOW - 86_400_000,
+    lastCheckedAt: NOW - 1_000,
+    lastError: null,
+    keychainReads: 1,
+    ...overrides,
+  })
+  const describeGoogle = (status: GoogleStatus | null) =>
+    describeSources(inputs({ google: status })).find((source) => source.id === 'google')!
+
+  it('is one source named for the account, whatever it was granted', () => {
+    const source = describeGoogle(google())
+    expect(source).toMatchObject({
+      name: 'Google account',
+      status: 'connected',
+      capabilities: ['read'],
+      detail: 'Calendar + Gmail · you@example.com',
+      checkedAt: NOW - 1_000,
+    })
+  })
+
+  it('says which service a partial grant covers', () => {
+    expect(describeGoogle(google({ gmail: false })).detail).toBe('Calendar only · you@example.com')
+    expect(describeGoogle(google({ calendar: false, account: null })).detail).toBe('Gmail only')
+  })
+
+  it('is connected only after a real round trip — a stored grant is merely available', () => {
+    expect(describeGoogle(google({ lastCheckedAt: null })).status).toBe('available')
+  })
+
+  it('maps every other state honestly', () => {
+    expect(describeGoogle(null)).toMatchObject({ status: 'unavailable', detail: 'Desktop only.' })
+    expect(describeGoogle(google({ configuredInBuild: false }))).toMatchObject({
+      status: 'unavailable',
+      detail: 'Not in this build.',
+    })
+    expect(describeGoogle(google({ authorized: false }))).toMatchObject({
+      status: 'requiresSetup',
+      capabilities: [],
+    })
+    expect(describeGoogle(google({ authorized: false, reconnectRequired: true })).status).toBe(
+      'error',
+    )
+    expect(describeGoogle(google({ lastError: 'network' }))).toMatchObject({
+      status: 'error',
+      capabilities: [],
+    })
+  })
+
+  it('never carries anything but words and a time', () => {
+    const text = JSON.stringify(describeGoogle(google()))
+    expect(text).not.toMatch(/token|secret|keychain|scope|googleapis/i)
   })
 })

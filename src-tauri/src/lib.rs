@@ -15,6 +15,7 @@
 //!      (`store.rs`).
 
 mod ai;
+mod google;
 mod mcp;
 mod menu;
 mod paths;
@@ -39,6 +40,10 @@ pub fn run() {
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_notification::init())
+        // M19.2: opens Google's consent page in the user's browser. Called from
+        // Rust only, with a URL built from constants — the renderer is granted
+        // no opener permission, so it cannot open anything itself.
+        .plugin(tauri_plugin_opener::init())
         /*
          * Launch at login. `Args::None` because Vaultwork takes no command
          * line, and nothing is passed to a login-launched instance that a
@@ -51,6 +56,7 @@ pub fn run() {
         .manage(vault::VaultState::default())
         .manage(Arc::new(telegram::TelegramState::default()))
         .manage(Arc::new(ai::AiState::default()))
+        .manage(Arc::new(google::GoogleState::default()))
         .setup(|app| {
             let handle = app.handle();
             app.set_menu(menu::build(handle)?)?;
@@ -73,6 +79,9 @@ pub fn run() {
             // once per launch is the whole cost. No request is made here —
             // an AI provider that called out at start-up would be a surprise.
             ai::prime(handle);
+            // The Google account's refresh token, read once per launch and held
+            // natively from then on. Nothing is requested here.
+            google::prime(handle);
             // `prime` above has just set `configured` from the credential
             // store, so both halves of this decision are known without a
             // second keychain read.
@@ -120,6 +129,13 @@ pub fn run() {
             ai::ai_complete,
             // M18.1. One write, one fixed destination: see `mcp.rs`.
             mcp::mcp_snapshot_write,
+            // M19.2. Read-only Google: no URL, scope, path or token parameter.
+            google::google_status,
+            google::google_connect,
+            google::google_cancel_connect,
+            google::google_disconnect,
+            google::google_calendar_events,
+            google::google_email_signals,
         ])
         .run(tauri::generate_context!())
         .expect("error while running Vaultwork");

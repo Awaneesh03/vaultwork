@@ -1,7 +1,7 @@
-import { render, screen, within } from '@testing-library/react'
+import { fireEvent, render, screen, within } from '@testing-library/react'
 import { MemoryRouter, Route, Routes } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
-import { platform, type CalendarPort, type EmailPort } from '@/platform'
+import { PortNotSupportedError, platform, type CalendarPort, type EmailPort } from '@/platform'
 import { executeText } from '@/services'
 import { useProjectUiStore } from '@/store/projectUiStore'
 import { useTaskUiStore } from '@/store/taskUiStore'
@@ -160,5 +160,50 @@ describe('external context on Today', () => {
     expect(screen.getAllByText('Study DBMS').length).toBeGreaterThan(0)
     expect(screen.getByRole('region', { name: 'Next action' })).toBeTruthy()
     expect(screen.queryByRole('region', { name: 'Important emails' })).toBeNull()
+  })
+
+  it('a connected-but-not-granted source shows nothing and says not connected', async () => {
+    install(
+      'calendar',
+      calendar(async () => {
+        throw new PortNotSupportedError('calendar', 'eventsBetween')
+      }),
+    )
+    install('email', signals)
+    mount()
+    expect(await screen.findByRole('region', { name: 'Important emails' })).toBeTruthy()
+    expect(screen.queryByRole('region', { name: 'Calendar' })).toBeNull()
+    expect(screen.queryByText(/calendar couldn.t be read/)).toBeNull()
+    expect(
+      screen.getByText(/Email is read live and not stored\. External calendars and other sources/),
+    ).toBeTruthy()
+  })
+
+  it('checks again on request — and only then', async () => {
+    let reads = 0
+    install(
+      'calendar',
+      calendar(async () => {
+        reads += 1
+        return reads === 1
+          ? []
+          : [
+              {
+                id: 'e9',
+                title: 'Added later',
+                start: at(17),
+                end: null,
+                allDay: false,
+                status: 'confirmed',
+              },
+            ]
+      }),
+    )
+    mount()
+    expect(await screen.findByText('Nothing on your calendar this week.')).toBeTruthy()
+    expect(reads).toBe(1)
+    fireEvent.click(screen.getByRole('button', { name: 'Check again' }))
+    expect(await screen.findByText('Added later')).toBeTruthy()
+    expect(reads).toBe(2)
   })
 })

@@ -25,6 +25,7 @@ import { useDiagnostics } from '../hooks/useDiagnostics'
 import { AssistantSection } from '../components/AssistantSection'
 import { ConnectedSourcesSection } from '../components/ConnectedSourcesSection'
 import { DesktopSection } from '../components/DesktopSection'
+import { GoogleSection } from '../components/GoogleSection'
 import { TelegramSection } from '../components/TelegramSection'
 import { useStorageReport } from '../hooks/useStorageReport'
 import { useWorkPreferences } from '../hooks/useWorkPreferences'
@@ -349,6 +350,13 @@ export function SettingsView() {
         description="A private bot that can capture and complete tasks from your phone. Desktop only — a browser tab cannot hold a connection open."
       >
         <TelegramSection />
+      </Group>
+
+      <Group
+        title="Google"
+        description="Your own Google account, read-only: calendar events and important email headers for Today. Desktop only, and nothing it reads is stored."
+      >
+        <GoogleSection />
       </Group>
 
       <Group

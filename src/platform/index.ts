@@ -3,6 +3,7 @@ import { downloadFileSystem } from './browser/downloadFileSystem'
 import { noDesktop } from './browser/noDesktop'
 import { noMenu } from './browser/noMenu'
 import { nullAi } from './browser/nullAi'
+import { unsupportedGoogle } from './browser/unsupportedGoogle'
 import { unsupportedTelegram } from './browser/unsupportedTelegram'
 import { unconnectedCalendar } from './browser/unconnectedCalendar'
 import { unconnectedEmail } from './browser/unconnectedEmail'
@@ -15,6 +16,7 @@ import { currentRuntime, isBrowser, isTauri, type RuntimeKind } from './runtime'
 import { tauriBridge } from './tauri/bridge'
 import { createTauriAi } from './tauri/tauriAi'
 import { createTauriDesktop } from './tauri/tauriDesktop'
+import { createTauriGoogle } from './tauri/tauriGoogle'
 import { createTauriMenu } from './tauri/tauriMenu'
 import { createTauriTelegram } from './tauri/tauriTelegram'
 import { createTauriNotifications } from './tauri/tauriNotifications'
@@ -25,6 +27,7 @@ import type {
   ClockPort,
   EmailPort,
   FileSystemPort,
+  GooglePort,
   MenuPort,
   TelegramPort,
   NotificationPort,
@@ -49,12 +52,14 @@ export interface Platform {
   /** Login items and other OS integration. Inert in a browser. */
   desktop: DesktopPort
   /**
-   * M19.1: read-only external context. No connector exists in any build yet,
-   * so both are the unconnected adapters everywhere; a real one replaces them
-   * here and nowhere else.
+   * M19.1: read-only external context. M19.2 gives the desktop build a real
+   * connector — the Google account below — and replaced them here and nowhere
+   * else; a browser keeps the unconnected adapters.
    */
   calendar: CalendarPort
   email: EmailPort
+  /** M19.2: the Google account's connection. Desktop only. */
+  google: GooglePort
   capabilities: Capabilities
 }
 
@@ -97,6 +102,10 @@ export function resolvePlatform(): Platform {
   // adapter rather than a half-working one.
   const ai: AiPort = desktop ? createTauriAi(tauriBridge) : nullAi
 
+  // Google's grant lives in the OS keychain and is spent natively; a browser
+  // keeps the unconnected adapters, which answer "not connected" honestly.
+  const google = desktop ? createTauriGoogle(tauriBridge) : null
+
   const parts = {
     runtime: currentRuntime(),
     clock: systemClock,
@@ -108,8 +117,9 @@ export function resolvePlatform(): Platform {
     vault,
     menu,
     desktop: desktopPort,
-    calendar: unconnectedCalendar,
-    email: unconnectedEmail,
+    calendar: google?.calendar ?? unconnectedCalendar,
+    email: google?.email ?? unconnectedEmail,
+    google: google?.google ?? unsupportedGoogle,
   }
 
   return { ...parts, capabilities: deriveCapabilities(parts) }

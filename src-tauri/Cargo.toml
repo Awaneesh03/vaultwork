@@ -19,6 +19,8 @@ crate-type = ["rlib"]
 
 [build-dependencies]
 tauri-build = { version = "2", features = [] }
+# M19.2: reads the local, uncommitted Google client file. Already a dependency.
+serde_json = "1"
 
 [dependencies]
 tauri = { version = "2", features = [] }
@@ -33,6 +35,10 @@ reqwest = { version = "0.12", default-features = false, features = ["json", "rus
 tokio = { version = "1", features = ["time", "sync", "rt"] }
 pdf-extract = "0.12"
 tauri-plugin-autostart = "2"
+sha2 = "0.10"
+getrandom = "0.3"
+base64 = "0.22"
+tauri-plugin-opener = "2"
 
 # The bot token lives in the OS credential store, never on disk in the clear.
 # macOS Keychain here; the other backends are declared so the intent is legible

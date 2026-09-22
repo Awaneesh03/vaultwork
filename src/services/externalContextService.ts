@@ -1,5 +1,5 @@
 import { addDays, fromDateStr } from '@/lib/date'
-import { platform, type CalendarEvent, type EmailSignal } from '@/platform'
+import { PortNotSupportedError, platform, type CalendarEvent, type EmailSignal } from '@/platform'
 import type { Timestamp } from '@/types/entities'
 
 /**
@@ -31,6 +31,11 @@ export const EXTERNAL_LIMITS = {
   title: 200,
   sender: 120,
   snippet: 160,
+  /**
+   * How long one source may take before Today calls it an error (M19.2). A
+   * provider that never answers costs its own section, and never forever.
+   */
+  deadlineMs: 15_000,
 } as const
 
 export type ExternalState<T> =
@@ -121,6 +126,25 @@ export function boundSignals(raw: readonly unknown[]): {
   }
 }
 
+/** Rejects once the deadline passes; the late answer, if any, is ignored. */
+function withDeadline<T>(work: Promise<T>): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const expired = new Promise<never>((_, reject) => {
+    timer = setTimeout(() => reject(new Error('deadline')), EXTERNAL_LIMITS.deadlineMs)
+  })
+  return Promise.race([work, expired]).finally(() => clearTimeout(timer))
+}
+
+/**
+ * A source refusing because it is not connected is absence, not failure:
+ * Today says "not connected" for it, never "couldn't be read".
+ */
+function settle<T>(error: unknown, checkedAt: Timestamp): ExternalState<T> {
+  return error instanceof PortNotSupportedError
+    ? { state: 'unavailable' }
+    : { state: 'error', checkedAt }
+}
+
 /**
  * The calendar from the start of today, a week ahead.
  *
@@ -135,10 +159,10 @@ export async function readCalendar(): Promise<ExternalState<CalendarEvent>> {
   const from = fromDateStr(today).getTime()
   const to = fromDateStr(addDays(today, EXTERNAL_LIMITS.horizonDays)).getTime()
   try {
-    const bounded = boundEvents(await port.eventsBetween(from, to))
+    const bounded = boundEvents(await withDeadline(port.eventsBetween(from, to)))
     return { state: 'ready', ...bounded, fetchedAt: platform.clock.now() }
-  } catch {
-    return { state: 'error', checkedAt: platform.clock.now() }
+  } catch (error) {
+    return settle(error, platform.clock.now())
   }
 }
 
@@ -147,9 +171,9 @@ export async function readEmail(): Promise<ExternalState<EmailSignal>> {
   const port = platform.email
   if (!port.isSupported) return { state: 'unavailable' }
   try {
-    const bounded = boundSignals(await port.recentSignals(EXTERNAL_LIMITS.signals))
+    const bounded = boundSignals(await withDeadline(port.recentSignals(EXTERNAL_LIMITS.signals)))
     return { state: 'ready', ...bounded, fetchedAt: platform.clock.now() }
-  } catch {
-    return { state: 'error', checkedAt: platform.clock.now() }
+  } catch (error) {
+    return settle(error, platform.clock.now())
   }
 }

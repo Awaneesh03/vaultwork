@@ -169,7 +169,14 @@ export type InboxType = (typeof INBOX_TYPES)[number]
  * the read-only snapshot Claude Desktop reads. A source is added here when it
  * is built, not when it is imagined.
  */
-export const SOURCE_IDS = ['vaultwork', 'obsidian', 'assistant', 'mcp', 'telegram'] as const
+export const SOURCE_IDS = [
+  'vaultwork',
+  'obsidian',
+  'assistant',
+  'mcp',
+  'telegram',
+  'google',
+] as const
 export type SourceId = (typeof SOURCE_IDS)[number]
 
 /**

@@ -1,4 +1,4 @@
-import { platform, type AiStatus, type TelegramStatus } from '@/platform'
+import { platform, type AiStatus, type GoogleStatus, type TelegramStatus } from '@/platform'
 import type { Timestamp } from '@/types/entities'
 import { SOURCE_IDS, type SourceCapability, type SourceId, type SourceStatus } from '@/types/enums'
 import { getMcpSnapshotPublishedAt } from './mcpSnapshotService'
@@ -45,6 +45,8 @@ export interface SourceInputs {
   /** `null` when this build has no Telegram adapter at all. */
   telegram: TelegramStatus | null
   mcp: { supported: boolean; publishedAt: Timestamp | null }
+  /** `null` when this build has no Google adapter at all (a browser). */
+  google?: GoogleStatus | null
   /** Sources whose status call threw. */
   failed: ReadonlySet<SourceId>
 }
@@ -56,6 +58,8 @@ const NAMES: Record<SourceId, string> = {
   mcp: 'Claude Desktop (MCP)',
   // The bot is the integration; "Telegram" alone is the Settings group's name.
   telegram: 'Telegram bot',
+  // One credential, one source: Calendar and Gmail are what it can read.
+  google: 'Google account',
 }
 
 const describeVaultwork = (now: Timestamp): SourceDescription => ({
@@ -175,6 +179,59 @@ function describeTelegram(telegram: TelegramStatus | null, now: Timestamp): Sour
   }
 }
 
+/** Which services the grant covers, in words. */
+function grantOf(google: GoogleStatus): string {
+  if (google.calendar && google.gmail) return 'Calendar + Gmail'
+  if (google.calendar) return 'Calendar only'
+  if (google.gmail) return 'Gmail only'
+  return 'No access granted'
+}
+
+/**
+ * The Google account (M19.2). `connected` only after a real round trip this
+ * session — a stored grant alone is `available`, by the same rule as the AI key.
+ */
+function describeGoogle(google: GoogleStatus | null, now: Timestamp): SourceDescription {
+  const base = { id: 'google' as const, name: NAMES.google, checkedAt: now }
+  if (google === null) {
+    return { ...base, status: 'unavailable', capabilities: [], detail: 'Desktop only.' }
+  }
+  if (!google.configuredInBuild) {
+    return { ...base, status: 'unavailable', capabilities: [], detail: 'Not in this build.' }
+  }
+  if (google.reconnectRequired) {
+    return {
+      ...base,
+      status: 'error',
+      capabilities: [],
+      detail: 'Google no longer accepts this connection. Reconnect in Settings.',
+    }
+  }
+  if (!google.authorized) {
+    return { ...base, status: 'requiresSetup', capabilities: [], detail: 'Not connected.' }
+  }
+  const detail =
+    google.account === null ? grantOf(google) : `${grantOf(google)} · ${google.account}`
+  if (google.lastError !== null) {
+    return {
+      ...base,
+      status: 'error',
+      capabilities: [],
+      detail: `${detail} — the last read failed.`,
+    }
+  }
+  if (google.lastCheckedAt === null) {
+    return { ...base, status: 'available', capabilities: ['read'], detail }
+  }
+  return {
+    ...base,
+    status: 'connected',
+    capabilities: ['read'],
+    detail,
+    checkedAt: google.lastCheckedAt,
+  }
+}
+
 function describeMcp(mcp: SourceInputs['mcp']): SourceDescription {
   const base = { id: 'mcp' as const, name: NAMES.mcp }
   if (!mcp.supported) {
@@ -220,6 +277,9 @@ export function describeSources(input: SourceInputs): SourceDescription[] {
     telegram: failed.has('telegram')
       ? unreadable('telegram', now)
       : describeTelegram(input.telegram, now),
+    google: failed.has('google')
+      ? unreadable('google', now)
+      : describeGoogle(input.google ?? null, now),
   }
   return SOURCE_IDS.map((id) => described[id])
 }
@@ -250,6 +310,11 @@ async function readSource(id: SourceId): Promise<SourceDescription> {
       case 'telegram':
         return describeTelegram(
           platform.telegram.isSupported ? await platform.telegram.status() : null,
+          now,
+        )
+      case 'google':
+        return describeGoogle(
+          platform.google.isAvailable ? await platform.google.status() : null,
           now,
         )
     }

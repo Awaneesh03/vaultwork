@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import {
   readCalendar,
   readEmail,
@@ -11,6 +11,8 @@ export interface ExternalContext {
   /** `undefined` while that source is still being asked. */
   calendar: ExternalState<CalendarEvent> | undefined
   email: ExternalState<EmailSignal> | undefined
+  /** Asks both sources again (M19.2). A manual path — there is no polling. */
+  checkAgain: () => void
 }
 
 /**
@@ -18,11 +20,14 @@ export interface ExternalContext {
  *
  * Not a live query and not part of the Today context: external data is not in
  * Vaultwork's database, and a source that hangs must cost its own section and
- * nothing else. Read once when Today opens; held in memory, never stored.
+ * nothing else. Read when Today opens and when the user asks again — never on
+ * a timer; held in memory, never stored.
  */
 export function useExternalContext(): ExternalContext {
   const [calendar, setCalendar] = useState<ExternalState<CalendarEvent> | undefined>(undefined)
   const [email, setEmail] = useState<ExternalState<EmailSignal> | undefined>(undefined)
+
+  const [round, setRound] = useState(0)
 
   useEffect(() => {
     let alive = true
@@ -35,9 +40,11 @@ export function useExternalContext(): ExternalContext {
     return () => {
       alive = false
     }
-  }, [])
+  }, [round])
 
-  return { calendar, email }
+  const checkAgain = useCallback(() => setRound((value) => value + 1), [])
+
+  return { calendar, email, checkAgain }
 }
 
 /**

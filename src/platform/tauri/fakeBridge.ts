@@ -3,6 +3,10 @@ import type {
   BridgeAiProbe,
   BridgeAiStatus,
   BridgeBotIdentity,
+  BridgeCalendarEvent,
+  BridgeEmailSignal,
+  BridgeGoogleFailure,
+  BridgeGoogleStatus,
   BridgeConnection,
   BridgeEntry,
   BridgeFailure,
@@ -50,6 +54,14 @@ export interface FakeBridgeOptions {
   aiEnabled?: boolean
   /** What a completion returns, so a test can drive the adapter deterministically. */
   aiReply?: string
+  /** Google (M19.2): whether this build carries a Google client. Defaults to false. */
+  googleInBuild?: boolean
+  /** Google: an account already connected, with what it granted. */
+  googleGranted?: { calendar: boolean; gmail: boolean; account?: string | null } | null
+  /** Google: what the next consent grants, or `'denied'` for a user who declines. */
+  googleConsent?: { calendar: boolean; gmail: boolean } | 'denied'
+  googleEvents?: BridgeCalendarEvent[]
+  googleSignals?: BridgeEmailSignal[]
 }
 
 export interface FakeTauriBridge extends TauriBridge {
@@ -61,7 +73,7 @@ export interface FakeTauriBridge extends TauriBridge {
   /** Fails the next matching call once, with the shape that command rejects with. */
   failNext(
     command: keyof TauriBridge,
-    failure: BridgeFailure | BridgeTelegramFailure | BridgeAiFailure,
+    failure: BridgeFailure | BridgeTelegramFailure | BridgeAiFailure | BridgeGoogleFailure,
   ): void
   /** Emits a native menu event to every subscriber. */
   emitMenu(id: string): void
@@ -91,6 +103,14 @@ export interface FakeTauriBridge extends TauriBridge {
   readonly aiRequests: { messages: { role: string; content: string }[]; json: boolean }[]
   /** What the keychain currently holds. Tests assert this; the app cannot read it. */
   aiStoredKey(): string | null
+
+  // --------------------------------------------------------------- google
+  /** Whether the keychain holds a Google grant. The app can never read it. */
+  googleHasStoredGrant(): boolean
+  /** Simulates the user revoking access in their Google Account. */
+  googleRevokeRemotely(): void
+  /** The calendar windows and email limits the renderer asked for, in order. */
+  readonly googleReads: string[]
 }
 
 function failure(kind: string, message: string, path: string | null = null): BridgeFailure {
@@ -131,7 +151,10 @@ export function createFakeTauriBridge(options: FakeBridgeOptions = {}): FakeTaur
   let launchAtLogin = false
   const calls: string[] = []
   const sent: { title: string; body: string | undefined }[] = []
-  const failures = new Map<string, BridgeFailure | BridgeTelegramFailure | BridgeAiFailure>()
+  const failures = new Map<
+    string,
+    BridgeFailure | BridgeTelegramFailure | BridgeAiFailure | BridgeGoogleFailure
+  >()
   const menuHandlers = new Set<(id: string) => void>()
 
   let connected: string | null = null
@@ -199,6 +222,51 @@ export function createFakeTauriBridge(options: FakeBridgeOptions = {}): FakeTaur
 
   const aiFailure = (kind: string, message: string): BridgeAiFailure => ({ kind, message })
 
+  // Google, gated in the order `google.rs` gates it.
+  const googleInBuild = options.googleInBuild ?? false
+  let googleGrant: { calendar: boolean; gmail: boolean; account: string | null } | null =
+    options.googleGranted
+      ? {
+          calendar: options.googleGranted.calendar,
+          gmail: options.googleGranted.gmail,
+          account: options.googleGranted.account ?? 'you@example.com',
+        }
+      : null
+  let googleReconnect = false
+  let googleRevokedRemotely = false
+  let googleCheckedAt: number | null = null
+  let googleError: string | null = null
+  const googleReads: string[] = []
+  const googleFailure = (kind: string, message: string): BridgeGoogleFailure => ({ kind, message })
+  const googleStatusNow = (connecting = false): BridgeGoogleStatus => ({
+    configured_in_build: googleInBuild,
+    authorized: googleGrant !== null,
+    connecting,
+    reconnect_required: googleReconnect,
+    calendar: googleGrant?.calendar ?? false,
+    gmail: googleGrant?.gmail ?? false,
+    account: googleGrant?.account ?? null,
+    connected_at: googleGrant === null ? null : 1,
+    last_checked_at: googleCheckedAt,
+    last_error: googleError,
+    keychain_reads: googleGrant === null ? 0 : 1,
+  })
+  const googleGate = (wantsCalendar: boolean) => {
+    if (!googleInBuild) throw googleFailure('unavailable', 'Google is not included in this build.')
+    if (googleReconnect) throw googleFailure('auth', 'Google did not accept this connection.')
+    if (googleGrant === null)
+      throw googleFailure('not-connected', 'No Google account is connected.')
+    if (googleRevokedRemotely) {
+      googleGrant = null
+      googleReconnect = true
+      googleError = 'auth'
+      throw googleFailure('auth', 'Google did not accept this connection.')
+    }
+    if (!(wantsCalendar ? googleGrant.calendar : googleGrant.gmail)) {
+      throw googleFailure('not-granted', 'That access was not granted.')
+    }
+  }
+
   const aiStatusNow = (): BridgeAiStatus => ({
     configured: aiKey !== null,
     enabled: aiEnabled,
@@ -210,7 +278,7 @@ export function createFakeTauriBridge(options: FakeBridgeOptions = {}): FakeTaur
 
   const record = (
     command: string,
-  ): BridgeFailure | BridgeTelegramFailure | BridgeAiFailure | null => {
+  ): BridgeFailure | BridgeTelegramFailure | BridgeAiFailure | BridgeGoogleFailure | null => {
     calls.push(command)
     const planned = failures.get(command)
     if (planned) {
@@ -237,6 +305,70 @@ export function createFakeTauriBridge(options: FakeBridgeOptions = {}): FakeTaur
   return {
     files,
     directories,
+    googleReads,
+
+    googleHasStoredGrant: () => googleGrant !== null,
+    googleRevokeRemotely() {
+      googleRevokedRemotely = true
+    },
+
+    async googleStatus() {
+      const planned = record('googleStatus')
+      if (planned) throw planned
+      return googleStatusNow()
+    },
+
+    async googleConnect() {
+      const planned = record('googleConnect')
+      if (planned) throw planned
+      if (!googleInBuild)
+        throw googleFailure('unavailable', 'Google is not included in this build.')
+      const consent = options.googleConsent ?? { calendar: true, gmail: true }
+      if (consent === 'denied')
+        throw googleFailure('auth', 'Google did not accept this connection.')
+      if (!consent.calendar && !consent.gmail) {
+        throw googleFailure('not-granted', 'That access was not granted.')
+      }
+      googleGrant = { ...consent, account: 'you@example.com' }
+      googleReconnect = false
+      googleRevokedRemotely = false
+      googleError = null
+      googleCheckedAt = 2
+      return googleStatusNow()
+    },
+
+    async googleCancelConnect() {
+      record('googleCancelConnect')
+      return googleStatusNow()
+    },
+
+    async googleDisconnect() {
+      const planned = record('googleDisconnect')
+      if (planned) throw planned
+      googleGrant = null
+      googleReconnect = false
+      googleCheckedAt = null
+      googleError = null
+      return googleStatusNow()
+    },
+
+    async googleCalendarEvents(from, to) {
+      const planned = record('googleCalendarEvents')
+      if (planned) throw planned
+      googleGate(true)
+      googleReads.push(`calendar ${from}..${to}`)
+      googleCheckedAt = 3
+      return options.googleEvents ?? []
+    },
+
+    async googleEmailSignals(limit) {
+      const planned = record('googleEmailSignals')
+      if (planned) throw planned
+      googleGate(false)
+      googleReads.push(`email ${limit}`)
+      googleCheckedAt = 3
+      return (options.googleSignals ?? []).slice(0, Math.min(Math.max(limit, 1), 8))
+    },
     calls,
     sent,
 

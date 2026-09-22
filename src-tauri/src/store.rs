@@ -53,6 +53,26 @@ struct DesktopState {
     /// work, and `#[serde(default)]` on a plain bool would read as "off".
     #[serde(default)]
     ai_enabled: Option<bool>,
+    /// The Google account (M19.2): which services were granted, whose account,
+    /// since when, and whether Google has since refused it. Non-secret by
+    /// construction — the refresh token is in the credential store, and no
+    /// access token, code, verifier, state, message or event is ever kept.
+    #[serde(default)]
+    google: GoogleRecord,
+}
+
+#[derive(Default, Clone, Serialize, Deserialize, Debug, PartialEq, Eq)]
+pub struct GoogleRecord {
+    #[serde(default)]
+    pub calendar: bool,
+    #[serde(default)]
+    pub gmail: bool,
+    #[serde(default)]
+    pub account: Option<String>,
+    #[serde(default)]
+    pub connected_at: Option<i64>,
+    #[serde(default)]
+    pub reconnect_required: bool,
 }
 
 fn file_of(app: &AppHandle) -> Option<PathBuf> {
@@ -167,6 +187,36 @@ pub fn forget_ai(app: &AppHandle) {
     write(app, &state);
 }
 
+pub fn google_record(app: &AppHandle) -> GoogleRecord {
+    read(app).google
+}
+
+pub fn remember_google(app: &AppHandle, record: GoogleRecord) {
+    let mut state = read(app);
+    state.google = record;
+    write(app, &state);
+}
+
+pub fn remember_google_account(app: &AppHandle, account: Option<&str>) {
+    let mut state = read(app);
+    state.google.account = account.map(String::from);
+    write(app, &state);
+}
+
+/// Google refused the grant: the account is gone until the user reconnects.
+pub fn mark_google_reconnect_required(app: &AppHandle) {
+    let mut state = read(app);
+    state.google = GoogleRecord { reconnect_required: true, ..GoogleRecord::default() };
+    write(app, &state);
+}
+
+/// Clears every Google setting. Leaves the vault, Telegram and AI alone.
+pub fn forget_google(app: &AppHandle) {
+    let mut state = read(app);
+    state.google = GoogleRecord::default();
+    write(app, &state);
+}
+
 /// Clears every Telegram setting. Deliberately leaves `vault_path` alone —
 /// disconnecting a bot is not disconnecting a vault.
 pub fn forget_telegram(app: &AppHandle) {
@@ -209,6 +259,8 @@ mod tests {
         // And the rest of the file survives the round trip untouched.
         assert_eq!(state.telegram_chat_id.as_deref(), Some("123"));
         assert_eq!(state.telegram_offset, 42);
+        // Nor any Google record: a pre-M19.2 file is simply not connected.
+        assert_eq!(state.google, GoogleRecord::default());
     }
 
     #[test]

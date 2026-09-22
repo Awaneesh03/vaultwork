@@ -571,3 +571,69 @@ export interface EmailPort {
   readonly isSupported: boolean
   recentSignals(limit: number): Promise<EmailSignal[]>
 }
+
+// ---------------------------------------------------------- Google account (M19.2)
+
+/** The closed set of Google failures. Mirrors `Kind` in `src-tauri/src/google.rs`. */
+export type GoogleErrorKind =
+  | 'auth'
+  | 'scope'
+  | 'network'
+  | 'timeout'
+  | 'quota'
+  | 'protocol'
+  | 'unavailable'
+  | 'not-connected'
+  | 'not-granted'
+  | 'cancelled'
+  | 'busy'
+  | 'keychain'
+
+/**
+ * What the app may know about the Google account. Every credential is absent
+ * by construction: the native side has no field that could carry one.
+ */
+export interface GoogleStatus {
+  /** This build carries a Google client at all. */
+  configuredInBuild: boolean
+  /** A grant is held. Not proof it works — `lastCheckedAt` is. */
+  authorized: boolean
+  /** Waiting for the user to finish in their browser. */
+  connecting: boolean
+  /** Google refused the grant; only a new consent fixes it. */
+  reconnectRequired: boolean
+  calendar: boolean
+  gmail: boolean
+  account: string | null
+  connectedAt: Timestamp | null
+  /** The last successful round trip to Google, this session. */
+  lastCheckedAt: Timestamp | null
+  lastError: GoogleErrorKind | null
+  keychainReads: number
+}
+
+export class GoogleError extends Error {
+  constructor(
+    readonly kind: GoogleErrorKind,
+    message: string,
+  ) {
+    super(message)
+    this.name = 'GoogleError'
+  }
+}
+
+/**
+ * The Google account's connection (M19.2): connect, cancel, disconnect, and a
+ * status. Reading happens through `CalendarPort` and `EmailPort`; this port
+ * has no read of its own and takes no URL, scope or token — only the user's
+ * intent.
+ */
+export interface GooglePort {
+  readonly id: string
+  /** A build property: false in a browser, which cannot hold a credential. */
+  readonly isAvailable: boolean
+  status(): Promise<GoogleStatus>
+  connect(): Promise<GoogleStatus>
+  cancelConnect(): Promise<GoogleStatus>
+  disconnect(): Promise<GoogleStatus>
+}

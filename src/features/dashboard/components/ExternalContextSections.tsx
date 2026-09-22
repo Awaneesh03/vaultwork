@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
-import { CalendarDays, Mail } from 'lucide-react'
+import { CalendarDays, Mail, RefreshCw } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
+import { Button } from '@/components/ui/Button'
 import { formatDayLabel, formatTime, toDateStr, toTimeStr } from '@/lib/date'
 import type { CalendarEvent, EmailSignal, ExternalState } from '@/services'
 import type { DateStr, Timestamp } from '@/types/entities'
@@ -133,16 +134,31 @@ export function ExternalContextSections({
   calendar,
   email,
   today,
+  onCheckAgain,
 }: {
   calendar: Calendar
   email: Email
   today: DateStr
+  /** Reads both sources again, on request. */
+  onCheckAgain?: () => void
 }) {
   if (!answered(calendar) && !answered(email)) return null
   return (
     <div className="flex flex-col gap-4 rounded-lg border border-info/25 bg-surface px-4 py-3">
       {calendar ? <CalendarSection state={calendar} today={today} /> : null}
       {email ? <EmailSection state={email} /> : null}
+      {onCheckAgain ? (
+        <div>
+          <Button
+            size="sm"
+            variant="ghost"
+            icon={<RefreshCw size={12} aria-hidden />}
+            onClick={onCheckAgain}
+          >
+            Check again
+          </Button>
+        </div>
+      ) : null}
     </div>
   )
 }

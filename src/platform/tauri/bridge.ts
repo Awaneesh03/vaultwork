@@ -123,6 +123,50 @@ export interface BridgeAiFailure {
   message: string
 }
 
+/** Mirrors `GoogleStatus` in `src-tauri/src/google.rs`. No credential field exists. */
+export interface BridgeGoogleStatus {
+  configured_in_build: boolean
+  authorized: boolean
+  connecting: boolean
+  reconnect_required: boolean
+  calendar: boolean
+  gmail: boolean
+  account: string | null
+  connected_at: number | null
+  last_checked_at: number | null
+  last_error: string | null
+  keychain_reads: number
+}
+
+/** Mirrors `EventTime`: an instant, or an all-day date the renderer localises. */
+export type BridgeEventTime = { kind: 'at'; ms: number } | { kind: 'day'; date: string }
+
+/** Mirrors `CalendarEventDto`. Only the five fields Google was asked for. */
+export interface BridgeCalendarEvent {
+  id: string
+  title: string
+  start: BridgeEventTime
+  end: BridgeEventTime | null
+  all_day: boolean
+  status: string
+}
+
+/** Mirrors `EmailSignalDto`. There is no body field on either side. */
+export interface BridgeEmailSignal {
+  id: string
+  subject: string
+  sender: string
+  received_at: number
+  important: boolean
+  snippet: string
+}
+
+/** Mirrors `GoogleError`: a kind and a fixed sentence, never Google's words. */
+export interface BridgeGoogleFailure {
+  kind: string
+  message: string
+}
+
 /** Mirrors `VaultFailure`. Rejected promises carry this shape, not a string. */
 export interface BridgeFailure {
   kind: string
@@ -218,6 +262,22 @@ export interface TauriBridge {
    * the snapshot and learn nothing else about where it went.
    */
   mcpSnapshotWrite(contents: string): Promise<void>
+
+  /*
+   * The Google account (M19.2).
+   *
+   * Six commands, none of which takes a URL, a scope, a path, an endpoint or a
+   * token. Connecting happens in the user's browser and the credential stays
+   * in the native process; reading is two narrow questions — events between
+   * two instants, and a few important emails — whose hosts and fields are
+   * decided in Rust.
+   */
+  googleStatus(): Promise<BridgeGoogleStatus>
+  googleConnect(): Promise<BridgeGoogleStatus>
+  googleCancelConnect(): Promise<BridgeGoogleStatus>
+  googleDisconnect(): Promise<BridgeGoogleStatus>
+  googleCalendarEvents(from: number, to: number): Promise<BridgeCalendarEvent[]>
+  googleEmailSignals(limit: number): Promise<BridgeEmailSignal[]>
 }
 
 /** The event `src-tauri/src/menu.rs` emits. Kept in step by name, deliberately. */
@@ -314,4 +374,12 @@ export const tauriBridge: TauriBridge = {
   aiSetModel: (model) => invoke<BridgeAiStatus>('ai_set_model', { model }),
   aiTest: () => invoke<BridgeAiProbe>('ai_test'),
   aiComplete: (request) => invoke<BridgeAiCompletion>('ai_complete', { request }),
+
+  googleStatus: () => invoke<BridgeGoogleStatus>('google_status'),
+  googleConnect: () => invoke<BridgeGoogleStatus>('google_connect'),
+  googleCancelConnect: () => invoke<BridgeGoogleStatus>('google_cancel_connect'),
+  googleDisconnect: () => invoke<BridgeGoogleStatus>('google_disconnect'),
+  googleCalendarEvents: (from, to) =>
+    invoke<BridgeCalendarEvent[]>('google_calendar_events', { from, to }),
+  googleEmailSignals: (limit) => invoke<BridgeEmailSignal[]>('google_email_signals', { limit }),
 }

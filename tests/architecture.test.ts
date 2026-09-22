@@ -536,6 +536,9 @@ describe('the Tauri runtime boundary', () => {
       // model, reads no database and makes no request; see the network check
       // immediately below, which it is deliberately not exempt from.
       'desktop.rs',
+      // M19.2. The read-only Google account: fixed hosts, fixed scopes, and no
+      // command that takes a URL or a token — see the Google boundary below.
+      'google.rs',
       'lib.rs',
       'main.rs',
       // M18.1. One command that writes one file to one path the renderer
@@ -550,11 +553,12 @@ describe('the Tauri runtime boundary', () => {
       'vault.rs',
     ])
 
-    // No database, and no way to run a program. M14 adds a network client and
-    // M15.1 adds a second, but each lives only in the file that talks to its own
-    // named host — see the Telegram and AI boundary tests for what those two
-    // files are allowed to reach. Nothing else may make a request at all.
-    const NETWORK_CLIENTS = ['telegram.rs', 'ai.rs']
+    // No database, and no way to run a program. M14 adds a network client,
+    // M15.1 a second and M19.2 a third, but each lives only in the file that
+    // talks to its own named hosts — see the Telegram, AI and Google boundary
+    // tests for what those files are allowed to reach. Nothing else may make a
+    // request at all.
+    const NETWORK_CLIENTS = ['telegram.rs', 'ai.rs', 'google.rs']
     const FORBIDDEN = ['rusqlite', 'sqlite', 'diesel', 'sea_orm', 'std::process::Command']
     for (const name of sources) {
       const source = readFileSync(join(rust, name), 'utf8')
@@ -1803,7 +1807,8 @@ describe('the knowledge artifact boundary', () => {
     const handlers = /generate_handler!\[([\s\S]*?)\]/.exec(lib)?.[1] ?? ''
     const modules = new Set([...handlers.matchAll(/(\w+)::\w+/g)].map((match) => match[1]))
 
-    expect([...modules].sort()).toEqual(['ai', 'desktop', 'mcp', 'telegram', 'vault'])
+    // `google` arrived with M19.2, for its own reasons; still no knowledge command.
+    expect([...modules].sort()).toEqual(['ai', 'desktop', 'google', 'mcp', 'telegram', 'vault'])
     expect(handlers).not.toMatch(/knowledge|research|notebook|pack/i)
   })
 
@@ -2102,7 +2107,7 @@ describe('the external context boundary', () => {
     expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
   })
 
-  it('opens no network path: the WebView CSP and the native command set are unchanged', () => {
+  it('opens no WebView network path: the CSP is unchanged, and Google is native-only', () => {
     const conf = JSON.parse(readFileSync(join(ROOT, 'src-tauri', 'tauri.conf.json'), 'utf8')) as {
       app: { security: { csp: string } }
     }
@@ -2112,7 +2117,189 @@ describe('the external context boundary', () => {
     const lib = readFileSync(join(ROOT, 'src-tauri', 'src', 'lib.rs'), 'utf8')
     const handlers = /generate_handler!\[([\s\S]*?)\]/.exec(lib)?.[1] ?? ''
     const modules = new Set([...handlers.matchAll(/(\w+)::\w+/g)].map((match) => match[1]))
-    expect([...modules].sort()).toEqual(['ai', 'desktop', 'mcp', 'telegram', 'vault'])
-    expect(handlers).not.toMatch(/calendar|gmail|email|google|oauth/i)
+    // M19.1 had no connector. M19.2 adds exactly one module — the Google
+    // account — and every calendar, email or OAuth command is one of its six.
+    expect([...modules].sort()).toEqual(['ai', 'desktop', 'google', 'mcp', 'telegram', 'vault'])
+    const outsideGoogle = handlers.replace(/\/\/.*$/gm, '').replace(/google::\w+/g, '')
+    expect(outsideGoogle).not.toMatch(/calendar|gmail|email|google|oauth/i)
+  })
+})
+
+/**
+ * M19.2's boundary: Vaultwork's own read-only Google account.
+ *
+ * The claims a reviewer would otherwise take on trust: every destination is a
+ * constant, the scopes are exactly the two read-only ones, no command can be
+ * pointed anywhere or handed a credential, the grant is read from the keychain
+ * in one place and never returned, and nothing Google says is stored.
+ */
+describe('the Google boundary', () => {
+  const RUST = join(ROOT, 'src-tauri', 'src')
+  const googleRs = () => readFileSync(join(RUST, 'google.rs'), 'utf8')
+  const code = () => googleRs().slice(0, googleRs().indexOf('#[cfg(test)]'))
+  const libRs = () => readFileSync(join(RUST, 'lib.rs'), 'utf8')
+  const TS_FILES = [
+    'src/platform/tauri/tauriGoogle.ts',
+    'src/platform/browser/unsupportedGoogle.ts',
+    'src/features/settings/hooks/useGoogleSettings.ts',
+    'src/features/settings/components/GoogleSection.tsx',
+  ]
+
+  it('names exactly its fixed destinations and scopes, and nothing else', () => {
+    const urls = [...code().matchAll(/"https?:\/\/[^"]+"/g)].map((match) => match[0]).sort()
+    expect(urls).toEqual([
+      '"http://127.0.0.1"',
+      '"https://accounts.google.com/o/oauth2/v2/auth"',
+      '"https://gmail.googleapis.com/gmail/v1"',
+      '"https://oauth2.googleapis.com/revoke"',
+      '"https://oauth2.googleapis.com/token"',
+      '"https://www.googleapis.com/auth/calendar.events.owned.readonly"',
+      '"https://www.googleapis.com/auth/gmail.metadata"',
+      '"https://www.googleapis.com/calendar/v3"',
+    ])
+  })
+
+  it('requests no write-capable or broader Google scope, anywhere', () => {
+    const BROADER = [
+      /auth\/gmail\.(readonly|modify|send|compose|insert|labels|settings)/,
+      /mail\.google\.com/,
+      /auth\/calendar\.readonly/,
+      /auth\/calendar\.events\.readonly/,
+      /auth\/calendar\.freebusy/,
+      /auth\/calendar\.events"/,
+      /auth\/calendar"/,
+      /auth\/calendar\.events\.owned"/,
+    ]
+    const sources = [...readdirSync(RUST).map((name) => join(RUST, name)), ...walk(SRC)]
+    for (const file of sources) {
+      const source = readFileSync(file, 'utf8')
+      for (const pattern of BROADER) {
+        expect(source, `${relative(ROOT, file)} must not name ${pattern}`).not.toMatch(pattern)
+      }
+    }
+  })
+
+  it('exposes exactly six commands, none taking a URL, scope, token or path', () => {
+    const commands = [...libRs().matchAll(/google::(\w+),/g)].map((match) => match[1]).sort()
+    expect(commands).toEqual([
+      'google_calendar_events',
+      'google_cancel_connect',
+      'google_connect',
+      'google_disconnect',
+      'google_email_signals',
+      'google_status',
+    ])
+    const signatures = [...code().matchAll(/pub (?:async )?fn (google_\w+)\(([^)]*)\)/g)]
+    expect(signatures).toHaveLength(6)
+    for (const [, name, params] of signatures) {
+      const names = (params ?? '')
+        .split(',')
+        .map((param) => param.split(':')[0]?.trim())
+        .filter((param): param is string => Boolean(param))
+      const allowed: Record<string, string[]> = {
+        google_calendar_events: ['app', 'from', 'to'],
+        google_email_signals: ['app', 'limit'],
+      }
+      expect(names, name).toEqual(allowed[name ?? ''] ?? ['app'])
+    }
+  })
+
+  it('writes nothing to Google: posts only to the token and revoke endpoints', () => {
+    const source = code()
+    expect(source).not.toMatch(/\.(put|patch|delete)\(/)
+    const posts = [...source.matchAll(/\.post\((\w+)\)/g)].map((match) => match[1]).sort()
+    expect(posts).toEqual(['REVOKE_ENDPOINT', 'TOKEN_ENDPOINT'])
+    // Gmail is read as metadata only: never a full or raw message.
+    expect(source).toContain('("format", "metadata")')
+    expect(source).not.toMatch(/"format", "(full|raw)"/)
+  })
+
+  it('reads the grant from the keychain in exactly one place and never returns it', () => {
+    const source = code()
+    expect([...source.matchAll(/secrets::get\(/g)]).toHaveLength(1)
+    expect(source).toContain('fn load_refresh_token(')
+    const secrets = readFileSync(join(RUST, 'secrets.rs'), 'utf8')
+    expect(secrets).toContain('"google.refreshToken"')
+    expect(libRs()).not.toMatch(/secret_get|google_token|get_token/)
+  })
+
+  it('gives no serialised shape a field that could hold a credential or a body', () => {
+    const source = code()
+    for (const name of ['GoogleStatus', 'GoogleError', 'CalendarEventDto', 'EmailSignalDto']) {
+      const body = new RegExp(`pub struct ${name} \\{([\\s\\S]*?)\\n\\}`).exec(source)?.[1] ?? ''
+      expect(body, name).not.toBe('')
+      const fields = [...body.matchAll(/pub (\w+):/g)].map((match) => match[1])
+      for (const field of fields) {
+        expect(field, `${name}.${field}`).not.toMatch(
+          /token|secret|verifier|code|state$|scope|body|payload|header|url/i,
+        )
+      }
+    }
+    const bridge = readFileSync(join(SRC, 'platform', 'tauri', 'bridge.ts'), 'utf8')
+    for (const name of ['BridgeGoogleStatus', 'BridgeCalendarEvent', 'BridgeEmailSignal']) {
+      const body = new RegExp(`interface ${name} \\{([\\s\\S]*?)\\n\\}`).exec(bridge)?.[1] ?? ''
+      expect(body, name).not.toBe('')
+      expect(body, name).not.toMatch(/token|secret|verifier|payload|\bbody\b|url/i)
+    }
+  })
+
+  it('logs only the kind of a failure', () => {
+    const logs = [...code().matchAll(/eprintln!\(([^;]*)\);/g)].map((match) => match[1] ?? '')
+    expect(logs.length).toBeGreaterThan(0)
+    for (const line of logs) {
+      expect(line).toMatch(/^"\[vaultwork\] google [a-z ]+: \{:\?\}", error\.kind$/)
+    }
+  })
+
+  it('keeps credentials out of the frontend, its stores and its persistence', () => {
+    for (const file of TS_FILES) {
+      const source = codeOf(join(ROOT, file))
+      expect(source, file).not.toMatch(
+        /access_token|refresh_token|client_secret|client_id|code_verifier|localStorage|sessionStorage|indexedDB/i,
+      )
+    }
+    const offenders = IMPORTS.filter(
+      (ref) =>
+        TS_FILES.includes(ref.file) &&
+        /^src\/(repositories|db|store)|^dexie|dexie-react-hooks/.test(ref.resolved),
+    )
+    expect(offenders.map((ref) => `${ref.file} -> ${ref.spec}`)).toEqual([])
+    // The MCP snapshot and the Obsidian integration never read the account.
+    for (const file of [
+      'src/services/mcpSnapshotService.ts',
+      'src/services/obsidianService.ts',
+      'src/services/obsidianSyncService.ts',
+    ]) {
+      expect(codeOf(join(ROOT, file)), file).not.toMatch(/google/i)
+    }
+  })
+
+  it('compiles the client into Rust only — never into the WebView bundle or the repo', () => {
+    expect(code()).toContain('option_env!("VAULTWORK_GOOGLE_CLIENT_ID")')
+    for (const file of walk(SRC)) {
+      expect(readFileSync(file, 'utf8'), relative(ROOT, file)).not.toMatch(
+        /VAULTWORK_GOOGLE|VITE_GOOGLE/,
+      )
+    }
+    const gitignore = readFileSync(join(ROOT, '.gitignore'), 'utf8')
+    expect(gitignore).toContain('src-tauri/google-oauth.local')
+  })
+
+  it('grants the renderer no opener, shell or HTTP permission', () => {
+    const capabilities = JSON.parse(
+      readFileSync(join(ROOT, 'src-tauri', 'capabilities', 'default.json'), 'utf8'),
+    ) as { permissions: string[] }
+    for (const permission of capabilities.permissions) {
+      expect(permission).not.toMatch(/opener|shell|http|process|fs:/)
+    }
+  })
+
+  it('leaves a browser build on the stand-in adapters', async () => {
+    const { platform } = await import('@/platform')
+    expect(platform.google.id).toBe('google-unsupported')
+    expect(platform.calendar.id).toBe('unconnected-calendar')
+    expect(platform.email.id).toBe('unconnected-email')
+    const index = codeOf(join(SRC, 'platform', 'index.ts'))
+    expect(index).toContain('const google = desktop ? createTauriGoogle(tauriBridge) : null')
   })
 })

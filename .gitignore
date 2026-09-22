@@ -37,6 +37,9 @@ src-tauri/gen
 *.mobileprovision
 secrets.json
 credentials.json
+# The Google desktop OAuth client (M19.2) — local build configuration only.
+src-tauri/google-oauth.local
+client_secret_*.json
 
 # ── Personal data ─────────────────────────────────────────────────────────
 # Vault contents, exports and backups are the user's own files. Nothing in the
