@@ -1,17 +1,58 @@
-# Vaultwork
+<div align="center">
 
-A local-first personal productivity system. No backend, no auth, no cloud
-database — everything lives in this browser's IndexedDB, and later in a Tauri
-desktop app talking to an Obsidian vault.
+# 🗄️ Vaultwork
 
-## Run it
+**A local-first personal productivity system — tasks, projects, goals, habits, notes and focus — with an Obsidian vault as its home and an optional Claude Desktop (MCP) bridge.**
+
+No backend. No account. No cloud database. Your data stays on your machine.
+
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
+![Tauri](https://img.shields.io/badge/Tauri-24C8D8?style=flat-square&logo=tauri&logoColor=white)
+![Rust](https://img.shields.io/badge/Rust-000000?style=flat-square&logo=rust&logoColor=white)
+![Dexie](https://img.shields.io/badge/Dexie_IndexedDB-1F6FEB?style=flat-square)
+![Zustand](https://img.shields.io/badge/Zustand-443E38?style=flat-square)
+![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white)
+![MCP](https://img.shields.io/badge/MCP-Claude_Desktop-D97757?style=flat-square)
+
+[Features](#-features) · [Run It](#-run-it) · [Architecture](#-architecture) · [Quick Add](#-quick-add-syntax)
+
+</div>
+
+---
+
+## ✨ Features
+
+| Area | What you get |
+|---|---|
+| **Today · Upcoming · Inbox** | A daily plan, what's coming next, and a capture inbox |
+| **Tasks** | Natural-language Quick Add, tags, priorities, estimates and a command palette |
+| **Projects & Goals** | Group work into projects and tie them to longer-term goals |
+| **Habits** | Daily habits with streaks |
+| **Notes & Documents** | Markdown notes with frontmatter, linked to an **Obsidian** vault (with conflict detection) |
+| **Calendar & Focus** | Calendar view, focus sessions, and read-only **Google Calendar & Gmail** integration (desktop) |
+| **Analytics & Dashboard** | See where your time and effort go |
+| **Desktop app** | Native macOS/Windows/Linux build with **Tauri** (Rust) and system notifications |
+| **Claude Desktop (MCP)** | A read-only MCP server so Claude can answer questions about your workspace — see [`docs/mcp.md`](docs/mcp.md) |
+
+### Engineering highlights
+
+- **Strict layered architecture** — dependency direction enforced by ESLint *and* by tests
+- **One command pipeline** for every task mutation (UI, Quick Add, palette — and later Telegram / AI)
+- **Tested** with Vitest (unit + pipeline + migration tests) and Rust tests for the desktop layer
+- **Versioned IndexedDB schema** with migrations and seed data
+
+## 🚀 Run It
 
 ```bash
+git clone https://github.com/Awaneesh03/vaultwork.git
+cd vaultwork
 npm install
-npm run dev        # http://localhost:5173
+npm run dev        # web app → http://localhost:5173
+npm run desktop    # desktop app (Tauri — needs Rust)
 ```
 
-## Check it
+## ✅ Check It
 
 ```bash
 npm run verify     # lint + typecheck + tests
@@ -21,7 +62,7 @@ npm test
 npm run build
 ```
 
-## Where things live
+## 🏗 Architecture
 
 ```
 src/app/           shell, router, global shortcuts
@@ -46,12 +87,7 @@ components → hooks → services → repositories → Dexie → IndexedDB
 A component may not import `db/`, `repositories/` or `dexie`. A service may not
 import React, UI, Dexie, or anything under `integrations/telegram/`.
 
-## Status
-
-Milestones 1–3 are complete: project setup, the data layer, and the task system
-with its command layer. Milestone 4 (projects and goals) is next.
-
-## The command layer
+## ⚙️ The Command Layer
 
 Every task mutation goes through one path, and only one:
 
@@ -71,7 +107,7 @@ to IndexedDB with no React involved at all.
 `src/features/tasks/` knows nothing about Telegram, and
 `tests/architecture.test.ts` fails if that ever stops being true.
 
-## Quick Add syntax
+## ⚡ Quick Add Syntax
 
 ```
 Study Java tomorrow at 7pm #college #java !high @DSA ~45m
@@ -89,3 +125,14 @@ Study Java tomorrow at 7pm #college #java !high @DSA ~45m
 
 Anything the parser does not recognise **stays in the title** and is reported
 rather than silently dropped.
+
+---
+
+## 👤 Author
+
+**Awaneesh Gupta** — B.Tech CSE (AI) @ Vedam School of Technology
+
+[![GitHub](https://img.shields.io/badge/GitHub-Awaneesh03-181717?style=flat-square&logo=github)](https://github.com/Awaneesh03)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-awaneesh--gupta-0A66C2?style=flat-square&logo=linkedin)](https://linkedin.com/in/awaneesh-gupta)
+
+<p align="center"><sub>If you found this project useful, consider giving it a ⭐</sub></p>
