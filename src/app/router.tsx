@@ -65,6 +65,7 @@ export function AppRoutes() {
     <Routes>
       <Route element={<AppShell />}>
         <Route index element={<DashboardView />} />
+        <Route path="dashboard" element={<DashboardView />} />
         <Route path="inbox" element={<InboxView />} />
         <Route path="today" element={<TodayView />} />
         <Route path="upcoming" element={<UpcomingView />} />

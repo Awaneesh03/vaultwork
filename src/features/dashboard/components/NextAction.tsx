@@ -77,21 +77,21 @@ export function NextAction({
     <section
       aria-label="Next action"
       className={cn(
-        'relative flex flex-col gap-3 overflow-hidden rounded-lg border border-accent-line/70',
-        'bg-surface p-5 pl-[21px] shadow-[var(--shadow-sm)]',
+        'relative flex flex-col gap-3.5 overflow-hidden rounded-xl border border-line bg-surface/80 p-5 pl-[21px] shadow-[var(--shadow-sm)] backdrop-blur-sm transition-colors',
       )}
     >
       {/*
-        A violet rail down the leading edge. This is the one decision the screen
-        exists to present, so it gets the only accent edge on the page — which
-        only works because nothing else claims one.
+        An accent rail down the leading edge. This is the one decision the screen
+        exists to present, so it gets the only accent edge on the page.
       */}
       <span className="absolute inset-y-0 left-0 w-[3px] bg-accent" aria-hidden />
 
-      <span className="t-eyebrow flex items-center gap-1.5 text-accent">
-        <Sparkles size={12} aria-hidden />
-        Next action
-      </span>
+      <div className="flex items-center justify-between">
+        <span className="text-micro font-semibold uppercase tracking-wider flex items-center gap-1.5 text-accent">
+          <Sparkles size={12} aria-hidden />
+          Next action
+        </span>
+      </div>
 
       <div className="flex items-start gap-2.5">
         <button

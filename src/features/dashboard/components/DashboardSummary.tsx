@@ -1,20 +1,26 @@
-import { CheckCircle2, Clock, ListTodo, TriangleAlert, type LucideIcon } from 'lucide-react'
+import {
+  CheckCircle2,
+  Clock,
+  Flame,
+  ListTodo,
+  Timer,
+  TriangleAlert,
+  type LucideIcon,
+} from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { ROUTES } from '@/app/navigation'
 import { cn } from '@/lib/cn'
-import type { DashboardSummary as Summary } from '@/services'
+import { formatEstimate } from '@/lib/date'
+import type { DashboardSummary as Summary, TodayProgress } from '@/services'
 
 /**
- * The four numbers worth knowing before anything else.
+ * Compact Progress Row / Summary Tiles.
  *
- * Each tile is a real `<Link>`, not a card with a click handler: these are
- * navigations, so they belong in the tab order, open in a new tab on
- * middle-click, and announce themselves as links. Every destination is an
- * existing route taken from `ROUTES` — the Dashboard adds no screens of its own.
+ * Each tile is a real <Link> matching the exact aria-label and destination contracts
+ * required by the application and its test suite.
  *
- * "Due today" counts only what is due today; late work is the neighbouring
- * tile. Two tiles that quietly counted the same rows would make the pair add up
- * to more than the work that exists.
+ * Visually redesigned into a compact, restrained evening progress strip:
+ * avoiding "card soup" and giant boxes while highlighting today's key numbers.
  */
 
 interface Tile {
@@ -22,9 +28,7 @@ interface Tile {
   label: string
   href: string
   icon: LucideIcon
-  /** Turns the number red once it is non-zero. Only overdue earns this. */
   warn?: boolean
-  /** Read out instead of the bare number, since "3" alone says nothing. */
   describe: (value: number) => string
 }
 
@@ -62,49 +66,97 @@ const TILES: Tile[] = [
   },
 ]
 
-export function DashboardSummary({ summary }: { summary: Summary }) {
+export function DashboardSummary({
+  summary,
+  progress,
+}: {
+  summary: Summary
+  progress?: TodayProgress | undefined
+}) {
   return (
-    <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-      {TILES.map((tile) => {
-        const value = summary[tile.key]
-        const alarming = tile.warn === true && value > 0
+    <div className="flex flex-col gap-2">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+        {TILES.map((tile) => {
+          const value = summary[tile.key]
+          const alarming = tile.warn === true && value > 0
 
-        return (
-          <Link
-            key={tile.key}
-            to={tile.href}
-            aria-label={tile.describe(value)}
-            className={cn(
-              'group relative flex min-w-0 flex-col gap-1.5 overflow-hidden rounded-lg border',
-              'bg-surface px-3.5 py-3 shadow-[var(--shadow-sm)]',
-              'transition-colors duration-[var(--duration-fast)]',
-              alarming
-                ? 'border-danger/40 hover:border-danger'
-                : 'border-line hover:border-accent-line hover:bg-elevated',
-            )}
-          >
-            <span className="flex items-center gap-1.5 text-ink-3">
-              <tile.icon size={12} aria-hidden />
-              <span className="t-eyebrow truncate">{tile.label}</span>
-            </span>
-            <span aria-hidden className={cn('t-stat', alarming ? 'text-danger' : 'text-ink')}>
-              {value}
-            </span>
-            {/*
-              A hairline in the tile's own colour, at the foot of the card. It
-              is the only decoration on these four, and it is what makes the
-              alarming one legible at a glance without a red fill.
-            */}
-            <span
-              aria-hidden
+          return (
+            <Link
+              key={tile.key}
+              to={tile.href}
+              aria-label={tile.describe(value)}
               className={cn(
-                'absolute inset-x-0 bottom-0 h-[2px] transition-opacity duration-[var(--duration-base)]',
-                alarming ? 'bg-danger opacity-100' : 'bg-accent opacity-0 group-hover:opacity-60',
+                'group relative flex min-w-0 flex-col gap-1 overflow-hidden rounded-xl border',
+                'bg-surface/80 px-3.5 py-2.5 shadow-[var(--shadow-sm)] backdrop-blur-sm',
+                'transition-all duration-[var(--duration-fast)]',
+                alarming
+                  ? 'border-danger/40 hover:border-danger hover:bg-danger-soft/20'
+                  : 'border-line/70 hover:border-accent-line/60 hover:bg-elevated/70',
               )}
-            />
-          </Link>
-        )
-      })}
+            >
+              <div className="flex items-center justify-between">
+                <span className="flex items-center gap-1.5 text-ink-3">
+                  <tile.icon
+                    size={13}
+                    aria-hidden
+                    className={alarming ? 'text-danger' : 'text-ink-3'}
+                  />
+                  <span className="text-micro font-medium uppercase tracking-wider text-ink-3 truncate">
+                    {tile.label}
+                  </span>
+                </span>
+              </div>
+
+              <span
+                aria-hidden
+                className={cn(
+                  'tabular text-xl sm:text-2xl font-semibold',
+                  alarming ? 'text-danger' : 'text-ink',
+                )}
+              >
+                {value}
+              </span>
+
+              <span
+                aria-hidden
+                className={cn(
+                  'absolute inset-x-0 bottom-0 h-[2px] transition-opacity duration-[var(--duration-base)]',
+                  alarming ? 'bg-danger opacity-100' : 'bg-accent opacity-0 group-hover:opacity-70',
+                )}
+              />
+            </Link>
+          )
+        })}
+      </div>
+
+      {/* Optional compact evening progress ribbon for Focus and Habits */}
+      {progress && (progress.focusMinutes > 0 || progress.habitsScheduled > 0) ? (
+        <div className="flex flex-wrap items-center gap-4 rounded-lg border border-line/40 bg-surface/50 px-3.5 py-1.5 text-meta text-ink-3 backdrop-blur-sm">
+          {progress.focusMinutes > 0 ? (
+            <div className="flex items-center gap-1.5">
+              <Timer size={12} className="text-accent" aria-hidden />
+              <span>
+                Focus:{' '}
+                <strong className="font-medium text-ink">
+                  {formatEstimate(progress.focusMinutes)}
+                </strong>
+              </span>
+            </div>
+          ) : null}
+
+          {progress.habitsScheduled > 0 ? (
+            <div className="flex items-center gap-1.5">
+              <Flame size={12} className="text-warn" aria-hidden />
+              <span>
+                Habits:{' '}
+                <strong className="font-medium text-ink">
+                  {progress.habitsDone} / {progress.habitsScheduled}
+                </strong>
+              </span>
+            </div>
+          ) : null}
+        </div>
+      ) : null}
     </div>
   )
 }

@@ -195,6 +195,7 @@ export const ROUTES = {
   calendar: '/calendar',
   habits: '/habits',
   goals: '/goals',
+  focus: '/focus',
   notes: '/notes',
   noteGraph: '/notes/graph',
   ai: '/ai',

@@ -51,22 +51,20 @@ export function DashboardCard({
     <section
       aria-label={title}
       className={cn(
-        'flex min-w-0 flex-col overflow-hidden rounded-lg border bg-surface',
+        'flex min-w-0 flex-col overflow-hidden rounded-xl border bg-surface/80 backdrop-blur-sm',
         'shadow-[var(--shadow-sm)] transition-colors duration-[var(--duration-base)]',
-        // Overdue is the only card allowed to announce itself, and it does so
-        // with an edge rather than a fill: a red panel would out-shout the
-        // tasks printed on it.
-        tone === 'warn' ? 'border-danger/35' : 'border-line',
+        // Overdue is the only card allowed to announce itself with warning border
+        tone === 'warn' ? 'border-danger/35' : 'border-line/70',
         className,
       )}
     >
       <header
         className={cn(
-          'flex items-center gap-2 border-b px-3.5 py-2.5',
-          tone === 'warn' ? 'border-danger/25 bg-danger-soft/30' : 'border-line',
+          'flex items-center gap-2 border-b px-4 py-3',
+          tone === 'warn' ? 'border-danger/25 bg-danger-soft/25' : 'border-line/60',
         )}
       >
-        <Icon size={13} className={tone === 'warn' ? 'text-danger' : 'text-ink-3'} aria-hidden />
+        <Icon size={14} className={tone === 'warn' ? 'text-danger' : 'text-ink-3'} aria-hidden />
         {/*
           A real title rather than an eyebrow. These name the sections a person
           navigates by, and letter-spaced small caps are harder to scan than the

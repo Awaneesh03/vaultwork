@@ -49,11 +49,16 @@ export function TodaySoFar({
   return (
     <section
       aria-labelledby="today-so-far"
-      className="flex flex-col gap-3 rounded-lg border border-line bg-surface px-4 py-3"
+      className="flex flex-col gap-3.5 rounded-xl border border-line/70 bg-surface/80 p-5 shadow-[var(--shadow-sm)] backdrop-blur-sm"
     >
-      <h2 id="today-so-far" className="t-eyebrow text-ink-3">
-        Today so far
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2
+          id="today-so-far"
+          className="text-micro font-semibold uppercase tracking-wider text-ink-3"
+        >
+          Today so far
+        </h2>
+      </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
         <Figure

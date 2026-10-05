@@ -53,6 +53,7 @@ export const DASHBOARD_LIMITS = {
   upcomingTasks: 6,
   projects: 5,
   activity: 8,
+  completed: 10,
 } as const
 
 export interface DashboardData {
@@ -118,6 +119,9 @@ export interface DashboardData {
    */
   notes: RecentNote[]
 
+  /** Tasks completed on today's local date, newest first. */
+  completedTasks: Task[]
+
   /** Context the previewed rows need, loaded once. */
   tags: Tag[]
   allProjects: Project[]
@@ -182,9 +186,14 @@ export async function getDashboard(): Promise<DashboardData> {
     today,
   )
 
+  const completedToday = completedOnDay(tasks, today).sort(
+    (a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0),
+  )
+
   const previewed = [
     ...limitGroups(todayGroups, DASHBOARD_LIMITS.today).flatMap((group) => group.tasks),
     ...overdueAll.slice(0, DASHBOARD_LIMITS.overdue),
+    ...completedToday.slice(0, DASHBOARD_LIMITS.completed),
   ]
 
   return {
@@ -218,6 +227,7 @@ export async function getDashboard(): Promise<DashboardData> {
     habits,
     goals,
     notes,
+    completedTasks: completedToday.slice(0, DASHBOARD_LIMITS.completed),
 
     tags,
     allProjects: projects,
