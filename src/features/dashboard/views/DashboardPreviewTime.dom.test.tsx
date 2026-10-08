@@ -157,6 +157,32 @@ describe('Automatic Dashboard Time of Day & Composition', () => {
     expect(screen.getByText('Evening Reflection')).toBeTruthy()
   })
 
+  it('10. the evening frame treatment belongs to the evening, and leaves with it', async () => {
+    // The warm sidebar, canvas glow and card tint all hang off one attribute on
+    // <html>. It must be absent by day, present after dark, and gone the moment
+    // the Dashboard unmounts — otherwise every other screen inherits dusk.
+    freezeClock(AFTERNOON_CLOCK)
+    const afternoon = mountAt('/')
+    await waitFor(() => expect(screen.getByText('Good afternoon.')).toBeTruthy())
+    expect(document.documentElement.dataset['evening']).toBeUndefined()
+    afternoon.unmount()
+
+    freezeClock(EVENING_CLOCK)
+    const evening = mountAt('/')
+    await waitFor(() => expect(screen.getByText('Good evening.')).toBeTruthy())
+    expect(document.documentElement.dataset['evening']).toBe('true')
+    evening.unmount()
+    expect(document.documentElement.dataset['evening']).toBeUndefined()
+
+    // Night inherits the evening composition, and its frame with it.
+    freezeClock(NIGHT_CLOCK)
+    const night = mountAt('/')
+    await waitFor(() => expect(screen.getByText('Still up.')).toBeTruthy())
+    expect(document.documentElement.dataset['evening']).toBe('true')
+    night.unmount()
+    expect(document.documentElement.dataset['evening']).toBeUndefined()
+  })
+
   it('9. internal test parameter previewTime=evening works without rendering any UI control', async () => {
     mountAt('/?previewTime=evening')
     await waitFor(() => expect(screen.getByText('Good evening.')).toBeTruthy())

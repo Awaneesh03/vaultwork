@@ -24,9 +24,9 @@ export function CompletedToday({ tasks, projects, onOpen }: CompletedTodayProps)
   return (
     <section
       aria-label="Completed today"
-      className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-line bg-surface/80 p-5 shadow-[var(--shadow-sm)] backdrop-blur-sm transition-colors duration-[var(--duration-base)]"
+      className="flex min-w-0 flex-col overflow-hidden rounded-xl border border-line/45 bg-surface/55 p-4 backdrop-blur-sm transition-colors duration-[var(--duration-base)]"
     >
-      <header className="flex items-center justify-between pb-3 border-b border-line/60">
+      <header className="flex items-center justify-between border-b border-line/50 pb-2.5">
         <div className="flex items-center gap-2">
           <div className="flex h-6 w-6 items-center justify-center rounded-md bg-accent-soft text-accent">
             <CheckCircle2 size={14} aria-hidden />
@@ -44,19 +44,14 @@ export function CompletedToday({ tasks, projects, onOpen }: CompletedTodayProps)
       </header>
 
       {tasks.length === 0 ? (
-        <div className="py-6 text-center">
-          <p className="text-body text-ink-3">No tasks completed today.</p>
-          <p className="mt-1 text-meta text-ink-3/70">
-            Work completed today will gather here as you wrap up your evening.
-          </p>
-        </div>
+        <p className="py-3 text-center text-meta text-ink-3">Nothing completed yet today.</p>
       ) : (
-        <ul className="mt-2 flex flex-col divide-y divide-line/40">
+        <ul className="mt-1 flex flex-col divide-y divide-line/30">
           {tasks.map((task) => {
             const projectName = task.projectId ? projectMap.get(task.projectId) : null
 
             return (
-              <li key={task.id} className="group flex items-center justify-between gap-3 py-2.5">
+              <li key={task.id} className="group flex items-center justify-between gap-3 py-1.5">
                 <div className="flex min-w-0 items-center gap-2.5">
                   <div className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
                     <CheckCircle2 size={12} strokeWidth={2.5} aria-hidden />

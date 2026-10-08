@@ -337,3 +337,74 @@
     scroll-behavior: auto !important;
   }
 }
+
+/*
+ * The evening dashboard (M19.2) warms the application frame.
+ *
+ * One attribute, set by the Dashboard while the evening composition is on
+ * screen and removed when it leaves, nudges the two chrome tokens towards the
+ * hero's amber. Nothing else changes: the daytime screen never sets it, and no
+ * component needs to know.
+ */
+[data-evening='true'] {
+  --sidebar: color-mix(in oklab, var(--warn) 8%, var(--sunken));
+}
+
+/*
+ * The hero's light does not stop at the hero. A single warm bloom behind the
+ * top of the canvas and a vignette at the edges put the whole screen in the
+ * same room — restrained enough that body text keeps its contrast, because an
+ * atmosphere that costs legibility is just a tint.
+ */
+[data-evening='true'] .bg-canvas {
+  background-image:
+    radial-gradient(
+      80rem 40rem at 62% -6rem,
+      color-mix(in oklab, var(--warn) 26%, transparent) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      50rem 30rem at 110% 20%,
+      color-mix(in oklab, var(--danger) 16%, transparent) 0%,
+      transparent 72%
+    ),
+    radial-gradient(
+      60rem 40rem at 50% 120%,
+      color-mix(in oklab, var(--sunken) 70%, black) 0%,
+      transparent 70%
+    );
+  background-attachment: fixed;
+}
+
+/*
+ * The evening uses the canvas it has. The shell centres every page in a 72rem
+ * column, which on a wide window leaves the composition stranded in black; the
+ * evening widens that container so the hero, the metric strip and the grid all
+ * share one pair of edges. Evening only — every other screen keeps its measure.
+ */
+[data-evening='true'] main > .max-w-6xl {
+  max-width: min(100%, 110rem);
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+/*
+ * The cards sit in the room rather than on top of it: a few per cent of the
+ * hero's amber mixed into each surface, and borders dropped to a whisper. The
+ * tint is small on purpose — enough to feel warm, not enough to read as brown.
+ */
+[data-evening='true'] main section {
+  background-color: color-mix(
+    in oklab,
+    var(--warn) 5%,
+    color-mix(in oklab, var(--surface) 72%, transparent)
+  );
+  border-color: color-mix(in oklab, var(--warn) 10%, var(--line));
+}
+
+/* The rail belongs to the same room: translucent, warmed, softly separated. */
+[data-evening='true'] nav[aria-label='Sections'] {
+  background-color: color-mix(in oklab, var(--sidebar) 82%, transparent);
+  border-right-color: color-mix(in oklab, var(--warn) 16%, var(--sunken));
+  backdrop-filter: blur(14px);
+}

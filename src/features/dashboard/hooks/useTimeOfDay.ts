@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { platform } from '@/platform'
 import type { GreetingKey } from '@/services'
-import {
-  msUntilNextBoundary,
-  resolveEffectiveTimeOfDay,
-  type TimeOfDay,
-} from '../timeOfDay'
+import { msUntilNextBoundary, resolveEffectiveTimeOfDay, type TimeOfDay } from '../timeOfDay'
 
 export interface UseTimeOfDayOptions {
   /**

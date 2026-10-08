@@ -2,9 +2,10 @@ import {
   BarChart3,
   Bot,
   CalendarDays,
+  CalendarRange,
   CheckCircle2,
   FileText,
-  FileType2,
+  Notebook,
   FolderKanban,
   Gauge,
   Inbox,
@@ -104,7 +105,7 @@ export const NAV_GROUPS: NavGroup[] = [
       {
         path: '/calendar',
         label: 'Calendar',
-        icon: CalendarDays,
+        icon: CalendarRange,
         shortcut: 'C',
         description: 'Month, week, day',
       },
@@ -137,7 +138,7 @@ export const NAV_GROUPS: NavGroup[] = [
       {
         path: '/notes',
         label: 'Notes',
-        icon: FileText,
+        icon: Notebook,
         shortcut: 'G N',
         description: 'Markdown, attached',
       },
@@ -150,7 +151,7 @@ export const NAV_GROUPS: NavGroup[] = [
          */
         path: '/documents',
         label: 'Documents',
-        icon: FileType2,
+        icon: FileText,
         description: 'PDFs from your vault',
       },
       {
