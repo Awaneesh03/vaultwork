@@ -3,6 +3,9 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "engines": {
+    "node": ">=22.18"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
@@ -13,8 +16,9 @@
     "test:watch": "TZ=Asia/Kolkata vitest",
     "verify": "npm run format:check && npm run lint && npm run typecheck && npm run test",
     "tauri": "tauri",
-    "desktop": "tauri dev",
+    "desktop": "tauri dev --config src-tauri/tauri.dev.conf.json",
     "desktop:build": "tauri build",
+    "icons": "tauri icon branding/vaultwork-icon.svg",
     "test:rust": "CARGO_TARGET_DIR=src-tauri/target/test cargo test --manifest-path src-tauri/Cargo.toml",
     "format": "prettier --write \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"mcp/**/*.ts\" \"*.{ts,js,json}\"",
     "format:check": "prettier --check \"src/**/*.{ts,tsx,css}\" \"tests/**/*.ts\" \"mcp/**/*.ts\" \"*.{ts,js,json}\""
@@ -25,7 +29,6 @@
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
     "@tauri-apps/api": "^2.11.1",
-    "@tauri-apps/plugin-dialog": "^2.7.3",
     "@tauri-apps/plugin-notification": "^2.4.0",
     "clsx": "^2.1.1",
     "dexie": "^4.0.11",

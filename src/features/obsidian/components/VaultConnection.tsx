@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { AlertCircle, FolderOpen, Link2Off, ShieldAlert } from 'lucide-react'
 import { Badge } from '@/components/ui/Badge'
 import { Button } from '@/components/ui/Button'
@@ -69,6 +70,9 @@ export function VaultConnection({
   // Until the first check returns, the state is genuinely unknown.
   const state = status?.state ?? null
   const connected = state === 'connected'
+  // Disconnecting forgets every sync baseline, so it asks first — the same
+  // inline confirmation the Google, Telegram and Assistant disconnects use.
+  const [confirming, setConfirming] = useState(false)
 
   return (
     <section className="relative overflow-hidden rounded-xl border border-line bg-surface shadow-[var(--shadow-sm)]">
@@ -107,8 +111,8 @@ export function VaultConnection({
               <Button
                 variant="ghost"
                 size="sm"
-                disabled={busy}
-                onClick={onDisconnect}
+                disabled={busy || confirming}
+                onClick={() => setConfirming(true)}
                 icon={<Link2Off size={12} aria-hidden />}
               >
                 Disconnect
@@ -136,6 +140,37 @@ export function VaultConnection({
             )}
           </div>
         </div>
+
+        {connected && confirming ? (
+          <div
+            role="group"
+            aria-label="Confirm disconnect"
+            className="flex flex-col gap-2 rounded-lg border border-line-strong bg-canvas p-3"
+          >
+            <p className="max-w-prose text-body text-ink-2">
+              Disconnect from <span className="text-ink">{status?.vaultName ?? 'this vault'}</span>?
+              Your notes and the vault&apos;s files are not touched, but Vaultwork forgets which
+              note matches which file. After reconnecting, the first sync compares everything
+              afresh.
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                size="sm"
+                variant="danger"
+                disabled={busy}
+                onClick={() => {
+                  setConfirming(false)
+                  onDisconnect()
+                }}
+              >
+                Disconnect vault
+              </Button>
+              <Button size="sm" variant="secondary" onClick={() => setConfirming(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        ) : null}
 
         {status?.state === 'connected' && !status.restorable ? (
           <p className="text-meta text-ink-3">

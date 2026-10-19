@@ -19,6 +19,7 @@ import { cn } from '@/lib/cn'
 import type { CommandIntent } from '@/services'
 import { useTaskUiStore } from '@/store/taskUiStore'
 import { useUiStore } from '@/store/uiStore'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * The command palette — now a *producer* of CommandIntents.
@@ -179,6 +180,7 @@ export function CommandPalette() {
     setActive(0)
   }, [query])
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(open)
   if (!open) return null
 
   const choices = ambiguity?.choices ?? []
@@ -208,6 +210,8 @@ export function CommandPalette() {
     >
       <div
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-label="Command palette"
         className="w-full max-w-xl animate-[dialog-in_var(--duration-base)_var(--ease-out)] overflow-hidden rounded-xl border border-line bg-elevated shadow-[var(--shadow-lg)]"

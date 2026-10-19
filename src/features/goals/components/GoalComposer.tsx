@@ -5,6 +5,7 @@ import { Kbd } from '@/components/ui/Kbd'
 import type { Goal } from '@/types/entities'
 import type { GoalHorizon } from '@/types/enums'
 import { emptyGoalForm, goalForm, goalFormError, type GoalFormValue } from '../goalFormValue'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * Create and edit a goal — one component, two modes.
@@ -44,6 +45,7 @@ export function GoalComposer({
   onSubmit: (value: GoalFormValue) => void
   onCancel: () => void
 }) {
+  const dialogRef = useDialogFocus<HTMLDivElement>()
   const editing = goal !== null
   const ids = useId()
   const titleRef = useRef<HTMLInputElement>(null)
@@ -68,6 +70,8 @@ export function GoalComposer({
   const shown = touched ? (error ?? problem) : error
 
   const submit = () => {
+    // The keyboard shortcut bypasses the disabled button.
+    if (busy) return
     setTouched(true)
     if (problem !== null) {
       titleRef.current?.focus()
@@ -86,6 +90,8 @@ export function GoalComposer({
     >
       <div
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-label={editing ? `Edit ${goal.title}` : 'New goal'}
         onKeyDown={(event) => {

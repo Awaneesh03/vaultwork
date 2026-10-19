@@ -1,4 +1,5 @@
 import type { GreetingKey } from '@/services'
+import { previewTimeOfDay } from './previewTime'
 
 export type TimeOfDay = 'morning' | 'afternoon' | 'evening' | 'night'
 
@@ -78,30 +79,15 @@ export function msUntilNextBoundary(now: Date = new Date()): number {
 }
 
 /**
- * Resolves effective TimeOfDay, allowing test-only overrides for automated tests
- * without exposing visible UI controls in the user interface.
+ * The time of day to show: a valid development preview if there is one,
+ * otherwise the real local clock. Production builds always use the clock (see
+ * `previewTimeOfDay`).
  */
 export function resolveEffectiveTimeOfDay(
   clockDate: Date = new Date(),
   testOverride?: string | null,
   isDev: boolean = import.meta.env.DEV,
 ): { timeOfDay: TimeOfDay; greeting: GreetingKey } {
-  if (isDev && testOverride && testOverride !== 'system') {
-    const normalized = testOverride.trim().toLowerCase()
-    if (
-      normalized === 'morning' ||
-      normalized === 'afternoon' ||
-      normalized === 'evening' ||
-      normalized === 'night'
-    ) {
-      const timeOfDay = normalized as TimeOfDay
-      return { timeOfDay, greeting: greetingForTimeOfDay(timeOfDay) }
-    }
-    if (normalized === 'latenight') {
-      return { timeOfDay: 'night', greeting: 'lateNight' }
-    }
-  }
-
-  const timeOfDay = getTimeOfDay(clockDate)
+  const timeOfDay = previewTimeOfDay(testOverride, isDev) ?? getTimeOfDay(clockDate)
   return { timeOfDay, greeting: greetingForTimeOfDay(timeOfDay) }
 }

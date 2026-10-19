@@ -52,7 +52,10 @@ describe('greetingFor', () => {
     expect(greetingFor(12)).toBe('afternoon')
     expect(greetingFor(16)).toBe('afternoon')
     expect(greetingFor(17)).toBe('evening')
-    expect(greetingFor(23)).toBe('evening')
+    expect(greetingFor(20)).toBe('evening')
+    // Night starts at 21:00, not midnight.
+    expect(greetingFor(21)).toBe('lateNight')
+    expect(greetingFor(23)).toBe('lateNight')
   })
 
   it('has a label for every greeting the service can return', () => {

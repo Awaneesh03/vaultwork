@@ -146,12 +146,31 @@ export function TelegramSection() {
         </div>
       ) : null}
 
+      {status.configured &&
+      status.authorizedChatId === null &&
+      status.pendingChatId === null &&
+      status.pairingCode !== null ? (
+        <div className="flex flex-col gap-1 rounded-lg border border-line bg-surface p-3">
+          <p className="text-body text-ink">
+            To pair your chat, send this code to{' '}
+            {status.botUsername === null ? 'your bot' : `@${status.botUsername}`} in a private chat:
+          </p>
+          <p className="font-mono text-title tracking-[0.2em] text-ink" aria-label="Pairing code">
+            {status.pairingCode}
+          </p>
+          <p className="text-body text-ink-3">
+            Messages without this code are refused, so nobody else can ask for access.
+          </p>
+        </div>
+      ) : null}
+
       {status.configured && status.pendingChatId !== null ? (
         <div className="flex flex-col gap-2 rounded-lg border border-accent-line bg-accent-soft p-3">
           <p className="text-body text-ink">
             {status.pendingChatName === null
-              ? 'A chat is asking for access.'
-              : `${status.pendingChatName} is asking for access.`}
+              ? 'A chat sent the pairing code.'
+              : `${status.pendingChatName} sent the pairing code.`}{' '}
+            <span className="font-mono text-ink-3">Chat id {status.pendingChatId}</span>
           </p>
           <p className="text-body text-ink-2">
             Approve it only if that is you. The approved chat can create, complete and delete your

@@ -12,6 +12,7 @@ import type { HabitFrequency } from '@/services'
 import type { Habit } from '@/types/entities'
 import { WEEKDAY_INITIALS, WEEKDAY_NAMES } from '../habitAppearance'
 import { emptyHabitForm, habitForm, habitFormError, type HabitFormValue } from '../habitFormValue'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * Create and edit a habit — one component, two modes.
@@ -59,6 +60,7 @@ export function HabitComposer({
   onSubmit: (value: HabitFormValue) => void
   onCancel: () => void
 }) {
+  const dialogRef = useDialogFocus<HTMLFormElement>()
   const editing = habit !== null
   const ids = useId()
   const nameRef = useRef<HTMLInputElement>(null)
@@ -111,6 +113,8 @@ export function HabitComposer({
     >
       <form
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-label={editing ? `Edit ${habit.name}` : 'New habit'}
         className="w-full max-w-md rounded-lg border border-line bg-elevated shadow-xl"

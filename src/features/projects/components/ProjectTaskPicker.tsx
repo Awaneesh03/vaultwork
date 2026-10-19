@@ -4,6 +4,7 @@ import { Kbd } from '@/components/ui/Kbd'
 import { cn } from '@/lib/cn'
 import { formatDayLabel } from '@/lib/date'
 import type { DateStr, Id, Project, Task } from '@/types/entities'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * Moving existing tasks in and out of a project.
@@ -96,6 +97,7 @@ export function ProjectTaskPicker({
   onAssign,
   onClose,
 }: ProjectTaskPickerProps) {
+  const dialogRef = useDialogFocus<HTMLDivElement>()
   const [query, setQuery] = useState('')
   const searchRef = useRef<HTMLInputElement>(null)
 
@@ -118,6 +120,8 @@ export function ProjectTaskPicker({
     >
       <div
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-label={`Manage tasks in ${project.name}`}
         className="w-full max-w-lg rounded-lg border border-line bg-elevated shadow-xl"

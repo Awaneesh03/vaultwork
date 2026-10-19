@@ -31,6 +31,7 @@ import {
   SYNC_STATUS_GROUPS,
   type SyncGroup,
 } from '../obsidianAppearance'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * The Sync Center.
@@ -572,6 +573,7 @@ function ConfirmApply({
   onCancel: () => void
   onConfirm: () => void
 }) {
+  const dialogRef = useDialogFocus<HTMLDivElement>()
   const rows: [string, number][] = [
     ['Import', summary.imported],
     ['Export', summary.exported],
@@ -590,6 +592,8 @@ function ConfirmApply({
     >
       <div
         role="alertdialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-label="Apply these changes"
         onKeyDown={(event) => {

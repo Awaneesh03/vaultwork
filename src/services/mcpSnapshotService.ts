@@ -292,10 +292,13 @@ export function getMcpSnapshotPublishedAt(): Timestamp | null {
 }
 
 /** Builds and publishes. Silent about its contents, loud about nothing. */
-export async function writeMcpSnapshot(): Promise<boolean> {
+export async function writeMcpSnapshot(stillWanted: () => boolean = () => true): Promise<boolean> {
   if (!platform.desktop.isSupported) return false
   try {
     const snapshot = await buildMcpSnapshot()
+    // Building reads the whole database and can take a while; a writer that
+    // was stopped in the meantime must not land one more file after it.
+    if (!stillWanted()) return false
     await platform.desktop.writeMcpSnapshot(JSON.stringify(snapshot))
     lastPublishedAt = platform.clock.now()
     return true
@@ -331,17 +334,20 @@ export function startMcpSnapshotWriter(debounceMs: number = MCP_SNAPSHOT_DEBOUNC
 
   // Once at start-up, so a user who opens Vaultwork and asks Claude a question
   // without touching anything is answered from today rather than from last week.
-  void writeMcpSnapshot()
+  let active = true
+  const live = () => active
+  void writeMcpSnapshot(live)
 
   const unsubscribe = eventBus.subscribe(() => {
     if (pending !== null) clearTimeout(pending)
     pending = setTimeout(() => {
       pending = null
-      void writeMcpSnapshot()
+      void writeMcpSnapshot(live)
     }, debounceMs)
   })
 
   return () => {
+    active = false
     unsubscribe()
     if (pending !== null) clearTimeout(pending)
     pending = null

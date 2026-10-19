@@ -30,7 +30,15 @@ pub fn read_count() -> u64 {
     READS.load(Ordering::SeqCst)
 }
 
-const SERVICE: &str = "app.vaultwork.desktop";
+/// The Keychain service, kept apart for development builds.
+///
+/// `npm run desktop` also runs under its own bundle identifier
+/// (`tauri.dev.conf.json`), so a dev build has its own config folder. The
+/// Keychain is not keyed by bundle, though, so without this a fresh clone run
+/// on the maintainer's Mac would pick up the real bot token and API key — and
+/// start polling the real bot against the installed app.
+const SERVICE: &str =
+    if cfg!(debug_assertions) { "app.vaultwork.desktop.dev" } else { "app.vaultwork.desktop" };
 
 /// Every secret this application is allowed to hold.
 const KNOWN_KEYS: &[&str] = &["telegram.botToken", "ai.groq.apiKey", "google.refreshToken"];
@@ -89,3 +97,15 @@ pub const AI_GROQ_KEY: &str = "ai.groq.apiKey";
 /// The Google account's OAuth refresh token (M19.2). Access tokens are never
 /// stored anywhere — they live in `google.rs`'s memory for about an hour.
 pub const GOOGLE_REFRESH_TOKEN: &str = "google.refreshToken";
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn a_development_build_never_reads_the_installed_apps_credentials() {
+        // Tests are debug builds, exactly like `npm run desktop`.
+        assert_eq!(SERVICE, "app.vaultwork.desktop.dev");
+        assert_ne!(SERVICE, "app.vaultwork.desktop");
+    }
+}

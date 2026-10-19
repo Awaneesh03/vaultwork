@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen } from '@testing-library/react'
 import { useState } from 'react'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { useToastStore } from '@/store/toastStore'
 import { AUTOSAVE_DELAY_MS, useAutosave } from './useAutosave'
 
 /**
@@ -156,6 +157,34 @@ describe('flushing', () => {
 
     expect(save).toHaveBeenCalledTimes(1)
     expect(save).toHaveBeenCalledWith('third')
+  })
+
+  it('retries a failed unmount save once', async () => {
+    const save = vi.fn().mockRejectedValueOnce(new Error('busy')).mockResolvedValue(undefined)
+    const { unmount } = render(<Harness noteKey="a" save={save} />)
+    await type('second chance')
+
+    await act(async () => {
+      unmount()
+    })
+
+    expect(save).toHaveBeenCalledTimes(2)
+    expect(useToastStore.getState().toasts).toHaveLength(0)
+  })
+
+  it('says so when the unmount save fails for good, instead of losing it quietly', async () => {
+    useToastStore.setState({ toasts: [] })
+    const save = vi.fn().mockRejectedValue(new Error('disk full'))
+    const { unmount } = render(<Harness noteKey="a" save={save} />)
+    await type('about to be lost')
+
+    await act(async () => {
+      unmount()
+    })
+
+    const toast = useToastStore.getState().toasts[0]
+    expect(toast?.tone).toBe('danger')
+    expect(toast?.timeout).toBeNull()
   })
 })
 

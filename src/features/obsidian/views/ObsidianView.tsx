@@ -18,6 +18,7 @@ import { VaultConnection } from '../components/VaultConnection'
 import { SyncStatusBadge } from '../components/SyncStatusBadge'
 import { useVaultConnection, useVaultScan } from '../hooks/useObsidian'
 import { SYNC_STATUS_DESCRIPTIONS, SYNC_STATUS_LABELS } from '../obsidianAppearance'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * The Obsidian screen.
@@ -373,6 +374,7 @@ function ImportConfirmation({
   onCancel: () => void
   onConfirm: () => void
 }) {
+  const dialogRef = useDialogFocus<HTMLDivElement>()
   return (
     <div
       className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 p-4 pt-[12vh]"
@@ -383,6 +385,8 @@ function ImportConfirmation({
     >
       <div
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-label="Import from Obsidian"
         onKeyDown={(event) => {

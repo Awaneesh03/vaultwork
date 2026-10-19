@@ -13,11 +13,12 @@
 //!     for exactly the same reason (`vaultwork-vault-handle`). This is the same
 //!     decision, made the same way, on the other side of the port.
 //!
-//! Nothing sensitive goes in here — a folder path and nothing else. No tokens,
+//! Nothing secret goes in here — paths, ids and flags. No tokens,
 //! no note contents, no window contents.
 
 use std::fs;
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use std::sync::Mutex;
 
 use serde::{Deserialize, Serialize};
 use tauri::{AppHandle, Manager};
@@ -88,14 +89,40 @@ fn read(app: &AppHandle) -> DesktopState {
     serde_json::from_str(&raw).unwrap_or_default()
 }
 
+/// Serialises every read-modify-write below. The Telegram poll worker advances
+/// its cursor on its own thread while commands authorize or forget a chat; two
+/// unguarded updates would each write back the other's stale copy, and a stale
+/// cursor write could restore a chat the user had just disconnected.
+static LOCK: Mutex<()> = Mutex::new(());
+
 fn write(app: &AppHandle, state: &DesktopState) {
     let Some(path) = file_of(app) else { return };
     if let Ok(encoded) = serde_json::to_string_pretty(state) {
-        let _ = fs::write(path, encoded);
+        let _ = write_atomic(&path, &encoded);
     }
 }
 
+/// Temp file then rename: a crash mid-write leaves the old file, never a torn
+/// one (which `read` would treat as empty — forgetting the vault and the chat).
+/// Owner-only, because the authorized chat id is what lets a chat drive the app.
+fn write_atomic(path: &Path, contents: &str) -> std::io::Result<()> {
+    use std::io::Write as _;
+    let temp = path.with_extension("json.tmp");
+    let mut options = fs::OpenOptions::new();
+    options.write(true).create(true).truncate(true);
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::OpenOptionsExt as _;
+        options.mode(0o600);
+    }
+    let mut file = options.open(&temp)?;
+    file.write_all(contents.as_bytes())?;
+    file.sync_all()?;
+    fs::rename(&temp, path)
+}
+
 pub fn remember_vault(app: &AppHandle, root: Option<&std::path::Path>) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.vault_path = root.map(|path| path.to_string_lossy().to_string());
     write(app, &state);
@@ -108,6 +135,7 @@ pub fn remembered_vault(app: &AppHandle) -> Option<PathBuf> {
 // ------------------------------------------------------------------ telegram
 
 pub fn remember_authorized_chat(app: &AppHandle, chat_id: Option<&str>) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.telegram_chat_id = chat_id.map(|id| id.to_string());
     write(app, &state);
@@ -118,6 +146,7 @@ pub fn authorized_chat(app: &AppHandle) -> Option<String> {
 }
 
 pub fn remember_telegram_offset(app: &AppHandle, offset: i64) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.telegram_offset = offset;
     write(app, &state);
@@ -128,6 +157,7 @@ pub fn telegram_offset(app: &AppHandle) -> i64 {
 }
 
 pub fn remember_telegram_auto_start(app: &AppHandle, enabled: bool) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.telegram_auto_start = enabled;
     write(app, &state);
@@ -140,6 +170,7 @@ pub fn telegram_auto_start(app: &AppHandle) -> bool {
 // ----------------------------------------------------------------------- ai
 
 pub fn remember_ai_model(app: &AppHandle, model: Option<&str>) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.ai_model = model.map(|value| value.to_string());
     write(app, &state);
@@ -150,6 +181,7 @@ pub fn ai_model(app: &AppHandle) -> Option<String> {
 }
 
 pub fn remember_ai_enabled(app: &AppHandle, enabled: bool) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.ai_enabled = Some(enabled);
     write(app, &state);
@@ -181,6 +213,7 @@ pub fn ai_enabled(app: &AppHandle) -> bool {
 
 /// Clears every AI setting. Leaves the vault and Telegram alone.
 pub fn forget_ai(app: &AppHandle) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.ai_model = None;
     state.ai_enabled = None;
@@ -192,12 +225,14 @@ pub fn google_record(app: &AppHandle) -> GoogleRecord {
 }
 
 pub fn remember_google(app: &AppHandle, record: GoogleRecord) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.google = record;
     write(app, &state);
 }
 
 pub fn remember_google_account(app: &AppHandle, account: Option<&str>) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.google.account = account.map(String::from);
     write(app, &state);
@@ -205,6 +240,7 @@ pub fn remember_google_account(app: &AppHandle, account: Option<&str>) {
 
 /// Google refused the grant: the account is gone until the user reconnects.
 pub fn mark_google_reconnect_required(app: &AppHandle) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.google = GoogleRecord { reconnect_required: true, ..GoogleRecord::default() };
     write(app, &state);
@@ -212,6 +248,7 @@ pub fn mark_google_reconnect_required(app: &AppHandle) {
 
 /// Clears every Google setting. Leaves the vault, Telegram and AI alone.
 pub fn forget_google(app: &AppHandle) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.google = GoogleRecord::default();
     write(app, &state);
@@ -220,6 +257,7 @@ pub fn forget_google(app: &AppHandle) {
 /// Clears every Telegram setting. Deliberately leaves `vault_path` alone —
 /// disconnecting a bot is not disconnecting a vault.
 pub fn forget_telegram(app: &AppHandle) {
+    let _guard = LOCK.lock();
     let mut state = read(app);
     state.telegram_chat_id = None;
     state.telegram_offset = 0;
@@ -230,6 +268,23 @@ pub fn forget_telegram(app: &AppHandle) {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn writes_replace_the_file_whole_and_owner_only() {
+        let dir = std::env::temp_dir().join("vaultwork-store-atomic-test");
+        fs::create_dir_all(&dir).expect("temp dir");
+        let path = dir.join(FILE);
+        write_atomic(&path, "{\"telegram_offset\":1,\"padding\":\"xxxxxxxx\"}").expect("first");
+        write_atomic(&path, "{\"telegram_offset\":2}").expect("second");
+        assert_eq!(fs::read_to_string(&path).unwrap(), "{\"telegram_offset\":2}");
+        assert!(!path.with_extension("json.tmp").exists(), "no temp file left behind");
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt as _;
+            assert_eq!(fs::metadata(&path).unwrap().permissions().mode() & 0o777, 0o600);
+        }
+        let _ = fs::remove_dir_all(&dir);
+    }
 
     #[test]
     fn ai_is_off_until_it_is_explicitly_switched_on() {

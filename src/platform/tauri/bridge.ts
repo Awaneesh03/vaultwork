@@ -64,6 +64,7 @@ export interface BridgeTelegramStatus {
   authorized_chat_id: string | null
   pending_chat_id: string | null
   pending_chat_name: string | null
+  pairing_code: string | null
   auto_start: boolean
   last_error: string | null
   keychain_reads: number

@@ -142,6 +142,15 @@ describe('safeHref', () => {
     expect(safeHref('vbscript:msgbox')).toBe('#')
   })
 
+  it('defuses a scheme hidden behind characters a browser ignores', () => {
+    // A browser drops tabs and newlines inside a URL and trims control
+    // characters, so each of these still navigates to javascript: there.
+    expect(safeHref('java\tscript:alert(1)')).toBe('#')
+    expect(safeHref('java\nscript:alert(1)')).toBe('#')
+    expect(safeHref('jav\r\nascript:alert(1)')).toBe('#')
+    expect(safeHref('\u0001javascript:alert(1)')).toBe('#')
+  })
+
   it('defuses an unsafe link found in a document', () => {
     const [node] = parseInline('[click](javascript:alert(1))')
     expect(node).toMatchObject({ kind: 'link', href: '#' })

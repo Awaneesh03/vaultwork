@@ -21,6 +21,7 @@ import {
   projectFormError,
   type ProjectFormValue,
 } from '../projectFormValue'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * Create and edit a project — one component, two modes.
@@ -66,6 +67,7 @@ export function ProjectComposer({
   onSubmit,
   onCancel,
 }: ProjectComposerProps) {
+  const dialogRef = useDialogFocus<HTMLFormElement>()
   const editing = project !== null
   const ids = useId()
   const nameRef = useRef<HTMLInputElement>(null)
@@ -112,6 +114,8 @@ export function ProjectComposer({
     >
       <form
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-label={editing ? `Edit ${project.name}` : 'New project'}
         className="w-full max-w-md rounded-lg border border-line bg-elevated shadow-xl"

@@ -19,6 +19,7 @@ const IDLE: TelegramStatus = {
   authorizedChatId: null,
   pendingChatId: null,
   pendingChatName: null,
+  pairingCode: null,
   autoStart: false,
   lastError: null,
   keychainReads: 0,
@@ -184,8 +185,26 @@ describe('authorization is explicit', () => {
     install({ authorize }, pending)
     render(<TelegramSection />)
 
-    expect(await screen.findByText('Awaneesh is asking for access.')).toBeTruthy()
+    expect(await screen.findByText(/Awaneesh sent the pairing code\./)).toBeTruthy()
+    // The numeric id is shown, so a look-alike display name cannot pass as you.
+    expect(screen.getByText('Chat id 1000')).toBeTruthy()
     expect(authorize).not.toHaveBeenCalled()
+  })
+
+  it('shows the pairing code while no chat is authorized or waiting', async () => {
+    install({}, { ...IDLE, configured: true, botUsername: 'vaultwork_bot', pairingCode: '042917' })
+    render(<TelegramSection />)
+
+    expect((await screen.findByLabelText('Pairing code')).textContent).toBe('042917')
+    expect(screen.getByText(/send this code to @vaultwork_bot/)).toBeTruthy()
+  })
+
+  it('hides the pairing code once a chat is authorized', async () => {
+    install({}, { ...IDLE, configured: true, authorizedChatId: '1000', pairingCode: null })
+    render(<TelegramSection />)
+
+    await screen.findByText('Authorized')
+    expect(screen.queryByLabelText('Pairing code')).toBeNull()
   })
 
   it('authorizes only when the user clicks', async () => {

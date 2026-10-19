@@ -2,6 +2,7 @@ import { NavLink } from 'react-router-dom'
 import { Settings as SettingsIcon, X } from 'lucide-react'
 import { NAV_GROUPS, ROUTES } from '@/app/navigation'
 import { CountBadge } from '@/components/ui/Badge'
+import { BrandMark } from '@/components/ui/BrandMark'
 import { Kbd } from '@/components/ui/Kbd'
 import { useTaskCounts } from '@/features/tasks/hooks/useTaskCounts'
 import { cn } from '@/lib/cn'
@@ -12,7 +13,7 @@ import { useUiStore } from '@/store/uiStore'
  *
  * Its own surface rung so it reads as chrome rather than as another panel, and
  * the one place in the application with a permanent visual identity: the mark,
- * the wordmark, and the violet bar that says where you are.
+ * the wordmark, and the ember bar that says where you are.
  *
  * The active item carries three signals at once — a tinted row, a solid accent
  * bar on the leading edge, and `aria-current`. That is not redundancy for its
@@ -56,20 +57,8 @@ export function Sidebar() {
     >
       <div className="flex h-14 shrink-0 items-center justify-between px-3.5">
         <div className="flex items-center gap-2.5">
-          {/*
-            The mark: an emerald square with a violet corner. Small, geometric,
-            and the only decorative element in the chrome — an identity needs
-            one fixed point, and this is cheaper than a logo file.
-
-            It is the product's own two accents side by side, which is the one
-            place both belong: the corner is not indicating anything, it is
-            half of the logo. (The comment said "violet square with a mint
-            corner" until Phase 6 — written before the palette was reversed,
-            and describing the opposite of what it draws.)
-          */}
-          <span className="relative h-[18px] w-[18px] shrink-0 rounded-[5px] bg-accent" aria-hidden>
-            <span className="absolute right-[3px] bottom-[3px] h-[6px] w-[6px] rounded-[2px] bg-accent-2" />
-          </span>
+          {/* The only decorative element in the chrome: the same mark as the app icon. */}
+          <BrandMark size={20} />
           <span className="text-strong font-semibold tracking-tight text-ink">Vaultwork</span>
         </div>
         <button
@@ -106,8 +95,8 @@ export function Sidebar() {
                         {/*
                           The Assistant, marked. It is the one entry that
                           reaches a network and the one that answers in its own
-                          voice, and violet is the colour that says so
-                          everywhere else in the application. The name carries
+                          voice, and clay (`--accent-2`) is the colour that says
+                          so everywhere else in the application. The name carries
                           the meaning for anyone who cannot see the dot.
                         */}
                         {item.path === ROUTES.ai ? (

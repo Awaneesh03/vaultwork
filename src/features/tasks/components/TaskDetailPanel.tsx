@@ -10,6 +10,7 @@ import type { Id, Subtask, Tag } from '@/types/entities'
 import { useTaskDetail } from '../hooks/useTaskDetail'
 import { emptyComposerValue, toTaskFields, type ComposerValue } from '../composerValue'
 import { TaskComposer } from './TaskComposer'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * The task detail sheet.
@@ -62,13 +63,14 @@ export function TaskDetailPanel({ taskId, onClose, onCreateTag }: TaskDetailPane
     if (seed) setValue(seed)
   }, [seed])
 
+  const dialogRef = useDialogFocus<HTMLDivElement>(Boolean(taskId))
   if (!taskId) return null
 
   const save = async () => {
     if (!loaded) return
     const fields = toTaskFields(value)
     if (fields.title.length === 0) return
-    await dispatch(
+    const result = await dispatch(
       {
         kind: 'task.update',
         source: 'ui',
@@ -87,7 +89,9 @@ export function TaskDetailPanel({ taskId, onClose, onCreateTag }: TaskDetailPane
       },
       { notify: 'errors' },
     )
-    onClose()
+    // On failure the error toast explains why, and the panel stays open with
+    // the edits still in it — closing would throw them away.
+    if (result.status === 'ok') onClose()
   }
 
   const subtaskOps = loaded
@@ -130,6 +134,8 @@ export function TaskDetailPanel({ taskId, onClose, onCreateTag }: TaskDetailPane
 
       <div
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-label="Task details"
         className={cn(

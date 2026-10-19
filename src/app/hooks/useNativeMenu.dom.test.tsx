@@ -1,10 +1,11 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, useLocation } from 'react-router-dom'
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { platform, type MenuAction, type MenuPort } from '@/platform'
 import { taskRepo } from '@/repositories'
 import { useCommands } from '@/hooks/useCommands'
 import { useGlobalShortcuts } from '@/app/shortcuts/useGlobalShortcuts'
+import { useTaskUiStore } from '@/store/taskUiStore'
 import { useToastStore } from '@/store/toastStore'
 import { taskInput } from '../../../tests/factories'
 import { freezeClock, resetDatabase } from '../../../tests/helpers'
@@ -321,5 +322,45 @@ describe('C. typing keeps its own undo', () => {
     menu.emit('undo')
 
     await waitFor(async () => expect(await titleOf()).toEqual(['Study Binary Trees']))
+  })
+})
+
+// ------------------------------------------------------------- new task
+
+function Where() {
+  return <p data-testid="where">{useLocation().pathname}</p>
+}
+
+describe('New Task from the menu', () => {
+  const mountAt = (path: string) =>
+    render(
+      <MemoryRouter initialEntries={[path]}>
+        <Harness />
+        <Where />
+      </MemoryRouter>,
+    )
+
+  it('goes to a screen with a quick add bar when the current one has none', async () => {
+    const menu = installFakeMenu()
+    useTaskUiStore.setState({ quickAddOpen: false })
+    mountAt('/habits')
+    await waitFor(() => expect(menu.subscribers).toBe(1))
+
+    menu.emit('new-task')
+
+    await waitFor(() => expect(screen.getByTestId('where').textContent).toBe('/today'))
+    expect(useTaskUiStore.getState().quickAddOpen).toBe(true)
+  })
+
+  it('opens in place on a screen that already has one', async () => {
+    const menu = installFakeMenu()
+    useTaskUiStore.setState({ quickAddOpen: false })
+    mountAt('/calendar')
+    await waitFor(() => expect(menu.subscribers).toBe(1))
+
+    menu.emit('new-task')
+
+    await waitFor(() => expect(useTaskUiStore.getState().quickAddOpen).toBe(true))
+    expect(screen.getByTestId('where').textContent).toBe('/calendar')
   })
 })

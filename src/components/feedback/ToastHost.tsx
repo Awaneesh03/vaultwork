@@ -2,7 +2,7 @@ import { X } from 'lucide-react'
 import { cn } from '@/lib/cn'
 import { useCommands } from '@/hooks/useCommands'
 import { useToasts } from '@/hooks/useToasts'
-import type { ToastTone } from '@/store/toastStore'
+import { useToastStore, type ToastTone } from '@/store/toastStore'
 
 /**
  * Where every result the command layer returns becomes visible.
@@ -28,6 +28,7 @@ const DOTS: Record<ToastTone, string> = {
 export function ToastHost() {
   const { toasts, dismiss } = useToasts()
   const { dispatch } = useCommands()
+  const takeUndo = useToastStore((s) => s.takeUndo)
 
   if (toasts.length === 0) return null
 
@@ -60,7 +61,10 @@ export function ToastHost() {
               onClick={() => {
                 const intent = toast.action?.intent
                 dismiss(toast.id)
-                if (intent) void dispatch(intent, { notify: 'always' })
+                if (intent) {
+                  takeUndo(intent)
+                  void dispatch(intent, { notify: 'always' })
+                }
               }}
               className="shrink-0 rounded-md px-2 py-1 text-body font-medium text-accent transition-colors hover:bg-accent-soft"
             >

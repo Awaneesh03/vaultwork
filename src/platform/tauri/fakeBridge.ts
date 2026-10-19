@@ -190,6 +190,7 @@ export function createFakeTauriBridge(options: FakeBridgeOptions = {}): FakeTaur
     authorized_chat_id: telegramAuthorized,
     pending_chat_id: telegramPendingId,
     pending_chat_name: telegramPendingName,
+    pairing_code: null,
     auto_start: telegramAutoStart,
     last_error: telegramError,
     // The fake never touches a real credential store; the count it reports is

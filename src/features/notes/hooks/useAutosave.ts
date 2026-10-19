@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { useToastStore } from '@/store/toastStore'
 
 /**
  * Debounced autosave.
@@ -120,10 +121,26 @@ export function useAutosave<T>(
 
   // The unmount flush. Without it, navigating away within the debounce window
   // loses whatever was typed last.
+  //
+  // By the time this save settles the editor is gone, so a failure cannot
+  // show in its save indicator. It is retried once, then reported as a toast
+  // that stays until dismissed — losing text quietly is the one outcome this
+  // hook exists to prevent.
   useEffect(
     () => () => {
       cancel()
-      if (pending.current !== null) void saveRef.current(pending.current)
+      const value = pending.current
+      if (value === null) return
+      const save = saveRef.current
+      void save(value)
+        .catch(() => save(value))
+        .catch(() => {
+          useToastStore.getState().push({
+            message: 'Your last edit could not be saved. Reopen the note to check it.',
+            tone: 'danger',
+            timeout: null,
+          })
+        })
     },
     [],
   )

@@ -21,6 +21,12 @@ function titleFor(pathname: string): string {
   return match?.label ?? 'Vaultwork'
 }
 
+/** "Today · Vaultwork", or just "Vaultwork" where no section matches. */
+function documentTitleFor(pathname: string): string {
+  const title = titleFor(pathname)
+  return title === 'Vaultwork' ? title : `${title} · Vaultwork`
+}
+
 /**
  * Sidebar on desktop, off-canvas drawer below `lg`. The layout is deliberately
  * plain: it is a frame for the work, and a frame that draws attention to itself
@@ -35,7 +41,7 @@ export function AppShell() {
   useTelegram()
 
   useEffect(() => {
-    document.title = `${titleFor(location.pathname)} · Vaultwork`
+    document.title = documentTitleFor(location.pathname)
   }, [location.pathname])
 
   return (

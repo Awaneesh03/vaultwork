@@ -1,5 +1,5 @@
 import { lazy } from 'react'
-import { Route, Routes } from 'react-router-dom'
+import { Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from '@/components/layout/AppShell'
 import { DashboardView } from '@/features/dashboard/views/DashboardView'
 import { FocusView } from '@/features/focus/views/FocusView'
@@ -65,7 +65,8 @@ export function AppRoutes() {
     <Routes>
       <Route element={<AppShell />}>
         <Route index element={<DashboardView />} />
-        <Route path="dashboard" element={<DashboardView />} />
+        {/* An old address, kept working; `/` is the one the sidebar marks active. */}
+        <Route path="dashboard" element={<Navigate to="/" replace />} />
         <Route path="inbox" element={<InboxView />} />
         <Route path="today" element={<TodayView />} />
         <Route path="upcoming" element={<UpcomingView />} />

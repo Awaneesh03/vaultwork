@@ -8,15 +8,7 @@ import { useHabitUiStore } from '@/store/habitUiStore'
 import { useProjectUiStore } from '@/store/projectUiStore'
 import { useTaskUiStore } from '@/store/taskUiStore'
 import { useUiStore } from '@/store/uiStore'
-import {
-  CAPTURE_ROUTES,
-  GOALS_ROUTE,
-  NOTES_ROUTE,
-  PROJECTS_ROUTE,
-  PROJECT_DETAIL_RE,
-  ROUTES,
-  TASK_ROUTES,
-} from '../navigation'
+import { GOALS_ROUTE, NOTES_ROUTE, PROJECTS_ROUTE, ROUTES, hasQuickAdd } from '../navigation'
 
 /** Single-key jumps. `g` opens a chord: g then d, i, g, n or o. */
 const DIRECT: Record<string, string> = {
@@ -93,17 +85,12 @@ export function useGlobalShortcuts(): void {
       chordTimer.current = null
     }
 
-    const onTaskScreen = () => (TASK_ROUTES as readonly string[]).includes(pathname.current)
     const onProjectsList = () => pathname.current === PROJECTS_ROUTE
     const onHabits = () => pathname.current === ROUTES.habits
     const onGoals = () => pathname.current === GOALS_ROUTE
     const onNotes = () => pathname.current === NOTES_ROUTE
-    const onProjectDetail = () => PROJECT_DETAIL_RE.test(pathname.current)
     /** Anywhere a quick add bar exists. */
-    const onCaptureScreen = () =>
-      onTaskScreen() ||
-      onProjectDetail() ||
-      (CAPTURE_ROUTES as readonly string[]).includes(pathname.current)
+    const onCaptureScreen = () => hasQuickAdd(pathname.current)
 
     const onKeyDown = (event: KeyboardEvent) => {
       const mod = event.metaKey || event.ctrlKey

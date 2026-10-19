@@ -2,6 +2,7 @@ import { X } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { cn } from '@/lib/cn'
 import { diffLines, summarizeDiff } from '@/lib/diff'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * Two versions of a note, side by side.
@@ -31,6 +32,7 @@ export function ConflictDiff({
   onKeepExternal: () => void
   onClose: () => void
 }) {
+  const dialogRef = useDialogFocus<HTMLDivElement>()
   const lines = diffLines(local, external)
   const summary = summarizeDiff(lines)
 
@@ -44,6 +46,8 @@ export function ConflictDiff({
     >
       <div
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-label={`Compare ${title}`}
         onKeyDown={(event) => {

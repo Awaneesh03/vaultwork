@@ -24,6 +24,11 @@ export type GreetingKey = (typeof GREETING_KEYS)[number]
 /**
  * The greeting for a local hour, 0–23.
  *
+ * Morning 05:00–11:59, afternoon 12:00–16:59, evening 17:00–20:59, night
+ * 21:00–04:59 — the same boundaries the Dashboard header uses
+ * (`features/dashboard/timeOfDay.ts`); a test there checks every minute of the
+ * day against this function so the two cannot drift.
+ *
  * A key rather than a string, so the boundaries are testable without asserting
  * on prose. Derived from the clock port's own instant — never hard-coded, and
  * never read from `Date.now()` inside a component.
@@ -32,7 +37,8 @@ export function greetingFor(hour: number): GreetingKey {
   if (hour < 5) return 'lateNight'
   if (hour < 12) return 'morning'
   if (hour < 17) return 'afternoon'
-  return 'evening'
+  if (hour < 21) return 'evening'
+  return 'lateNight'
 }
 
 // ------------------------------------------------------------- completed today

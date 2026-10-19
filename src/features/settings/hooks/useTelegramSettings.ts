@@ -19,6 +19,7 @@ const IDLE: TelegramStatus = {
   authorizedChatId: null,
   pendingChatId: null,
   pendingChatName: null,
+  pairingCode: null,
   autoStart: false,
   lastError: null,
   keychainReads: 0,

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isPreviewActive, resolveDashboardGreeting } from './previewTime'
+import { isPreviewActive, previewTimeOfDay, resolveDashboardGreeting } from './previewTime'
 
 describe('resolveDashboardGreeting', () => {
   it('1. normal Dashboard uses the real time-of-day when previewTime is absent or system', () => {
@@ -67,5 +67,22 @@ describe('isPreviewActive', () => {
     expect(isPreviewActive('evening', true)).toBe(true)
     expect(isPreviewActive('night', true)).toBe(true)
     expect(isPreviewActive('lateNight', true)).toBe(true)
+  })
+})
+
+describe('previewTimeOfDay', () => {
+  it('never mistakes an inherited object key for a preview', () => {
+    // `in` would accept these, returning a function or Object.prototype.
+    for (const key of ['constructor', '__proto__', 'toString', 'hasOwnProperty', 'valueOf']) {
+      expect(previewTimeOfDay(key, true)).toBeNull()
+      expect(resolveDashboardGreeting(key, 'morning', true)).toBe('morning')
+      expect(isPreviewActive(key, true)).toBe(false)
+    }
+  })
+
+  it('returns nothing in production, whatever the parameter', () => {
+    for (const key of ['morning', 'afternoon', 'evening', 'night', 'lateNight']) {
+      expect(previewTimeOfDay(key, false)).toBeNull()
+    }
   })
 })

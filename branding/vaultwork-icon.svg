@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <!--
+    Vaultwork application icon — source of truth for every platform asset.
+    Regenerate with: npm run icons
+
+    macOS layout: an 824px tile centred on a 1024px canvas, leaving the margin
+    the Dock expects. The symbol is the Cradle: a V of two converging paths
+    holding a single focal point.
+  -->
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c45c22" />
+      <stop offset="1" stop-color="#963f12" />
+    </linearGradient>
+  </defs>
+  <rect x="100" y="100" width="824" height="824" rx="186" fill="url(#tile)" />
+  <g transform="translate(512 512) scale(9.4) translate(-32 -32)" fill="none" stroke-linecap="round">
+    <path d="M50 16 L32 47" stroke="#f7c7a1" stroke-width="7" />
+    <path d="M14 16 L32 47" stroke="#fff8f0" stroke-width="7" />
+    <g fill="#fff8f0" stroke="none">
+      <circle cx="14" cy="16" r="6" />
+      <circle cx="50" cy="16" r="6" />
+      <circle cx="32" cy="47" r="8" />
+    </g>
+  </g>
+</svg>

@@ -11,6 +11,7 @@ import {
   Inbox,
   ListChecks,
   Repeat,
+  Settings,
   Sparkles,
   Sun,
   Target,
@@ -170,7 +171,7 @@ export const ALL_NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((group) => group.item
 export const SETTINGS_ITEM: NavItem = {
   path: '/settings',
   label: 'Settings',
-  icon: CheckCircle2,
+  icon: Settings,
   description: 'Theme, data and storage',
 }
 
@@ -244,3 +245,9 @@ export const PROJECT_DETAIL_RE = /^\/projects\/[^/]+$/
  * capture bar in place; anywhere else it has to go find one.
  */
 export const CAPTURE_ROUTES = [ROUTES.calendar] as const
+
+/** Anywhere a quick add bar exists — the N key and the New Task menu item share this. */
+export const hasQuickAdd = (pathname: string): boolean =>
+  (TASK_ROUTES as readonly string[]).includes(pathname) ||
+  PROJECT_DETAIL_RE.test(pathname) ||
+  (CAPTURE_ROUTES as readonly string[]).includes(pathname)

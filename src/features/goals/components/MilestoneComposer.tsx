@@ -8,6 +8,7 @@ import {
   milestoneFormError,
   type MilestoneFormValue,
 } from '../goalFormValue'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * Create and edit a milestone — one component, two modes.
@@ -37,6 +38,7 @@ export function MilestoneComposer({
   onSubmit: (value: MilestoneFormValue) => void
   onCancel: () => void
 }) {
+  const dialogRef = useDialogFocus<HTMLDivElement>()
   const editing = milestone !== null
   const ids = useId()
   const titleRef = useRef<HTMLInputElement>(null)
@@ -59,6 +61,8 @@ export function MilestoneComposer({
   const problem = milestoneFormError(value)
 
   const submit = () => {
+    // The keyboard shortcut bypasses the disabled button.
+    if (busy) return
     setTouched(true)
     if (problem !== null) {
       titleRef.current?.focus()
@@ -77,6 +81,8 @@ export function MilestoneComposer({
     >
       <div
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-label={editing ? `Edit ${milestone.title}` : `New milestone in ${goalTitle}`}
         onKeyDown={(event) => {

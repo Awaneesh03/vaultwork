@@ -499,15 +499,19 @@ fn await_callback(
                         respond(&mut stream, "200 OK", PAGE_DONE);
                         return Ok(code);
                     }
-                    // Fail closed: a callback that is wrong in any way ends
-                    // this attempt rather than waiting for a better one.
+                    // The user saying no ends the attempt.
                     Callback::Denied => {
                         respond(&mut stream, "200 OK", PAGE_FAILED);
                         return Err(GoogleError::new(Kind::Auth));
                     }
+                    // A forged or garbled request is refused, but it does not
+                    // end the attempt: any local process or web page can hit
+                    // this port, and letting one abort the real sign-in is a
+                    // denial of service. Nothing is accepted without the
+                    // state, and PKCE still binds the code to this verifier.
                     Callback::StateMismatch | Callback::Malformed => {
                         respond(&mut stream, "400 Bad Request", PAGE_FAILED);
-                        return Err(GoogleError::new(Kind::Protocol));
+                        continue;
                     }
                 }
             }
@@ -1762,6 +1766,34 @@ mod tests {
         assert!(page.starts_with("HTTP/1.1 200"));
         assert!(page.contains(PAGE_DONE));
         assert!(!page.contains("the-code"), "the code is never echoed");
+    }
+
+    #[test]
+    fn a_forged_callback_is_refused_without_ending_the_real_sign_in() {
+        let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+        listener.set_nonblocking(true).unwrap();
+        let port = listener.local_addr().unwrap().port();
+        let cancel = AtomicBool::new(false);
+
+        let browser = std::thread::spawn(move || {
+            let mut forged = TcpStream::connect(("127.0.0.1", port)).unwrap();
+            forged.write_all(b"GET /callback?code=evil&state=guessed HTTP/1.1\r\n\r\n").unwrap();
+            let mut refused = String::new();
+            let _ = forged.read_to_string(&mut refused);
+
+            let mut real = TcpStream::connect(("127.0.0.1", port)).unwrap();
+            real.write_all(b"GET /callback?code=the-code&state=expected-state HTTP/1.1\r\n\r\n")
+                .unwrap();
+            let mut page = String::new();
+            real.read_to_string(&mut page).unwrap();
+            refused
+        });
+
+        let code =
+            await_callback(listener, STATE, &cancel, Instant::now() + Duration::from_secs(10));
+        let refused = browser.join().unwrap();
+        assert!(refused.starts_with("HTTP/1.1 400"));
+        assert_eq!(code.unwrap(), "the-code", "the forged code is never accepted");
     }
 
     #[test]

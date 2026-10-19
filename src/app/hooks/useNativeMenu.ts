@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { hasQuickAdd } from '@/app/navigation'
 import { platform, type MenuAction } from '@/platform'
 import { useCommands } from '@/hooks/useCommands'
 import { isEditableTarget } from '@/hooks/useHotkey'
@@ -35,6 +36,10 @@ import { useUiStore } from '@/store/uiStore'
  */
 export function useNativeMenu(): void {
   const navigate = useNavigate()
+  // Read at the moment the menu fires, without re-subscribing on every route.
+  const location = useLocation()
+  const pathname = useRef(location.pathname)
+  pathname.current = location.pathname
   const setQuickAddOpen = useTaskUiStore((s) => s.setQuickAddOpen)
   const openNoteComposer = useNoteUiStore((s) => s.openComposer)
   const requestMenuAction = useUiStore((s) => s.requestMenuAction)
@@ -52,7 +57,10 @@ export function useNativeMenu(): void {
           navigate('/settings')
           return
         case 'new-task':
+          // Same as N: the request is only answered on a screen with a quick
+          // add bar, so anywhere else it goes to Today first.
           setQuickAddOpen(true)
+          if (!hasQuickAdd(pathname.current)) navigate('/today')
           return
         case 'new-note':
           openNoteComposer()

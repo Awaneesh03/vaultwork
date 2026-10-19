@@ -97,19 +97,33 @@ export interface ImportSummary {
  * Replaces the database with a backup's contents.
  *
  * A snapshot of the current state is taken first, so an import of the wrong
- * file is recoverable rather than terminal.
+ * file is recoverable rather than terminal. If that snapshot cannot be taken,
+ * nothing is replaced: the UI promises an undo, and an import without one is
+ * the one outcome that promise rules out.
  */
 export async function importBackup(
   text: string,
-  options: { snapshotFirst?: boolean } = {},
+  options: { snapshotFirst?: boolean; snapshotLabel?: string; store?: SnapshotStore } = {},
 ): Promise<Result<ImportSummary>> {
   const parsed = parseBackup(text)
   if (!parsed.ok) return parsed
 
-  return attempt(async () => {
-    if (options.snapshotFirst !== false) {
-      await createSnapshot('pre-import').catch(() => undefined)
+  if (options.snapshotFirst !== false) {
+    const safety = await createSnapshot(
+      options.snapshotLabel ?? 'pre-import',
+      new Date(),
+      options.store,
+    )
+    if (!safety.ok) {
+      return err(
+        new Error(
+          `Nothing was replaced: a safety snapshot could not be taken first (${safety.error.message}).`,
+        ),
+      )
     }
+  }
+
+  return attempt(async () => {
     await maintenanceRepo.replaceAll(parsed.value.data)
     const restored = Object.fromEntries(
       STORE_NAMES_FOR_BACKUP.map((store) => [
@@ -167,7 +181,11 @@ export async function restoreSnapshot(
   id: string,
   store: SnapshotStore = platform.snapshots,
 ): Promise<Result<ImportSummary>> {
+  // Read first: the safety snapshot below may prune the oldest one, which can
+  // be the very snapshot being restored.
   const read = await attempt(() => store.read(id))
   if (!read.ok) return read
-  return importBackup(read.value, { snapshotFirst: false })
+  // Restoring is as destructive as importing — everything since `id` would be
+  // gone — so it gets the same safety snapshot.
+  return importBackup(read.value, { snapshotLabel: 'pre-restore', store })
 }

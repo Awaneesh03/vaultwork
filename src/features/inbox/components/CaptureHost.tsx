@@ -7,6 +7,7 @@ import type { InboxItem } from '@/services'
 import { useUiStore } from '@/store/uiStore'
 import { useInboxActions } from '../hooks/useInbox'
 import { ProposalEditor } from './ProposalEditor'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * Capture anything, from anywhere (M18.3). Mounted once, at the shell.
@@ -23,6 +24,7 @@ export function CaptureHost() {
 }
 
 function CaptureDialog() {
+  const dialogRef = useDialogFocus<HTMLDivElement>()
   const setOpen = useUiStore((s) => s.setCaptureOpen)
   const { busy, capture, resolve, dismiss } = useInboxActions()
   const projects = useProjectsView()?.projects ?? []
@@ -45,16 +47,23 @@ function CaptureDialog() {
 
   const close = () => setOpen(false)
 
+  // One capture in flight at a time: a repeated Enter must not file the same
+  // thought twice.
+  const submitting = useRef(false)
   const submit = async () => {
+    if (submitting.current) return
     if (text.trim().length === 0) {
       setError('Type something to capture.')
       return
     }
     setError(null)
+    submitting.current = true
     try {
       setItem(await capture(text))
     } catch (thrown) {
       setError(thrown instanceof Error ? thrown.message : 'That could not be captured.')
+    } finally {
+      submitting.current = false
     }
   }
 
@@ -68,6 +77,8 @@ function CaptureDialog() {
     >
       <div
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-labelledby={titleId}
         onKeyDown={(event) => {

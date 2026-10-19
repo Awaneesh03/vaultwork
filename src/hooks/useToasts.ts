@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useToastStore, type Toast } from '@/store/toastStore'
 
 export interface ToastController {
@@ -16,12 +16,38 @@ export function useToasts(): ToastController {
   const toasts = useToastStore((s) => s.toasts)
   const dismiss = useToastStore((s) => s.dismiss)
 
+  // One timer per toast, started when it first appears. Re-arming every timer
+  // whenever the queue changed meant a steady stream of toasts kept the older
+  // ones on screen indefinitely.
+  const timers = useRef(new Map<string, ReturnType<typeof setTimeout>>())
+
   useEffect(() => {
-    const timers = toasts
-      .filter((toast) => toast.timeout !== null)
-      .map((toast) => setTimeout(() => dismiss(toast.id), toast.timeout ?? 0))
-    return () => timers.forEach(clearTimeout)
+    const live = new Set(toasts.map((toast) => toast.id))
+    for (const [id, timer] of timers.current) {
+      if (!live.has(id)) {
+        clearTimeout(timer)
+        timers.current.delete(id)
+      }
+    }
+    for (const toast of toasts) {
+      if (toast.timeout === null || timers.current.has(toast.id)) continue
+      timers.current.set(
+        toast.id,
+        setTimeout(() => {
+          timers.current.delete(toast.id)
+          dismiss(toast.id)
+        }, toast.timeout),
+      )
+    }
   }, [toasts, dismiss])
+
+  useEffect(() => {
+    const owned = timers.current
+    return () => {
+      owned.forEach(clearTimeout)
+      owned.clear()
+    }
+  }, [])
 
   return { toasts, dismiss }
 }

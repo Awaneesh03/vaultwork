@@ -36,18 +36,18 @@ snapshot when Vaultwork is closed.
 (the same directory Tauri gives `desktop-state.json`; Windows and Linux resolve
 through the same platform helper). Mode `0600`, rewritten in place.
 
-**A development build writes `mcp-snapshot.dev.json` instead.** The two builds
-share a config directory but not a database — `npm run desktop` stores its
-IndexedDB under the binary name, the packaged app under the bundle identifier —
-so a single shared file meant that starting the dev build replaced your real day
-with seeded fixtures, and the MCP server then answered from those. The build
-itself picks the filename; nothing about the security model changes, because the
-renderer still names no path.
+**A development build writes elsewhere.** `npm run desktop` runs under its own
+bundle identifier, `app.vaultwork.desktop.dev` (see `src-tauri/tauri.dev.conf.json`),
+so it has its own config folder, database and Keychain entries, and writes
+`mcp-snapshot.dev.json` there. Starting a dev build therefore never replaces your
+real day with seeded fixtures, and the MCP server keeps answering from the
+installed app. The build itself picks the location; nothing about the security
+model changes, because the renderer still names no path.
 
 To point the MCP server at the dev snapshot while developing:
 
 ```bash
-VAULTWORK_MCP_SNAPSHOT=~/Library/Application\ Support/app.vaultwork.desktop/mcp-snapshot.dev.json \
+VAULTWORK_MCP_SNAPSHOT=~/Library/Application\ Support/app.vaultwork.desktop.dev/mcp-snapshot.dev.json \
   node mcp/src/server.ts
 ```
 

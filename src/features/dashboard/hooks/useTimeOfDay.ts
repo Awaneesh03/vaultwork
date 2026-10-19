@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { platform } from '@/platform'
 import type { GreetingKey } from '@/services'
+import { isPreviewActive } from '../previewTime'
 import { msUntilNextBoundary, resolveEffectiveTimeOfDay, type TimeOfDay } from '../timeOfDay'
 
 export interface UseTimeOfDayOptions {
@@ -41,9 +42,14 @@ export function useTimeOfDay(options?: UseTimeOfDayOptions): UseTimeOfDayResult 
     resolveEffectiveTimeOfDay(getNow(), testOverride),
   )
 
+  // Only a *valid development* preview pins the time. In production, or for
+  // an unrecognised value, the parameter is ignored and the clock keeps
+  // driving the greeting — the timers and resume listeners below must still
+  // run, or a stray `?previewTime=` would freeze the greeting at load time.
+  const previewActive = isPreviewActive(testOverride)
+
   useEffect(() => {
-    // If a test override is active, keep it synchronized
-    if (testOverride && testOverride !== 'system') {
+    if (previewActive) {
       setState(resolveEffectiveTimeOfDay(getNow(), testOverride))
       return
     }
@@ -82,6 +88,9 @@ export function useTimeOfDay(options?: UseTimeOfDayOptions): UseTimeOfDayResult 
       }
     }
 
+    // Leaving a preview, or a new clock source, must show the real time now
+    // rather than at the next boundary.
+    checkAndUpdate()
     scheduleBoundary()
 
     // Minute-level interval safety net
@@ -96,7 +105,7 @@ export function useTimeOfDay(options?: UseTimeOfDayOptions): UseTimeOfDayResult 
       document.removeEventListener('visibilitychange', onVisibilityChange)
       window.removeEventListener('focus', handleResume)
     }
-  }, [testOverride, getNow])
+  }, [previewActive, testOverride, getNow])
 
   const isEvening = state.timeOfDay === 'evening' || state.timeOfDay === 'night'
 

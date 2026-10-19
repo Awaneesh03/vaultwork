@@ -48,7 +48,11 @@ const SAFE_SCHEME = /^(https?:|mailto:)/i
 const HAS_SCHEME = /^[a-z][a-z0-9+.-]*:/i
 
 export function safeHref(raw: string): string {
-  const href = raw.trim()
+  // Judged the way a browser parses it: tabs and newlines anywhere are
+  // dropped, and control characters at either end are trimmed. Otherwise
+  // `java<TAB>script:` would read as schemeless here and as javascript: there.
+  // eslint-disable-next-line no-control-regex -- matching control characters is the point
+  const href = raw.replace(/[\t\n\r]/g, '').replace(/^[\u0000-\u0020]+|[\u0000-\u0020]+$/g, '')
   if (href.length === 0) return '#'
   // A relative or fragment link names no scheme and cannot execute.
   if (!HAS_SCHEME.test(href)) return href

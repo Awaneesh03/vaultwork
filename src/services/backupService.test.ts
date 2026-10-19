@@ -188,6 +188,44 @@ describe('snapshots', () => {
     expect(await taskRepo.count()).toBe(1)
   })
 
+  it('snapshots the current state before restoring, so a restore can itself be undone', async () => {
+    const store = createMemorySnapshotStore()
+    const { task } = await populate()
+    const snapshot = await createSnapshot('test', new Date('2026-09-01T00:00:00Z'), store)
+    if (!snapshot.ok) throw snapshot.error
+
+    const later = await taskRepo.create(taskInput({ title: 'Written after the snapshot' }))
+    const restored = await restoreSnapshot(snapshot.value.id, store)
+    expect(restored.ok).toBe(true)
+    expect(await taskRepo.get(later.id)).toBeUndefined()
+
+    const safety = (await listSnapshots(store)).find((s) => s.id.endsWith('pre-restore'))
+    expect(safety).toBeDefined()
+    if (!safety) return
+    await restoreSnapshot(safety.id, store)
+    expect(await taskRepo.get(later.id)).toBeDefined()
+    expect(await taskRepo.get(task.id)).toBeDefined()
+  })
+
+  it('replaces nothing when the safety snapshot cannot be taken', async () => {
+    const { task } = await populate()
+    const backup = serializeBackup(await exportBackup())
+    const extra = await taskRepo.create(taskInput({ title: 'Must survive' }))
+    const broken = {
+      ...createMemorySnapshotStore(),
+      save: async () => {
+        throw new Error('disk full')
+      },
+    }
+
+    const result = await importBackup(backup, { store: broken })
+
+    expect(result.ok).toBe(false)
+    if (!result.ok) expect(result.error.message).toMatch(/Nothing was replaced/)
+    expect(await taskRepo.get(extra.id)).toBeDefined()
+    expect(await taskRepo.get(task.id)).toBeDefined()
+  })
+
   it('keeps only the newest snapshots', async () => {
     const store = createMemorySnapshotStore()
     await populate()

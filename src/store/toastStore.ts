@@ -48,6 +48,12 @@ interface ToastState {
   pushUndo: (intent: CommandIntent) => void
   /** Removes and returns the most recent reversal. */
   popUndo: () => CommandIntent | undefined
+  /**
+   * Removes one specific reversal — the one a toast's Undo button is about to
+   * run — so ⌘Z afterwards walks back to the action before it instead of
+   * replaying the same reversal a second time.
+   */
+  takeUndo: (intent: CommandIntent) => void
 }
 
 export const useToastStore = create<ToastState>((set, get) => ({
@@ -79,4 +85,7 @@ export const useToastStore = create<ToastState>((set, get) => ({
     set({ undoStack: rest })
     return next
   },
+
+  takeUndo: (intent) =>
+    set((s) => ({ undoStack: s.undoStack.filter((entry) => entry !== intent) })),
 }))

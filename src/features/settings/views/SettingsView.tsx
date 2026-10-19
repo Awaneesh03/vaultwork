@@ -193,6 +193,7 @@ export function SettingsView() {
    * happen to it.
    */
   const [pendingImport, setPendingImport] = useState<File | null>(null)
+  const [pendingRestore, setPendingRestore] = useState<string | null>(null)
 
   const menuRequest = useUiStore((s) => s.menuRequest)
   const clearMenuRequest = useUiStore((s) => s.clearMenuRequest)
@@ -538,13 +539,56 @@ export function SettingsView() {
                   <span className="tabular font-mono text-meta text-ink-3">
                     {formatBytes(snapshot.bytes)}
                   </span>
-                  <Button size="sm" variant="ghost" onClick={() => void data.restore(snapshot.id)}>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    disabled={data.state.busy}
+                    onClick={() => setPendingRestore(snapshot.id)}
+                  >
                     Restore
                   </Button>
                 </li>
               ))}
             </ul>
-          ) : (
+          ) : null}
+
+          {pendingRestore !== null ? (
+            <div
+              role="group"
+              aria-label="Confirm restore"
+              className="flex flex-col gap-2 rounded-lg border-2 border-danger bg-surface p-3.5"
+            >
+              <p className="inline-flex items-start gap-1.5 text-strong font-medium text-danger">
+                <AlertTriangle size={13} className="mt-[3px] shrink-0" aria-hidden />
+                Go back to this snapshot?
+              </p>
+              <p className="max-w-prose text-body text-ink-2">
+                Everything is replaced by{' '}
+                <span className="font-mono text-ink">{pendingRestore}</span>, including anything
+                changed since. A snapshot of the current state is taken first, so this can be undone
+                from this list.
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  size="sm"
+                  variant="danger"
+                  disabled={data.state.busy}
+                  onClick={() => {
+                    const id = pendingRestore
+                    setPendingRestore(null)
+                    void data.restore(id)
+                  }}
+                >
+                  Restore snapshot
+                </Button>
+                <Button size="sm" variant="secondary" onClick={() => setPendingRestore(null)}>
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          ) : null}
+
+          {data.snapshots && data.snapshots.length > 0 ? null : (
             <p className="text-meta text-ink-3">
               No snapshots yet. Snapshots are stored in{' '}
               {platform.snapshots.id === 'opfs'

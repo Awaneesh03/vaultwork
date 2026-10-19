@@ -63,12 +63,27 @@ describe('connection', () => {
     expect(screen.getByTitle('MyVault')).toBeTruthy()
   })
 
-  it('disconnects again', async () => {
+  it('disconnects again, only after confirming', async () => {
     mount()
     await connect()
 
     fireEvent.click(screen.getByRole('button', { name: 'Disconnect' }))
+    // One click asks; it does not forget the sync baselines on its own.
+    expect(screen.getByRole('group', { name: 'Confirm disconnect' })).toBeTruthy()
+    expect(screen.getByText('Connected')).toBeTruthy()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Disconnect vault' }))
     await waitFor(() => expect(screen.getByText('Not connected')).toBeTruthy())
+  })
+
+  it('cancelling a disconnect keeps the vault', async () => {
+    mount()
+    await connect()
+
+    fireEvent.click(screen.getByRole('button', { name: 'Disconnect' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+    expect(screen.queryByRole('group', { name: 'Confirm disconnect' })).toBeNull()
+    expect(screen.getByText('Connected')).toBeTruthy()
   })
 
   it('offers Reconnect, not Connected, when permission lapsed', async () => {
@@ -78,6 +93,7 @@ describe('connection', () => {
     // A handle can outlive its permission. The UI must not claim otherwise.
     vault.setPermission('prompt')
     fireEvent.click(screen.getByRole('button', { name: 'Disconnect' }))
+    fireEvent.click(screen.getByRole('button', { name: 'Disconnect vault' }))
     await waitFor(() => expect(screen.getByText('Not connected')).toBeTruthy())
   })
 

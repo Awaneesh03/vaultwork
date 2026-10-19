@@ -17,6 +17,9 @@ coverage
 # every build, so neither belongs in history.
 src-tauri/target
 src-tauri/gen
+# `npm run icons` (tauri icon) also emits mobile icon sets; this app is desktop-only.
+src-tauri/icons/android/
+src-tauri/icons/ios/
 **/*.rs.bk
 
 # Generated desktop bundles — rebuilt by `npm run desktop:build`.
@@ -61,6 +64,12 @@ vaultwork-backup*.json
 *.log
 npm-debug.log*
 yarn-error.log*
+
+# ── Local tooling output ──────────────────────────────────────────────────
+# graphify knowledge-graph output: regenerable, and machine-specific.
+graphify-out/
+# The macOS custom-folder-icon file ("Icon" followed by a carriage return).
+/Icon?
 
 # ── Editors ───────────────────────────────────────────────────────────────
 .idea/

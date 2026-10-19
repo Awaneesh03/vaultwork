@@ -5,6 +5,7 @@ import { Kbd } from '@/components/ui/Kbd'
 import { KNOWLEDGE_KIND_LABELS } from '@/integrations/obsidian/knowledge'
 import { cn } from '@/lib/cn'
 import { KNOWLEDGE_KINDS, type KnowledgeKind } from '@/types/enums'
+import { useDialogFocus } from '@/hooks/useDialogFocus'
 
 /**
  * Quick capture for notes, reachable anywhere with Shift+N.
@@ -36,6 +37,7 @@ export function NoteComposer({
   }) => void
   onCancel: () => void
 }) {
+  const dialogRef = useDialogFocus<HTMLDivElement>()
   const [title, setTitle] = useState('')
   const [body, setBody] = useState('')
   const [knowledgeKind, setKnowledgeKind] = useState<KnowledgeKind | null>(null)
@@ -47,7 +49,10 @@ export function NoteComposer({
 
   // An empty note is legitimate — you may want somewhere to write — so there is
   // nothing to validate and the button is never disabled on content grounds.
-  const submit = (open: boolean) => onSubmit({ title, body, open, knowledgeKind })
+  // The keyboard shortcut bypasses the disabled buttons.
+  const submit = (open: boolean) => {
+    if (!busy) onSubmit({ title, body, open, knowledgeKind })
+  }
 
   return (
     <div
@@ -59,6 +64,8 @@ export function NoteComposer({
     >
       <div
         role="dialog"
+        ref={dialogRef}
+        tabIndex={-1}
         aria-modal="true"
         aria-label="New note"
         onKeyDown={(event) => {

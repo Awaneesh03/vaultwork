@@ -41,6 +41,7 @@ const telegram = (overrides: Partial<TelegramStatus> = {}): TelegramStatus => ({
   authorizedChatId: '987654321',
   pendingChatId: null,
   pendingChatName: null,
+  pairingCode: null,
   autoStart: false,
   lastError: null,
   keychainReads: 2,

@@ -107,10 +107,18 @@ export function QuickAddBar({
     }))
   }, [autoExpand, defaultDueDate, defaultDueTime, defaultProjectId])
 
+  // Enter is not disabled the way the button is, and the text is cleared only
+  // after the await — so a second press would submit the same task again.
+  const submitting = useRef(false)
   const submitText = async () => {
-    if (draft.title.trim().length === 0) return
-    const ok = await onSubmitText(text)
-    if (ok) setText('')
+    if (draft.title.trim().length === 0 || submitting.current) return
+    submitting.current = true
+    try {
+      const ok = await onSubmitText(text)
+      if (ok) setText('')
+    } finally {
+      submitting.current = false
+    }
     inputRef.current?.focus()
   }
 

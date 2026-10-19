@@ -79,6 +79,16 @@ describe('the MCP snapshot writer', () => {
     expect(written).toHaveLength(afterStop)
   })
 
+  it('drops a write still being built when the writer is stopped', async () => {
+    // Stopped before the start-up snapshot has finished reading the database:
+    // it must not land afterwards. Under load this was the flake above.
+    const stop = startMcpSnapshotWriter(20)
+    stop()
+    await settle(60)
+
+    expect(written).toHaveLength(0)
+  })
+
   it('writes nothing in a build with no desktop', async () => {
     vi.spyOn(platform.desktop, 'isSupported', 'get').mockReturnValue(false)
 

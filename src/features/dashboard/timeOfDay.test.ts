@@ -6,6 +6,7 @@ import {
   msUntilNextBoundary,
   resolveEffectiveTimeOfDay,
 } from './timeOfDay'
+import { greetingFor } from '@/services'
 
 describe('getTimeOfDay - exact local time ranges', () => {
   const at = (hours: number, minutes: number): Date => {
@@ -107,5 +108,18 @@ describe('resolveEffectiveTimeOfDay', () => {
     const res = resolveEffectiveTimeOfDay(morning, 'evening', false)
     expect(res.timeOfDay).toBe('morning')
     expect(res.greeting).toBe('morning')
+  })
+})
+
+describe('one rule for the whole app', () => {
+  it('agrees with the service greeting for every minute of the day', () => {
+    // Two functions name the time of day: this one drives the Dashboard header,
+    // `greetingFor` the dashboard query. They once disagreed about 21:00–23:59.
+    for (let minute = 0; minute < 24 * 60; minute += 1) {
+      const at = new Date(2026, 8, 3, Math.floor(minute / 60), minute % 60, 0, 0)
+      expect(greetingForTimeOfDay(getTimeOfDay(at)), at.toTimeString()).toBe(
+        greetingFor(at.getHours()),
+      )
+    }
   })
 })

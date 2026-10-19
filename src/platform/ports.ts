@@ -232,6 +232,8 @@ export interface TelegramStatus {
   /** A chat that has written in but has not been approved. */
   pendingChatId: string | null
   pendingChatName: string | null
+  /** Shown in Settings while no chat is authorized; a chat must send it to ask for approval. */
+  pairingCode: string | null
   autoStart: boolean
   lastError: string | null
   /**

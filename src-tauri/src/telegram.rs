@@ -58,6 +58,10 @@ pub struct TelegramStatus {
     /// A chat that has messaged us but has not been approved.
     pub pending_chat_id: Option<String>,
     pub pending_chat_name: Option<String>,
+    /// The code a chat must send to ask for approval. Present only while no
+    /// chat is authorized; it is what stops a stranger who merely knows the
+    /// bot's username from putting themselves in front of the Approve button.
+    pub pairing_code: Option<String>,
     pub auto_start: bool,
     /// The last failure, in words a person can act on.
     pub last_error: Option<String>,
@@ -81,6 +85,7 @@ struct Inner {
     bot_username: Option<String>,
     pending_chat_id: Option<String>,
     pending_chat_name: Option<String>,
+    pairing_code: Option<String>,
     last_error: Option<String>,
     /// The bot token, held for the lifetime of a worker session.
     ///
@@ -176,6 +181,42 @@ impl TelegramState {
             inner.pending_chat_name = name;
         }
     }
+
+    /// The current pairing code, minted on first use. Six digits from the OS
+    /// RNG: shown on the user's own screen, so guessing it means messaging the
+    /// bot a million times while Settings is waiting.
+    fn pairing_code(&self) -> Option<String> {
+        let mut inner = self.inner.lock().ok()?;
+        if inner.pairing_code.is_none() {
+            let mut bytes = [0u8; 4];
+            getrandom::fill(&mut bytes).ok()?;
+            inner.pairing_code = Some(format!("{:06}", u32::from_le_bytes(bytes) % 1_000_000));
+        }
+        inner.pairing_code.clone()
+    }
+
+    /// Retires the code, so the next pairing needs a fresh one.
+    fn clear_pairing(&self) {
+        if let Ok(mut inner) = self.inner.lock() {
+            inner.pairing_code = None;
+        }
+    }
+}
+
+/// Whether an update from an unauthorized chat is a valid request to pair.
+///
+/// Private chats only (Telegram gives groups and channels negative ids): an
+/// approved group would let every member drive the app. The text must be the
+/// code itself, or `/start <code>` from a deep link.
+fn pairing_request(update: &Update, code: &str) -> Option<(String, Option<String>)> {
+    let message = update.message.as_ref()?;
+    let chat = message.chat.as_ref()?;
+    if chat.id <= 0 {
+        return None;
+    }
+    let text = message.text.as_deref()?.trim();
+    let sent = text.strip_prefix("/start").map(str::trim).unwrap_or(text);
+    (sent == code).then(|| (chat.id.to_string(), chat_name(chat)))
 }
 
 #[derive(Serialize, Debug)]
@@ -423,7 +464,7 @@ fn classify(update: &Update, authorized: Option<&str>) -> Disposition {
         },
         None => Disposition::Reject {
             chat_id,
-            text: "Vaultwork is not authorized for this chat yet. Approve it in Vaultwork ▸ Settings ▸ Telegram.".into(),
+            text: "Vaultwork is not paired with this chat. Send the pairing code shown in Vaultwork ▸ Settings ▸ Telegram.".into(),
         },
     }
 }
@@ -533,7 +574,17 @@ pub fn start_worker(app: AppHandle) {
             }
 
             let offset = state.offset.load(Ordering::SeqCst);
-            match get_updates(&token, offset).await {
+            let polled = get_updates(&token, offset).await;
+            // A long poll can outlive a stop, disconnect or restart issued
+            // while it was in flight. Its batch belongs to a session that has
+            // ended, so it is dropped unread rather than delivered or answered.
+            if state.generation.load(Ordering::SeqCst) != generation
+                || !state.running.load(Ordering::SeqCst)
+            {
+                state.clear_token();
+                return;
+            }
+            match polled {
                 Ok(updates) => {
                     backoff = BACKOFF_START;
                     state.set_error(None);
@@ -551,13 +602,13 @@ pub fn start_worker(app: AppHandle) {
                                 let _ = app.emit(UPDATE_EVENT, message);
                             }
                             Disposition::Reject { chat_id, text } => {
-                                if authorized.is_none() {
-                                    let name = update
-                                        .message
-                                        .as_ref()
-                                        .and_then(|m| m.chat.as_ref())
-                                        .and_then(chat_name);
-                                    state.set_pending(Some(chat_id.clone()), name);
+                                let request = authorized
+                                    .is_none()
+                                    .then(|| state.pairing_code())
+                                    .flatten()
+                                    .and_then(|code| pairing_request(&update, &code));
+                                if let Some((id, name)) = request {
+                                    state.set_pending(Some(id), name);
                                     emit_status(&app);
                                 }
                                 let _ = send_message(&token, &chat_id, &text).await;
@@ -649,6 +700,7 @@ fn status_of(app: &AppHandle) -> TelegramStatus {
     // reason: those touch the filesystem, and the poll worker's `set_error`
     // should never wait on a JSON file being parsed.
     let inner = state.snapshot();
+    let authorized_chat = store::authorized_chat(app);
 
     TelegramStatus {
         // Cached, not read. `status` is called by Settings on mount, by every
@@ -658,7 +710,8 @@ fn status_of(app: &AppHandle) -> TelegramStatus {
         configured: inner.configured,
         running: state.running.load(Ordering::SeqCst),
         bot_username: inner.bot_username,
-        authorized_chat_id: store::authorized_chat(app),
+        pairing_code: if authorized_chat.is_none() { state.pairing_code() } else { None },
+        authorized_chat_id: authorized_chat,
         pending_chat_id: inner.pending_chat_id,
         pending_chat_name: inner.pending_chat_name,
         auto_start: store::telegram_auto_start(app),
@@ -773,6 +826,7 @@ pub fn telegram_authorize(app: AppHandle, chat_id: String) -> Result<TelegramSta
         Some(waiting) if waiting == chat_id => {
             store::remember_authorized_chat(&app, Some(&chat_id));
             state.set_pending(None, None);
+            state.clear_pairing();
             let status = status_of(&app);
             let _ = app.emit(STATUS_EVENT, status.clone());
             Ok(status)
@@ -831,6 +885,7 @@ pub fn telegram_disconnect(app: AppHandle) -> Result<TelegramStatus, TelegramErr
         inner.bot_username = None;
         inner.pending_chat_id = None;
         inner.pending_chat_name = None;
+        inner.pairing_code = None;
         inner.last_error = None;
     }
 
@@ -908,6 +963,32 @@ mod tests {
             Disposition::Reject { text, .. } => assert!(text.contains("Settings")),
             _ => panic!("the first sender must not be trusted automatically"),
         }
+    }
+
+    #[test]
+    fn only_the_pairing_code_from_a_private_chat_asks_for_approval() {
+        assert_eq!(
+            pairing_request(&update(5, 7, "  123456 "), "123456"),
+            Some(("7".into(), None))
+        );
+        assert!(pairing_request(&update(5, 7, "/start 123456"), "123456").is_some());
+        // A stranger who knows only the bot's name cannot get in line.
+        assert!(pairing_request(&update(5, 7, "/start"), "123456").is_none());
+        assert!(pairing_request(&update(5, 7, "hello"), "123456").is_none());
+        assert!(pairing_request(&update(5, 7, "1234567"), "123456").is_none());
+        // Groups and channels have negative ids: never pairable.
+        assert!(pairing_request(&update(5, -100, "123456"), "123456").is_none());
+    }
+
+    #[test]
+    fn a_pairing_code_is_six_digits_and_stable_until_cleared() {
+        let state = TelegramState::default();
+        let code = state.pairing_code().expect("code");
+        assert_eq!(code.len(), 6);
+        assert!(code.chars().all(|c| c.is_ascii_digit()));
+        assert_eq!(state.pairing_code().as_deref(), Some(code.as_str()));
+        state.clear_pairing();
+        assert!(state.pairing_code().is_some());
     }
 
     #[test]
