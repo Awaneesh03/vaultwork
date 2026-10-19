@@ -136,7 +136,10 @@ export function DashboardHeader({
   today: DateStr
   headline: string
 }) {
-  const isEvening = greeting === 'evening' || greeting === 'lateNight'
+  // Night (21:00–04:59) keeps the evening composition and scene, but not its
+  // words: "Evening Wrap-Up" at 22:00 contradicts the greeting beside it.
+  const isNight = greeting === 'lateNight'
+  const isEvening = greeting === 'evening' || isNight
 
   return (
     <header
@@ -172,7 +175,7 @@ export function DashboardHeader({
               aria-hidden
             />
             <span className="text-micro font-semibold uppercase tracking-widest text-ink-3">
-              {isEvening ? 'Evening Wrap-Up' : 'Daily Briefing'}
+              {isNight ? 'Night Wind-Down' : isEvening ? 'Evening Wrap-Up' : 'Daily Briefing'}
             </span>
           </div>
 
@@ -191,7 +194,11 @@ export function DashboardHeader({
           </h2>
 
           <p className="max-w-prose text-body leading-relaxed text-ink-2">
-            {isEvening ? 'Great progress today. Let’s wrap things up.' : headline}
+            {isNight
+              ? 'Time to rest. Tomorrow is lined up below.'
+              : isEvening
+                ? 'Great progress today. Let’s wrap things up.'
+                : headline}
           </p>
         </div>
 

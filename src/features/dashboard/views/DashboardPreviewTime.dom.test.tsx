@@ -76,8 +76,12 @@ describe('Automatic Dashboard Time of Day & Composition', () => {
     freezeClock(NIGHT_CLOCK)
     mountAt('/')
 
-    await waitFor(() => expect(screen.getByText('Still up.')).toBeTruthy())
-    expect(screen.getByText('Evening Wrap-Up')).toBeTruthy()
+    // Night keeps the evening composition but says night: at 22:15 the
+    // header once read "Evening Wrap-Up" beside a night greeting.
+    await waitFor(() => expect(screen.getByText('Good night.')).toBeTruthy())
+    expect(screen.getByText('Night Wind-Down')).toBeTruthy()
+    expect(screen.getByText('Time to rest. Tomorrow is lined up below.')).toBeTruthy()
+    expect(screen.queryByText('Evening Wrap-Up')).toBeNull()
     expect(screen.getByText('Completed Today')).toBeTruthy()
     expect(screen.getByText('Evening Reflection')).toBeTruthy()
   })
@@ -177,7 +181,7 @@ describe('Automatic Dashboard Time of Day & Composition', () => {
     // Night inherits the evening composition, and its frame with it.
     freezeClock(NIGHT_CLOCK)
     const night = mountAt('/')
-    await waitFor(() => expect(screen.getByText('Still up.')).toBeTruthy())
+    await waitFor(() => expect(screen.getByText('Good night.')).toBeTruthy())
     expect(document.documentElement.dataset['evening']).toBe('true')
     night.unmount()
     expect(document.documentElement.dataset['evening']).toBeUndefined()
@@ -188,5 +192,50 @@ describe('Automatic Dashboard Time of Day & Composition', () => {
     await waitFor(() => expect(screen.getByText('Good evening.')).toBeTruthy())
     expect(screen.getByText('Completed Today')).toBeTruthy()
     expect(screen.queryByTestId('dashboard-preview-control')).toBeNull()
+  })
+})
+
+describe('the dashboard at each boundary', () => {
+  it.each([
+    { at: [20, 59], greeting: 'Good evening.', eyebrow: 'Evening Wrap-Up' },
+    { at: [21, 0], greeting: 'Good night.', eyebrow: 'Night Wind-Down' },
+    { at: [0, 0], greeting: 'Good night.', eyebrow: 'Night Wind-Down' },
+    { at: [4, 59], greeting: 'Good night.', eyebrow: 'Night Wind-Down' },
+    { at: [5, 0], greeting: 'Good morning.', eyebrow: 'Daily Briefing' },
+  ])('$at.0:$at.1 shows "$greeting" under "$eyebrow"', async ({ at, greeting, eyebrow }) => {
+    freezeClock(new Date(2026, 8, 3, at[0], at[1], 0))
+    mountAt('/')
+
+    await waitFor(() => expect(screen.getByText(greeting)).toBeTruthy())
+    expect(screen.getByText(eyebrow)).toBeTruthy()
+  })
+
+  it('ignores an invalid preview and shows the real clock', async () => {
+    freezeClock(new Date(2026, 8, 3, 22, 2, 0))
+    mountAt('/?previewTime=constructor')
+
+    await waitFor(() => expect(screen.getByText('Good night.')).toBeTruthy())
+    expect(screen.getByText('Night Wind-Down')).toBeTruthy()
+  })
+})
+
+describe('a dashboard left open overnight', () => {
+  it('moves to the new day on resume, without any database write', async () => {
+    freezeClock(new Date(2026, 8, 3, 23, 58, 0))
+    const view = mountAt('/')
+    await waitFor(() =>
+      expect(view.container.querySelector('time')?.getAttribute('dateTime')).toBe('2026-09-03'),
+    )
+
+    // The Mac slept through midnight; the window regains focus.
+    freezeClock(new Date(2026, 8, 4, 7, 30, 0))
+    act(() => {
+      window.dispatchEvent(new Event('focus'))
+    })
+
+    await waitFor(() =>
+      expect(view.container.querySelector('time')?.getAttribute('dateTime')).toBe('2026-09-04'),
+    )
+    expect(screen.getByText('Good morning.')).toBeTruthy()
   })
 })

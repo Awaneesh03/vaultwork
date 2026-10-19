@@ -93,13 +93,13 @@ function DashboardSkeleton() {
 const STILL_OPEN_ROWS = 6
 
 export function DashboardView() {
-  const data = useToday()
-  // M19.1: read on its own, beside the Today context — never inside it.
-  const external = useExternalContext()
-  const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const previewParam = searchParams.get('previewTime')?.toLowerCase()
   const timeContext = useTimeOfDay({ testOverride: previewParam })
+  const data = useToday(timeContext.date)
+  // M19.1: read on its own, beside the Today context — never inside it.
+  const external = useExternalContext()
+  const navigate = useNavigate()
   const { dispatch, run, pending } = useCommands()
   const tagActions = useTagActions()
 

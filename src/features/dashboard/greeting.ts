@@ -12,7 +12,9 @@ import type { GreetingKey } from '@/services'
  * label here, so the two cannot drift.
  */
 export const GREETINGS: Record<GreetingKey, string> = {
-  lateNight: 'Still up',
+  // 21:00–04:59. "Still up" was written when night began at midnight, and
+  // read wrongly at ten in the evening.
+  lateNight: 'Good night',
   morning: 'Good morning',
   afternoon: 'Good afternoon',
   evening: 'Good evening',

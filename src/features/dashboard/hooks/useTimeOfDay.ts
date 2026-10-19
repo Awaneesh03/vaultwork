@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import { platform } from '@/platform'
+import { toDateStr } from '@/lib/date'
 import type { GreetingKey } from '@/services'
+import type { DateStr } from '@/types/entities'
 import { isPreviewActive } from '../previewTime'
 import { msUntilNextBoundary, resolveEffectiveTimeOfDay, type TimeOfDay } from '../timeOfDay'
 
@@ -19,7 +21,15 @@ export interface UseTimeOfDayResult {
   timeOfDay: TimeOfDay
   greeting: GreetingKey
   isEvening: boolean
+  /**
+   * The local calendar day, from the real clock (a preview never moves it).
+   * Changes at midnight on the minute tick, or at once on focus/resume, so
+   * anything keyed on it re-derives "today" without a database write.
+   */
+  date: DateStr
 }
+
+type TimeState = { timeOfDay: TimeOfDay; greeting: GreetingKey; date: DateStr }
 
 /**
  * Hook that automatically tracks the user's local time-of-day.
@@ -38,9 +48,10 @@ export function useTimeOfDay(options?: UseTimeOfDayOptions): UseTimeOfDayResult 
   )
   const testOverride = options?.testOverride
 
-  const [state, setState] = useState<{ timeOfDay: TimeOfDay; greeting: GreetingKey }>(() =>
-    resolveEffectiveTimeOfDay(getNow(), testOverride),
-  )
+  const [state, setState] = useState<TimeState>(() => {
+    const now = getNow()
+    return { ...resolveEffectiveTimeOfDay(now, testOverride), date: toDateStr(now) }
+  })
 
   // Only a *valid development* preview pins the time. In production, or for
   // an unrecognised value, the parameter is ignored and the clock keeps
@@ -50,20 +61,25 @@ export function useTimeOfDay(options?: UseTimeOfDayOptions): UseTimeOfDayResult 
 
   useEffect(() => {
     if (previewActive) {
-      setState(resolveEffectiveTimeOfDay(getNow(), testOverride))
+      const now = getNow()
+      setState({ ...resolveEffectiveTimeOfDay(now, testOverride), date: toDateStr(now) })
       return
     }
 
     let timeoutId: ReturnType<typeof setTimeout> | null = null
 
     const checkAndUpdate = () => {
-      const current = resolveEffectiveTimeOfDay(getNow(), null)
-      setState((prev) => {
-        if (prev.timeOfDay !== current.timeOfDay || prev.greeting !== current.greeting) {
-          return current
-        }
-        return prev
-      })
+      const now = getNow()
+      const current = { ...resolveEffectiveTimeOfDay(now, null), date: toDateStr(now) }
+      // Same object back when nothing changed, so the minute tick re-renders
+      // nothing on the 1,435 minutes a day that are not a boundary.
+      setState((prev) =>
+        prev.timeOfDay !== current.timeOfDay ||
+        prev.greeting !== current.greeting ||
+        prev.date !== current.date
+          ? current
+          : prev,
+      )
     }
 
     // Schedule the next boundary crossing exactly
@@ -113,5 +129,6 @@ export function useTimeOfDay(options?: UseTimeOfDayOptions): UseTimeOfDayResult 
     timeOfDay: state.timeOfDay,
     greeting: state.greeting,
     isEvening,
+    date: state.date,
   }
 }

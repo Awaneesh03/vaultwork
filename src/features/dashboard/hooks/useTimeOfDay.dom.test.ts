@@ -122,3 +122,50 @@ describe('the preview parameter', () => {
     expect(result.current.greeting).toBe('evening')
   })
 })
+
+describe('the initial render at each boundary', () => {
+  it.each([
+    [20, 59, 'evening', 'evening'],
+    [21, 0, 'night', 'lateNight'],
+    [0, 0, 'night', 'lateNight'],
+    [4, 59, 'night', 'lateNight'],
+    [5, 0, 'morning', 'morning'],
+  ] as const)('%i:%i is %s', (hours, minutes, timeOfDay, greeting) => {
+    setClock(hours, minutes)
+    const { result } = renderHook(() => useTimeOfDay({ now: clock }))
+    expect(result.current.timeOfDay).toBe(timeOfDay)
+    expect(result.current.greeting).toBe(greeting)
+  })
+})
+
+describe('the local date', () => {
+  it('rolls over at midnight on the minute tick', () => {
+    setClock(23, 59, 30)
+    const { result } = renderHook(() => useTimeOfDay({ now: clock }))
+    expect(result.current.date).toBe('2026-09-03')
+
+    advance(60_000)
+    expect(result.current.date).toBe('2026-09-04')
+    expect(result.current.greeting).toBe('lateNight')
+  })
+
+  it('does not re-render on minutes where nothing changes', () => {
+    setClock(13, 0)
+    let renders = 0
+    renderHook(() => {
+      renders += 1
+      return useTimeOfDay({ now: clock })
+    })
+    const settled = renders
+
+    advance(10 * 60_000)
+    expect(renders).toBe(settled)
+  })
+
+  it('stops every timer and listener on unmount', () => {
+    setClock(13, 0)
+    const { unmount } = renderHook(() => useTimeOfDay({ now: clock }))
+    unmount()
+    expect(vi.getTimerCount()).toBe(0)
+  })
+})
