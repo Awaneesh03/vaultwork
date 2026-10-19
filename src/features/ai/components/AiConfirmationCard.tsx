@@ -12,12 +12,12 @@ import type { AiConfirmation } from '@/services'
  * reasoning rather than as the action, because a reply that says "tidy up a few
  * old things" while proposing something else is the ordinary failure mode here.
  *
- * It is deliberately *not* violet. Everything the assistant says wears the
+ * It is deliberately *not* clay. Everything the assistant says wears the
  * Assistant's colour; this is Vaultwork saying what it is about to do to your
  * own data, and the model is not the thing that acts. Reading "the assistant
  * understood me" and authorising "Vaultwork is about to change my data" must
- * not look like the same event, so one is a violet rule beside some prose and
- * the other is the loudest surface in the application, in Vaultwork's emerald,
+ * not look like the same event, so one is a clay rule beside some prose and
+ * the other is the loudest surface in the application, in Vaultwork's ember,
  * with an amber reminder that it has not happened yet.
  *
  * Confirming is a deliberate click. There is no default-focused Confirm, no

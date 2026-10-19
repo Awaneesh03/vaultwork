@@ -107,8 +107,8 @@ describe('turning a frequency into schedule fields', () => {
 describe('toHabitPatch', () => {
   it('sends only what changed', () => {
     const current = habit({ name: 'Read', color: 'teal' })
-    const value = { ...habitForm(current), color: 'violet' }
-    expect(toHabitPatch(value, current)).toEqual({ color: 'violet' })
+    const value = { ...habitForm(current), color: 'indigo' }
+    expect(toHabitPatch(value, current)).toEqual({ color: 'indigo' })
   })
 
   it('sends nothing when nothing changed', () => {

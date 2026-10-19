@@ -260,7 +260,7 @@ describe('editing never rewrites history', () => {
   it('leaves entries untouched when the colour changes', async () => {
     const habit = await withHistory()
     const before = await habitEntryRepo.forHabit(habit.id)
-    await updateHabit(habit.id, { color: 'violet' })
+    await updateHabit(habit.id, { color: 'indigo' })
     expect(await habitEntryRepo.forHabit(habit.id)).toEqual(before)
   })
 

@@ -55,7 +55,7 @@ describe('create', () => {
   it('takes the fields the composer offers', async () => {
     const project = await createProject('DSA', {
       description: 'Structured practice',
-      color: 'violet',
+      color: 'indigo',
       icon: 'binary',
       status: 'planning',
       deadline: '2026-12-31',
@@ -63,7 +63,7 @@ describe('create', () => {
 
     expect(project).toMatchObject({
       description: 'Structured practice',
-      color: 'violet',
+      color: 'indigo',
       icon: 'binary',
       status: 'planning',
       deadline: '2026-12-31',

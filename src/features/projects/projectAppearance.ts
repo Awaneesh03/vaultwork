@@ -31,7 +31,7 @@ export const PROJECT_COLORS = [
   'green',
   'amber',
   'rose',
-  'violet',
+  'indigo',
   'blue',
   'slate',
 ] as const
@@ -53,7 +53,7 @@ export const PROJECT_COLOR_LABELS: Record<ProjectColor, string> = {
   green: 'Green',
   amber: 'Amber',
   rose: 'Rose',
-  violet: 'Violet',
+  indigo: 'Indigo',
   blue: 'Blue',
   slate: 'Slate',
 }

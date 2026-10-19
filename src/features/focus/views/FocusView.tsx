@@ -132,7 +132,7 @@ export function FocusView() {
         aria-label="Timer"
       >
         {/*
-          A single soft violet wash behind a running clock, and nothing at all
+          A single soft ember wash behind a running clock, and nothing at all
           when idle. It is the only ambient treatment in the application, which
           is what lets it mean "a session is running" rather than just "this is
           a card".

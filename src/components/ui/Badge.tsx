@@ -21,9 +21,8 @@ const TONES: Record<BadgeTone, string> = {
   /*
    * "Settled" — synced, agreed, done. It wears the success green rather than
    * the brand accent, which is reserved for *selection and identity*, and it
-   * is emphatically not violet: violet belongs to the Assistant, and a PDF
-   * badge in the Assistant's colour claims a relationship that is not there.
-   * It read violet from the palette reversal until Phase 5 caught it.
+   * is emphatically not clay: clay belongs to the Assistant, and a PDF badge
+   * in the Assistant's colour claims a relationship that is not there.
    */
   confirm: 'bg-ok-soft text-ok border-ok/25',
   ok: 'bg-ok-soft text-ok border-ok/25',

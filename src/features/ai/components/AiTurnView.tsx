@@ -17,7 +17,7 @@ import type { Id } from '@/types/entities'
  * So each one is *named* rather than left to be inferred from its shape. The
  * eyebrow over every reply says which of the five this is, in words, which is
  * also what makes the distinction survive for a reader who cannot see the
- * violet rule beside it.
+ * clay rule beside it.
  *
  * Nothing here executes, resolves or asks a provider. Every control reports
  * upward.
@@ -26,11 +26,11 @@ import type { Id } from '@/types/entities'
 /**
  * The assistant speaking.
  *
- * A violet rule down the left edge rather than a chat bubble. Violet is the
+ * A clay rule down the left edge rather than a chat bubble. Clay is the
  * Assistant's colour and only the Assistant's, so the rule is the mark that
  * says "this text came from the model" — which matters most at the moment the
  * next thing on screen is Vaultwork proposing to change your data, in
- * Vaultwork's own emerald.
+ * Vaultwork's own ember.
  */
 function Reply({ label, children }: { label: string; children: React.ReactNode }) {
   return (

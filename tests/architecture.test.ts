@@ -1014,19 +1014,19 @@ describe('the AI boundary', () => {
     /*
      * The semantic mapping, enforced rather than described.
      *
-     *   emerald (`--accent`)   Vaultwork itself: identity, selection, the one
-     *                          primary action per view, and Vaultwork acting
-     *                          on your data — including the AI mutation gate,
-     *                          because the model is not the thing that acts.
-     *   violet  (`--accent-2`) the Assistant's own voice and presence. Here,
-     *                          and nowhere else.
+     *   ember (`--accent`)   Vaultwork itself: identity, selection, the one
+     *                        primary action per view, and Vaultwork acting on
+     *                        your data — including the AI mutation gate,
+     *                        because the model is not the thing that acts.
+     *   clay  (`--accent-2`) the Assistant's own voice and presence. Here,
+     *                        and nowhere else.
      *   warn                   an exception inside a normal flow: a focus
      *                          session overrunning, a truncated extraction, a
      *                          lapsed permission, a change not yet applied.
      *   danger                 destructive, or blocked pending a decision.
      *   ok                     settled: synced, persisted, succeeded.
      *
-     * Violet had drifted onto a Focus countdown that had overrun (an
+     * The secondary accent had drifted onto a Focus countdown that had overrun (an
      * exception), a `confirm` button variant whose only caller was Focus's
      * primary action, and every "Synced" badge in Obsidian. Each of those read
      * as a second primary, which is exactly what makes an accent stop meaning

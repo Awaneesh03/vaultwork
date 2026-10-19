@@ -89,14 +89,13 @@ export function AiView() {
   return (
     <div className="relative flex max-w-3xl flex-col gap-6">
       {/*
-        The assistant's one piece of ambience: a violet bloom behind the top of
+        The assistant's one piece of ambience: a clay bloom behind the top of
         the column. It is the only place in the application with a gradient, and
         it earns that by being the only place where something is *thinking* —
         which is exactly why it must not appear on any other screen.
 
-        It drew in emerald until Phase 6: the comment said violet, the token
-        said `--accent-soft`, and the palette reversal had quietly made those
-        two different colours.
+        It draws from `--accent-2-soft`, the Assistant's own rung, so it stays
+        adjacent to the ember identity without ever reading as a primary.
       */}
       <span
         aria-hidden

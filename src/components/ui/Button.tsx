@@ -11,10 +11,10 @@ import { cn } from '@/lib/cn'
  *
  * There was a fifth, `confirm`, described here as mint and as belonging to
  * "applying a sync, accepting a plan". It was neither: it rendered in the
- * Assistant's violet, and its only caller in the entire application was the
+ * Assistant's clay, and its only caller in the entire application was the
  * Focus screen's "Finish now" — which is simply that view's primary action.
  * A variant with one user whose semantics are already covered is not a
- * variant, and keeping it meant violet reading as a second primary.
+ * variant, and keeping it meant clay reading as a second primary.
  */
 
 type Variant = 'primary' | 'secondary' | 'ghost' | 'danger'

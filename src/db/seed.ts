@@ -67,7 +67,7 @@ export function buildSeed(now: Date = new Date()) {
     java: tag('java', 'amber'),
     college: tag('college', 'slate'),
     health: tag('health', 'green'),
-    reading: tag('reading', 'violet'),
+    reading: tag('reading', 'indigo'),
   }
 
   const goal: Goal = {
@@ -128,7 +128,7 @@ export function buildSeed(now: Date = new Date()) {
       tagIds: [tags.college.id],
       deadline: addDays(today, 90),
     }),
-    portfolio: project('Portfolio Site', 'planning', 'globe', 'violet', 3000, {
+    portfolio: project('Portfolio Site', 'planning', 'globe', 'indigo', 3000, {
       description: 'Something to point recruiters at.',
     }),
   }
@@ -235,7 +235,7 @@ export function buildSeed(now: Date = new Date()) {
   const habits: Habit[] = [
     habit('Study', 'teal', 1000, { kind: 'quantity', unit: 'minutes', target: 90 }),
     habit('Exercise', 'green', 2000, { daysOfWeek: [1, 2, 3, 4, 5] }),
-    habit('Reading', 'violet', 3000, { kind: 'quantity', unit: 'pages', target: 20 }),
+    habit('Reading', 'indigo', 3000, { kind: 'quantity', unit: 'pages', target: 20 }),
   ]
 
   const habitEntries: HabitEntry[] = []

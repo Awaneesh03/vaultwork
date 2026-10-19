@@ -13,12 +13,6 @@ import { ROUTES } from '@/app/navigation'
 import { useUiStore } from '@/store/uiStore'
 import type { RecentNote } from '@/services'
 
-interface ReflectionWindDownProps {
-  recentNotes: RecentNote[]
-  completedCount: number
-  capturesWaiting: number
-}
-
 /**
  * Reflection and Wind Down sections for the evening dashboard.
  *
@@ -194,20 +188,5 @@ export function WindDown({
         Quiet command center ready for tomorrow.
       </p>
     </section>
-  )
-}
-
-/** Both evening surfaces stacked. Kept for callers that want them together. */
-export function ReflectionWindDown({
-  recentNotes,
-  completedCount,
-  capturesWaiting,
-}: ReflectionWindDownProps) {
-  return (
-    <div className="flex flex-col gap-4">
-      <EveningReflection />
-      <NotesFromToday recentNotes={recentNotes} />
-      <WindDown completedCount={completedCount} capturesWaiting={capturesWaiting} />
-    </div>
   )
 }

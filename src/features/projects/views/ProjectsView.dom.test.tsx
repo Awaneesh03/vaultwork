@@ -168,13 +168,13 @@ describe('creating a project', () => {
 
     await createThroughUi('College', () => {
       const dialog = screen.getByRole('dialog', { name: 'New project' })
-      fireEvent.click(within(dialog).getByRole('button', { name: 'Violet' }))
+      fireEvent.click(within(dialog).getByRole('button', { name: 'Indigo' }))
       fireEvent.click(within(dialog).getByRole('button', { name: 'Study' }))
     })
 
     await waitFor(async () => {
       const [row] = await db.projects.toArray()
-      expect(row).toMatchObject({ color: 'violet', icon: 'graduation-cap' })
+      expect(row).toMatchObject({ color: 'indigo', icon: 'graduation-cap' })
     })
   })
 })
