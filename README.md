@@ -18,6 +18,7 @@ Your data stays on your machine.
 ![Zustand](https://img.shields.io/badge/Zustand-443E38?style=flat-square)
 ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white)
 ![MCP](https://img.shields.io/badge/MCP-Claude_Desktop-D97757?style=flat-square)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow?style=flat-square)](LICENSE)
 
 [Features](#-features) · [Quick Start](#-quick-start) · [Platforms](#-platforms) · [User guide](docs/user-guide.md) · [Architecture](#-architecture) · [Quick Add](#-quick-add-syntax)
 
@@ -198,8 +199,10 @@ if you touch `src-tauri/`) before opening one; CI runs the same checks.
 
 ## 📄 License
 
-No license has been chosen yet. Until one is added, the code is public to read
-but not licensed for reuse or redistribution.
+[MIT](LICENSE) © 2026 Awaneesh Gupta.
+
+Third-party dependencies keep their own licenses — overwhelmingly MIT and
+Apache-2.0, plus a few MPL-2.0 Rust crates pulled in by Tauri.
 
 ## 👤 Author
 
