@@ -4,9 +4,11 @@
 
 # Vaultwork
 
-**A local-first personal productivity system — tasks, projects, goals, habits, notes and focus — with an Obsidian vault as its home and an optional Claude Desktop (MCP) bridge.**
+**A local-first personal productivity system — tasks, projects, goals, habits, notes and focus — with optional Obsidian sync and a read-only Claude Desktop (MCP) bridge.**
 
-No backend. No account. No cloud database. Your data stays on your machine.
+For students and individuals who want one calm place to plan their day, without
+handing their data to a cloud service. No backend. No account. No cloud database.
+Your data stays on your machine.
 
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=flat-square&logo=react&logoColor=61DAFB)
@@ -17,7 +19,7 @@ No backend. No account. No cloud database. Your data stays on your machine.
 ![Vitest](https://img.shields.io/badge/Vitest-6E9F18?style=flat-square&logo=vitest&logoColor=white)
 ![MCP](https://img.shields.io/badge/MCP-Claude_Desktop-D97757?style=flat-square)
 
-[Features](#-features) · [Quick Start](#-quick-start) · [User guide](docs/user-guide.md) · [Architecture](#-architecture) · [Quick Add](#-quick-add-syntax)
+[Features](#-features) · [Quick Start](#-quick-start) · [Platforms](#-platforms) · [User guide](docs/user-guide.md) · [Architecture](#-architecture) · [Quick Add](#-quick-add-syntax)
 
 </div>
 
@@ -33,10 +35,21 @@ No backend. No account. No cloud database. Your data stays on your machine.
 | **Habits** | Daily habits with streaks |
 | **Notes & Documents** | Markdown notes with frontmatter, linked to an **Obsidian** vault (with conflict detection) |
 | **Calendar & Focus** | Calendar view, focus sessions, and read-only **Google Calendar & Gmail** integration (desktop) |
-| **Analytics & Dashboard** | See where your time and effort go |
+| **Time-aware dashboard** | The day at a glance under a hero that follows your clock — morning, afternoon, evening and night scenes, with an evening wrap-up layout |
+| **Analytics** | See where your time and effort go |
 | **Desktop app** | Native macOS app with **Tauri** (Rust) and system notifications. Windows and Linux are not yet built or tested. |
 | **Telegram & Assistant** | Optional: capture and check tasks from a paired Telegram chat; an AI assistant whose every proposed change needs your confirmation |
 | **Claude Desktop (MCP)** | A read-only MCP server so Claude can answer questions about your workspace — see [`docs/mcp.md`](docs/mcp.md) |
+
+### Tech stack
+
+| Layer | Technology |
+|---|---|
+| Interface | React 18, TypeScript 5, Vite 6, Tailwind CSS 4, React Router 7, Zustand 5, Lucide icons |
+| Data | IndexedDB through Dexie 4 — versioned schema with migrations |
+| Desktop | Tauri 2 (Rust) — native folder access, notifications, macOS Keychain |
+| Tests | Vitest 2 + Testing Library + fake-indexeddb; `cargo test` for the Rust layer |
+| Claude Desktop | Model Context Protocol SDK (stdio, read-only) |
 
 ### Engineering highlights
 
@@ -76,6 +89,40 @@ npm run build          # production web build
 npm run desktop:build  # Vaultwork.app + .dmg (unsigned)
 npm run icons          # regenerate app icons from branding/vaultwork-icon.svg
 ```
+
+CI runs the web checks and the Rust tests on pushes to `main` and on every pull request.
+
+## 💻 Platforms
+
+| Platform | Status |
+|---|---|
+| macOS (Apple Silicon) — desktop app | Tested: developed, built and run here |
+| Browser — `npm run dev` | Tested in Chrome; Obsidian sync needs a Chromium-based browser |
+| Windows, Linux — desktop app | Not built or tested. CI runs the test suite on Ubuntu, but no Linux or Windows app has been produced |
+
+## 🔒 Your Data
+
+- Everything lives on your machine, in the app's local IndexedDB database. There is no server and no sync service.
+- Credentials you add (Telegram bot token, AI key, Google sign-in) go to the macOS Keychain — never into the database, a backup file or this repository.
+- Back up from **Settings ▸ Storage ▸ Export JSON**; imports and restores take a safety snapshot first.
+
+Integrations are optional and off until you supply your own credentials:
+
+| Integration | Needs |
+|---|---|
+| Obsidian | A vault folder you choose |
+| Telegram | Your own bot token from @BotFather, then a pairing code |
+| Assistant (AI) | Your own Groq API key; every proposed change needs your confirmation |
+| Google Calendar & Gmail | Your own Google OAuth desktop client, compiled into the build — read-only scopes |
+
+Details: [docs/user-guide.md](docs/user-guide.md) and [docs/developer-setup.md](docs/developer-setup.md).
+
+## ⚠️ Current Limitations
+
+- The macOS app is **not code-signed or notarized**; macOS warns on first open (right-click ▸ Open).
+- Windows and Linux desktop builds are untested.
+- Telegram, the Assistant and Google do nothing until you configure your own credentials; Google additionally needs a rebuild.
+- Data is local to one machine — there is no multi-device sync.
 
 ## 🏗 Architecture
 
@@ -142,6 +189,17 @@ Anything the parser does not recognise **stays in the title** and is reported
 rather than silently dropped.
 
 ---
+
+## 🐛 Bugs & Contributions
+
+Found a bug or have an idea? [Open an issue](https://github.com/Awaneesh03/vaultwork/issues).
+Pull requests are welcome — please run `npm run verify` (and `npm run test:rust`
+if you touch `src-tauri/`) before opening one; CI runs the same checks.
+
+## 📄 License
+
+No license has been chosen yet. Until one is added, the code is public to read
+but not licensed for reuse or redistribution.
 
 ## 👤 Author
 
