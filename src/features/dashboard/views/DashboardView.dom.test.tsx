@@ -69,19 +69,24 @@ describe('the header', () => {
     expect(time.getAttribute('datetime')).toBe(TODAY)
   })
 
+  // The hero's subtitle is fixed copy per time of day; the day's live counts
+  // are stated once, by the summary tiles directly beneath it.
   it('summarises the day from the live counts', async () => {
     await capture('Study Java today')
     await capture('Submit lab record 2026-08-30')
 
     mount()
-    await waitFor(() =>
-      expect(screen.getByText('You have 1 task due today and 1 overdue.')).toBeTruthy(),
-    )
+    await waitFor(() => expect(tile('View today')).toBeTruthy())
+    expect(screen.getByText('A fresh start. Let’s make today count.')).toBeTruthy()
+    expect(tile('View today').getAttribute('aria-label')).toBe('1 task due today. View today')
+    expect(tile('View overdue').getAttribute('aria-label')).toBe('1 overdue task. View overdue')
   })
 
   it('says the plain thing on an empty database', async () => {
     mount()
-    await waitFor(() => expect(screen.getByText('Nothing due today.')).toBeTruthy())
+    await waitFor(() => expect(tile('View today')).toBeTruthy())
+    expect(tile('View today').getAttribute('aria-label')).toBe('0 tasks due today. View today')
+    expect(tile('View overdue').getAttribute('aria-label')).toBe('0 overdue tasks. View overdue')
   })
 
   it('shows a skeleton before the first read resolves', () => {

@@ -327,6 +327,28 @@
   }
 }
 
+/*
+ * The dashboard hero's clouds and mist drift — slowly, a few percent across a
+ * minute, transform-only so the compositor moves an already-painted layer.
+ * Defined only where motion is welcome: with reduced motion asked for, the
+ * class does nothing at all and the scene is a still picture.
+ */
+@keyframes scene-drift {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-3%);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .scene-drift {
+    animation: scene-drift 70s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

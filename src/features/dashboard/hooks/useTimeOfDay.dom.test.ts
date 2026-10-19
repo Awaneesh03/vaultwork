@@ -169,3 +169,28 @@ describe('the local date', () => {
     expect(vi.getTimerCount()).toBe(0)
   })
 })
+
+describe('listeners', () => {
+  it('removes every focus and visibility listener it adds', () => {
+    // Spies call through, so the hook behaves normally while they record.
+    const spies = [
+      vi.spyOn(window, 'addEventListener'),
+      vi.spyOn(document, 'addEventListener'),
+      vi.spyOn(window, 'removeEventListener'),
+      vi.spyOn(document, 'removeEventListener'),
+    ]
+    const [winAdd, docAdd, winRemove, docRemove] = spies
+    const types = (spy: (typeof spies)[number] | undefined) =>
+      (spy?.mock.calls ?? []).map((call) => String(call[0]))
+
+    setClock(13, 0)
+    const { unmount } = renderHook(() => useTimeOfDay({ now: clock }))
+    expect(types(winAdd)).toContain('focus')
+    expect(types(docAdd)).toContain('visibilitychange')
+
+    unmount()
+    expect(types(winRemove)).toContain('focus')
+    expect(types(docRemove)).toContain('visibilitychange')
+    spies.forEach((spy) => spy.mockRestore())
+  })
+})

@@ -256,7 +256,6 @@ export function DashboardView() {
     <div className="flex flex-col gap-6">
       <DataView<TodayContext> data={data} loading={<DashboardSkeleton />} isEmpty={() => false}>
         {(value) => {
-          const effectiveGreeting = timeContext.greeting
           const isEvening = timeContext.isEvening
           /*
            * Still open, flat. The engine's grouping is kept — overdue first,
@@ -272,12 +271,8 @@ export function DashboardView() {
 
           return (
             <div className="flex flex-col gap-6">
-              {/* Top Atmospheric Evening Hero */}
-              <DashboardHeader
-                greeting={effectiveGreeting}
-                today={value.today}
-                headline={value.headline}
-              />
+              {/* The hero: one scene per time of day, from the same state as the greeting. */}
+              <DashboardHeader timeOfDay={timeContext.timeOfDay} today={value.today} />
 
               {/* M19.2 — the evening states today's numbers once, quietly. The four
                   daytime counters and the always-open Quick Add belong to the
@@ -503,7 +498,7 @@ export function DashboardView() {
                     </div>
 
                     <div className="min-w-0">
-                      <EveningVista />
+                      <EveningVista night={timeContext.timeOfDay === 'night'} />
                     </div>
                   </div>
 
